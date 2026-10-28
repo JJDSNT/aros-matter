@@ -1,0 +1,9 @@
+info setup if=eth0 index=2 link-local=fe80::2057:f4ff:fe77:8862
+case mld.addr-owned
+ok mld.addr-owned add-address
+ok mld.addr-owned delete-address
+host mld.addr-owned mld ff02::1:ff12:3456 report,leave
+case mld.ifdetach
+ok mld.ifdetach join
+ok mld.ifdetach read-interfaces-db
+ok mld.ifdetach drop-interface-from-db

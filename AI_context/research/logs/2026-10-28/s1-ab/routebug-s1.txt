@@ -1,0 +1,6 @@
+info  setup if=eth0 index=2 link-local=fe80::f04f:20ff:fec0:9106
+PASS  addr.delete-then-reload add-address
+PASS  addr.delete-then-reload delete-address
+PASS  addr.delete-then-reload reload # rc=0
+PASS  addr.delete-then-reload stack-still-up
+image=/home/jaime/aros-build-ipv6-hosted/bin/linux-x86_64/AROS arostcp=/home/jaime/aros-build-ipv6-hosted/ab/AROSTCP.s1  checks=4  failed=0  boot=ok

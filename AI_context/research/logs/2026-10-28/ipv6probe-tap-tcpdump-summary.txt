@@ -1,0 +1,14 @@
+     23 IP6 fe80::e090:2aff:fe98:97bd.PORT > ff02::fb.5353: domain [length 10 < 12] (invalid)
+     15 IP6 fe80::e0f7:85ff:fe35:1f8a.PORT > ff02::fb.5353: domain [length 10 < 12] (invalid)
+      2 IP6 fe80::e0f7:85ff:fe35:1f8a > ff02::fb: HBH ICMP6, multicast listener reportmax resp delay: 0 addr: ff02::fb, length 24
+      2 IP6 fe80::e0f7:85ff:fe35:1f8a > ff02::1:ff35:1f8a: HBH ICMP6, multicast listener reportmax resp delay: 0 addr: ff02::1:ff35:1f8a, length 24
+      2 IP6 fe80::e090:2aff:fe98:97bd > ff02::16: HBH ICMP6, multicast listener report v2, 2 group record(s), length 48
+      1 tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+      1 packets received by filter
+      1 packets dropped by kernel
+      1 packets captured
+      1 listening on aros0, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+      1 IP6 fe80::e0f7:85ff:fe35:1f8a > ff02::2: ICMP6, router solicitation, length 16
+      1 IP6 fe80::e090:2aff:fe98:97bd > ff02::2: ICMP6, router solicitation, length 16
+      1 IP6 :: > ff02::1:ff35:1f8a: ICMP6, neighbor solicitation, who has fe80::e0f7:85ff:fe35:1f8a, length 24
+      1 

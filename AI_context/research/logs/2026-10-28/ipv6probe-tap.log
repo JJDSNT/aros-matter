@@ -1,0 +1,28 @@
+PASS miami.library
+PASS socket(AF_INET6, SOCK_DGRAM)
+PASS bind [::1]:40001
+PASS sendto [::1]:40001
+PASS WaitSelect+recvfrom loopback: n=5 family=28
+PASS if_nametoindex(lo0): lo0 -> 1
+PASS bind [::]:5353 first socket
+PASS IPV6_JOIN_GROUP ff02::fb (first)
+PASS bind [::]:5353 second socket (SO_REUSEPORT)
+PASS IPV6_JOIN_GROUP ff02::fb (second)
+PASS IPV6_MULTICAST_IF lo0
+PASS IPV6_MULTICAST_LOOP 1
+FAIL sendto ff02::fb%lo0:5353: Cannot assign requested address
+FAIL recvmsg multicast (first socket): timeout
+FAIL recvmsg multicast (second socket): timeout
+PASS link: if_nametoindex: eth0 -> 2
+INFO addr6 lo0 ::1
+INFO addr6 eth0 fe80::e0f7:85ff:fe35:1f8a
+PASS SIOCGLIFADDR: 2 IPv6 addresses
+PASS link: interface has a link-local address
+PASS link: bind [::]:5353
+PASS link: IPV6_JOIN_GROUP ff02::fb
+PASS link: IPV6_MULTICAST_IF
+FAIL link: sendto ff02::fb from socket bound to [::]: Cannot assign requested address
+PASS link: bind send socket to link-local
+PASS link: sendto ff02::fb from link-local socket (workaround)
+FAIL link: receive peer multicast: nothing from peer in 15 s
+SUMMARY FAIL (5 failed)

@@ -1,0 +1,42 @@
+{
+ "peer_rx": [],
+ "mld": [
+  [
+   "ff02::1:ffec:81ba",
+   "report"
+  ],
+  [
+   "ff12::4d54:10",
+   "report"
+  ],
+  [
+   "ff12::4d54:10",
+   "leave"
+  ],
+  [
+   "ff02::fb",
+   "report"
+  ],
+  [
+   "ff02::1:ffec:81ba",
+   "report"
+  ],
+  [
+   "ff02::fb",
+   "report"
+  ],
+  [
+   "ff12::4d54:b",
+   "report"
+  ],
+  [
+   "ff12::4d54:b",
+   "leave"
+  ],
+  [
+   "ff12::4d54:a",
+   "report"
+  ]
+ ],
+ "host_sent": 90
+}

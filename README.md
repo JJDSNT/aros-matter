@@ -34,6 +34,8 @@ See [docs/architecture-and-research.md](docs/architecture-and-research.md) for t
 
 **Research / bootstrap.** No claim of functional Matter support is made yet.
 
+Operational tracker (issues, findings, current state): [AI_context/](AI_context/current_state.md).
+
 ## References
 
 - [Matter SDK (connectedhomeip)](https://github.com/project-chip/connectedhomeip)
