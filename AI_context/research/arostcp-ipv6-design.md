@@ -63,6 +63,20 @@ Referências do AROS na revisão `4c2c268a53`; do FreeBSD em `freebsd-src@389ae8
 ### G10 — Tempo de vida endereço × rotas
 - `ifa_refcnt` existe em `struct ifaddr`, mas não é usado; `in6_purgeaddr()` libera o endereço mesmo com rotas apontando para ele. Uso após liberação intermitente observado em `rtrequest()`. Ver [ISSUE-0009](../issues/ISSUE-0009.md).
 
+### G15 — Rotas IPv6 via roteador perdem o gateway (**causa confirmada no código; efeito no envio ainda não medido**)
+- `nd6_rtrequest()` (`netinet6/nd6.c`) trata toda rota nova numa interface IPv6 como entrada de vizinho: no `RTM_ADD` cai no caminho de `RTM_RESOLVE`, troca o gateway por um `sockaddr_dl` vazio (`nd6_storelladdr()`) e aloca `llinfo_nd6`. O FreeBSD 4.11, que o comentário diz seguir, sai logo no início para rotas com gateway (`sys/netinet6/nd6.c:1103-1104`, `if ((rt->rt_flags & RTF_GATEWAY)) return;`). Essa linha foi omitida.
+- Evidência: na bancada RFC 4191, `RTM_GET` da rota instalada por RIO devolve `flags=0x413` (`RTF_UP|RTF_GATEWAY|…`), mas o gateway vem como `AF_LINK` (família 18, len 18), não como `fe80::4d54:a`.
+- Afeta toda rota via roteador: a default aprendida de RA (já antes da S8), rotas estáticas IPv6 e as rotas da RIO.
+- Suspeita relacionada (a confirmar): `nd6_resolve()` resolve o vizinho sobre a rota do destino; não há o desvio para a entrada de vizinho do gateway que o `nd6_output()` do KAME faz (`rt_gwroute`). Se confirmado, nenhum pacote IPv6 para fora do link sai pelo roteador.
+- Para medir: o AROS precisa de um endereço global (o RA do host deve trazer PIO com SLAAC); só com link-local, `sendto()` para destino global devolve `EADDRNOTAVAIL`, o que está correto (RFC 4291: link-local não é roteado).
+- Impacto Matter: é o caminho do controlador até um dispositivo Thread atrás do border router (rota da RIO → gateway = BR).
+
+### G14 — Sockets raw IPv6 ignoram as opções IPv6
+- `rip6_ctloutput()` (`netinet6/icmp6.c`) é um stub que devolve 0 para qualquer opção: `setsockopt()` "funciona" sem efeito.
+- `rip6_output()` monta o cabeçalho com `ip6_defhlim` e chama `ip6_output()` com opções multicast `NULL`: `IPV6_MULTICAST_HOPS/IF/LOOP` e `IPV6_UNICAST_HOPS` não se aplicam; não há `ICMP6_FILTER`. O socket raw usa `struct rawcb`, sem lugar para opções (no KAME/FreeBSD, o raw IPv6 usa o `in6pcb` e herda as opções).
+- Consequência: nenhum programa no AROS gera RS/RA/NS/NA válidos (hop limit 255, RFC 4861). Impediu o teste autocontido da S8, cujo RA saía com hop limit 64 e era descartado, corretamente.
+- Cuidado registrado: um teste que envia RA por raw socket com hop limit certo também o envia pela tap ao host. Um RA com router lifetime > 0 instalaria rota default no Linux do host. Testes upstream não devem fazer isso.
+
 ### G13 — `IPV6_V6ONLY` e `IPV6_CHECKSUM` com o mesmo valor
 - Ambos valem 26 em `common/include/netinet/in.h`; nos BSDs, `IPV6_V6ONLY` é 27. Anotado no #1947, sem mudança.
 
@@ -105,7 +119,7 @@ Cada etapa é uma série de commits focados com testes. Ordem pensada para entre
 | S5 | G7: `in6_pktinfo` público; verificar `recvmsg`/ancillary | S3 | `IPV6_PKTINFO` com ifindex e destino corretos |
 | S6 | G1: zonas na API e no PCB (decisão D1) | discussão D4 | bind/connect/sendto/recvfrom com `%if`; origem recebida com `sin6_scope_id`; duas interfaces |
 | S7 | G2: `in6_selectif` + `in6_selectsrc` únicos; remover as heurísticas | S6 | `sendto(ff02::fb)` de `[::]` funciona; testes de regras RFC 6724; TCP6 e ICMPv6 sem regressão |
-| S8 | G8: RIO (RFC 4191), rotas com preferência e tempo de vida | S7 | RA com RIO gera a rota; ela expira; testado com radvd no host |
+| S8 | G8: RFC 4191 completa (preferência de roteador default + RIO, host tipo C) | — (teste autocontido usa o loopback do #1945/S4) | RA com RIO instala a rota via o roteador na interface do RA; lifetime 0 remove; expira; preferência desempata. Com várias interfaces, o gateway `fe80::` herda a limitação G1 da rota default atual, salvo se a interface for informada na instalação |
 | S9 | G9: comandos multicast no `tap.device` (opcional, bancada) | — | filtro igual ao do `eth.device` unix |
 
 Regressão em toda etapa: IPv4 multicast/mdnsd (`dnssd`), ND/SLAAC, DHCPv4, TCP sobre IPv6.
