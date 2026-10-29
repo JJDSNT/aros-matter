@@ -23,7 +23,7 @@
 #include <net/if.h>
 #include <netinet/in_var.h>
 #include <arpa/inet.h>
-#include "bpf.h"                /* the stack's BPF header; see mmakefile.src */
+#include <net/bpf.h>
 #include <stdlib.h>
 
 struct Library *SocketBase = NULL;

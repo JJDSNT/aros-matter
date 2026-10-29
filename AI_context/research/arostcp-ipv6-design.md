@@ -64,7 +64,7 @@ Referências do AROS na revisão `4c2c268a53`; do FreeBSD em `freebsd-src@389ae8
 - `ifa_refcnt` existe em `struct ifaddr`, mas não é usado; `in6_purgeaddr()` libera o endereço mesmo com rotas apontando para ele. Uso após liberação intermitente observado em `rtrequest()`. Ver [ISSUE-0009](../issues/ISSUE-0009.md).
 
 ### G11 — BPF para programas
-- Não há `<net/bpf.h>` público para as chamadas Roadshow `bpf_*()` (só o header privado da pilha).
+- ~~Não há `<net/bpf.h>` público~~ → resolvido no #1924, a pedido do Kal (2026-10-29).
 - `BIOCGDLT` anuncia `DLT_EN10MB`, mas o `bpf_mtap()` de `sana_output()` recebe o pacote IP sem cabeçalho de enlace.
 - Encontrado ao escrever `tests/upstream/.../cunit-net-mld6.c`.
 

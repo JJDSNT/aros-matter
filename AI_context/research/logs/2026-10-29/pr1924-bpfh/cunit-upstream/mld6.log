@@ -1,0 +1,33 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: MLD6_Suite
+  Test: join/leave send Report/Done ...passed
+  Test: closing a socket leaves its groups ...FAILED
+    1. testMLD6_CLOSE_LEAVES:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-mld6.c:211  - mld_wait("ff12::4d54:22", EV_LEAVE, 3)
+  Test: rejoin after close is reported ...FAILED
+    1. testMLD6_REJOIN_AFTER_CLOSE:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-mld6.c:226  - mld_wait("ff12::4d54:23", EV_REPORT, 3)
+  Test: added address joins solicited-node ...FAILED
+    1. testMLD6_ADDR_JOINS_SOLICITED:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-mld6.c:236  - mld_wait("ff02::1:ff21:3458", EV_REPORT, 3)
+  Test: deleted address leaves solicited-node ...FAILED
+    1. testMLD6_ADDR_LEAVES_SOLICITED:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-mld6.c:244  - mld_wait("ff02::1:ff21:3458", EV_LEAVE, 3)
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       13         4       n/a       n/a
+     Tests        :        5         4         0         0
+
+Elapsed Time: 13.080(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       13         5       n/a       n/a
+     Tests        :        5         4         0         0
+
+Elapsed Time: 19.020(s)
+

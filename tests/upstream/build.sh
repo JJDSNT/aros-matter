@@ -13,7 +13,6 @@ for f in "$here"/developer/debug/test/net/socket/cunit-*.c; do
     n=$(basename "$f" .c)
     "$cc" --sysroot "$build/bin/linux-x86_64/AROS/Developer" -O2 -Wall -Wno-pointer-sign \
         -I"$src/developer/debug/test/net/socket" -I"$sdk/include" \
-        -iquote "$src/workbench/network/stacks/AROSTCP/bsdsocket/net" \
         -o "$out/$n" "$f" -L"$sdk/lib" -lcunit
     echo "built $out/$n"
 done

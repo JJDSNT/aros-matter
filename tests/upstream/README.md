@@ -30,6 +30,6 @@ tests/upstream/build.sh OUTDIR       # cross-compiles every cunit-*.c here
 
 ## Open points for the PR
 
-- **`<net/bpf.h>` is not public.** AROS installs the Roadshow `bpf_*()` prototypes but not the structures and `BIOC*` requests they need. The test includes `"bpf.h"`, and the mmakefile in #1924 (and `build.sh` here) adds `-iquote .../AROSTCP/bsdsocket/net`. #1924 asks whether a public header is preferred.
+- **`<net/bpf.h>`**: on Kal's review, #1924 now makes it public (`workbench/network/common/include/net/bpf.h`, first commit of the series), and the test includes it normally. `build.sh` needs a build that has run `network-includes-copy` with that commit.
 - **The BPF data link type does not match the data.** `BIOCGDLT` reports `DLT_EN10MB` on Ethernet, but the stack taps the IP packet before the SANA-II driver adds the link header (`net/if_sana.c`, `bpf_mtap()` in `sana_output()`), so a capture holds raw IP. The test accepts both. It should be raised separately.
 - In #1924 the test is listed in `CUNITSOCKETTESTFILES` in `developer/debug/test/net/socket/mmakefile.src`.
