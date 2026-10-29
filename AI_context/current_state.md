@@ -38,7 +38,7 @@ Fase de pesquisa (M0). Toolchain validada (ISSUE-0002 concluída). Testes IPv6 n
 
 ## Ordem sugerida
 
-ISSUE-0008: S0 ✅, S1 ✅ **mesclada** no upstream ([AROS #1924](https://github.com/aros-development-team/AROS/pull/1924), `42cb8e8f34`), S2–S4 ([AROS #1945](https://github.com/aros-development-team/AROS/pull/1945)) e S5 ([AROS #1947](https://github.com/aros-development-team/AROS/pull/1947)) em revisão → S8 (RFC 4191) em andamento, bloqueada pela G15 (rotas via roteador perdem o gateway; corrigir antes); S6/S7 (zonas, seleção de interface/origem): levar o desenho ao Kal antes. Achados novos: G14 (raw IPv6 ignora opções), G15 (IPv6 no AROSTCP: S0–S5 primeiro, S6–S7 após decisão de desenho). Em paralelo, se houver tempo: ISSUE-0003 (crypto). Depois fechar ISSUE-0001 → ISSUE-0006 (spike M1) → ISSUE-0004.
+ISSUE-0008: S0 ✅, S1 ✅ **mesclada** no upstream ([AROS #1924](https://github.com/aros-development-team/AROS/pull/1924), `42cb8e8f34`), S2–S4 ([AROS #1945](https://github.com/aros-development-team/AROS/pull/1945)) e S5 ([AROS #1947](https://github.com/aros-development-team/AROS/pull/1947)) em revisão → S8 (RFC 4191) em andamento, bloqueada pela G15 (rotas via roteador perdem o gateway; corrigir antes); S6/S7 (zonas, seleção de interface/origem): levar o desenho ao Kal antes. Achados novos: G14 (raw IPv6 ignora opções), G15, G16 (a confirmar). Ordem decidida: **G15 → G14 → S8**, cada um em PR com teste (IPv6 no AROSTCP: S0–S5 primeiro, S6–S7 após decisão de desenho). Em paralelo, se houver tempo: ISSUE-0003 (crypto). Depois fechar ISSUE-0001 → ISSUE-0006 (spike M1) → ISSUE-0004.
 
 ## Decisões em aberto para o mantenedor
 

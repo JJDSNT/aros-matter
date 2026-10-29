@@ -63,6 +63,11 @@ Referências do AROS na revisão `4c2c268a53`; do FreeBSD em `freebsd-src@389ae8
 ### G10 — Tempo de vida endereço × rotas
 - `ifa_refcnt` existe em `struct ifaddr`, mas não é usado; `in6_purgeaddr()` libera o endereço mesmo com rotas apontando para ele. Uso após liberação intermitente observado em `rtrequest()`. Ver [ISSUE-0009](../issues/ISSUE-0009.md).
 
+### G16 — Observações a confirmar (captura de 2026-10-29, host como roteador com PIO/SLAAC)
+- **MLD com origem global:** os Listener Reports saem de `2001:db8:4d54:1:…`; RFC 3810 §5 / RFC 2710 §3 exigem origem link-local.
+- **Endereços temporários se acumulando:** 5 grupos solicited-node distintos depois de ~17 RAs iguais: parece um endereço temporário (RFC 4941) novo por RA, em vez de um por prefixo até a regeneração.
+- **Envio para destino global falha com `EADDRNOTAVAIL`** mesmo com endereço global SLAAC já formado: a seleção de origem via a rota default não acha o endereço. Pode ser G15 (rota default corrompida) ou outra causa; investigar junto com a G15.
+
 ### G15 — Rotas IPv6 via roteador perdem o gateway (**causa confirmada no código; efeito no envio ainda não medido**)
 - `nd6_rtrequest()` (`netinet6/nd6.c`) trata toda rota nova numa interface IPv6 como entrada de vizinho: no `RTM_ADD` cai no caminho de `RTM_RESOLVE`, troca o gateway por um `sockaddr_dl` vazio (`nd6_storelladdr()`) e aloca `llinfo_nd6`. O FreeBSD 4.11, que o comentário diz seguir, sai logo no início para rotas com gateway (`sys/netinet6/nd6.c:1103-1104`, `if ((rt->rt_flags & RTF_GATEWAY)) return;`). Essa linha foi omitida.
 - Evidência: na bancada RFC 4191, `RTM_GET` da rota instalada por RIO devolve `flags=0x413` (`RTF_UP|RTF_GATEWAY|…`), mas o gateway vem como `AF_LINK` (família 18, len 18), não como `fe80::4d54:a`.
