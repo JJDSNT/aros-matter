@@ -65,7 +65,7 @@ Referências do AROS na revisão `4c2c268a53`; do FreeBSD em `freebsd-src@389ae8
 
 ### G11 — BPF para programas
 - ~~Não há `<net/bpf.h>` público~~ → resolvido no #1924, a pedido do Kal (2026-10-29).
-- `BIOCGDLT` anuncia `DLT_EN10MB`, mas o `bpf_mtap()` de `sana_output()` recebe o pacote IP sem cabeçalho de enlace.
+- ~~`BIOCGDLT` anuncia `DLT_EN10MB`, mas a captura vem sem cabeçalho de enlace~~ → corrigido pelo Kal em `13743b3160` (cabeçalho Ethernet reconstruído; `DLT_RAW` nos outros tipos SANA-II; `BIOCSETIF` recusa `lo0`/`sit0`).
 - Encontrado ao escrever `tests/upstream/.../cunit-net-mld6.c`.
 
 ### G9 — `tap.device` (bancada hosted)
@@ -92,7 +92,7 @@ Cada etapa é uma série de commits focados com testes. Ordem pensada para entre
 | Etapa | Conteúdo | Depende de | Teste que fecha a etapa |
 |---|---|---|---|
 | S0 | Suíte de testes IPv6 **neste repositório** (`tests/`, evolução de `tests/m0/ipv6probe.c`) + roteiro de bancada hosted/tap | — | roda no hosted; os casos que falham hoje estão documentados |
-| S1 ✅ [#1924](https://github.com/aros-development-team/AROS/pull/1924) | G5: liberar `in6p_moptions` no detach; solicited-node pertence ao endereço (`in6_ifaddr_priv`), all-nodes à interface; `in6_ifdetach()`. (A interface padrão do join ficou para S7.) | S0 | `mld.close-leaves`, `mld.addr-owned`, `mld.ifdetach` passam; ND sem regressão |
+| S1 ✅ mesclada [#1924](https://github.com/aros-development-team/AROS/pull/1924) | G5: liberar `in6p_moptions` no detach; solicited-node pertence ao endereço (`in6_ifaddr_priv`), all-nodes à interface; `in6_ifdetach()`. (A interface padrão do join ficou para S7.) | S0 | `mld.close-leaves`, `mld.addr-owned`, `mld.ifdetach` passam; ND sem regressão |
 | S2 | G3: aceitar grupos em `in6_multihead` por `rcvif`; remover os casos fixos | S0 | o host envia para `ff02::fb`, o AROS recebe; ND e RA continuam funcionando |
 | S3 | G4: entrega multicast UDP a todos os PCBs com filtro por associação/interface | S2 | dois sockets `SO_REUSEPORT` recebem; um socket sem associação na interface não recebe |
 | S4 | G6: loopback de multicast na saída | S2 | dois programas no mesmo AROS se veem em `ff02::fb`; `IPV6_MULTICAST_LOOP 0` desliga |
