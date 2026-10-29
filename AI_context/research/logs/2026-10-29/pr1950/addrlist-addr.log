@@ -1,0 +1,6 @@
+addr lo0 ::1
+addr eth0 fe80::e0b8:75ff:fe39:5021
+addr eth0 2001:db8:4d54:1:9156:dd2:27b3:d930
+addr eth0 2001:db8:4d54:1:e0b8:75ff:fe39:5021
+in-prefix 2
+*** 'C:addrlist' returned with unfreed signal 0x10000

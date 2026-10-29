@@ -1,0 +1,32 @@
+addr lo0 ::1
+addr eth0 fe80::705c:38ff:fe29:2512
+addr eth0 2001:db8:4d54:1:38e8:cd0d:6d0b:7f54
+addr eth0 2001:db8:4d54:1:e87d:7b4a:3b8e:ea8
+addr eth0 2001:db8:4d54:1:705c:38ff:fe29:2512
+addr eth0 2001:db8:4d54:1:11f1:abc7:e77d:f482
+addr eth0 2001:db8:4d54:1:3182:98bc:dc0c:ea14
+addr eth0 2001:db8:4d54:1:751f:6d93:c56f:518a
+addr eth0 2001:db8:4d54:1:9b8:f440:5a9c:529e
+addr eth0 2001:db8:4d54:1:b933:2cb1:e26f:8613
+addr eth0 2001:db8:4d54:1:1ce5:dfd:bddb:bc68
+addr eth0 2001:db8:4d54:1:d439:8132:4aed:b828
+addr eth0 2001:db8:4d54:1:258e:da09:108e:5b29
+addr eth0 2001:db8:4d54:1:7912:5c7c:cbd:3022
+addr eth0 2001:db8:4d54:1:1d14:d5d7:761f:160b
+addr eth0 2001:db8:4d54:1:7519:5647:c82e:f994
+addr eth0 2001:db8:4d54:1:548:7e15:956e:686d
+addr eth0 2001:db8:4d54:1:5555:6877:8bb:6b16
+addr eth0 2001:db8:4d54:1:3d30:431d:7eae:343d
+addr eth0 2001:db8:4d54:1:1d19:8849:a298:ee98
+addr eth0 2001:db8:4d54:1:6dee:e096:132d:4b11
+addr eth0 2001:db8:4d54:1:7154:dd22:899f:124b
+addr eth0 2001:db8:4d54:1:1992:75ad:f678:3ee9
+addr eth0 2001:db8:4d54:1:fd9f:f620:87f9:62d5
+addr eth0 2001:db8:4d54:1:6d:ef28:b4bd:2ef0
+addr eth0 2001:db8:4d54:1:d8f3:7123:cf0d:493c
+addr eth0 2001:db8:4d54:1:bda6:4a50:140c:e305
+addr eth0 2001:db8:4d54:1:b03c:f47d:c4f:b1fa
+addr eth0 2001:db8:4d54:1:c9f8:40a:926e:d20f
+addr eth0 2001:db8:4d54:1:78e3:c752:cf2e:1a1f
+in-prefix 28
+*** 'C:addrlist' returned with unfreed signal 0x10000
