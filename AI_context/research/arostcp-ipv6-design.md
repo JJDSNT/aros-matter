@@ -68,7 +68,18 @@ Referências do AROS na revisão `4c2c268a53`; do FreeBSD em `freebsd-src@389ae8
 - **Endereços temporários se acumulando:** 5 grupos solicited-node distintos depois de ~17 RAs iguais: parece um endereço temporário (RFC 4941) novo por RA, em vez de um por prefixo até a regeneração.
 - **Envio para destino global falha com `EADDRNOTAVAIL`** mesmo com endereço global SLAAC já formado: a seleção de origem via a rota default não acha o endereço. Pode ser G15 (rota default corrompida) ou outra causa; investigar junto com a G15.
 
-### G15 — Rotas IPv6 via roteador perdem o gateway (**causa confirmada no código; efeito no envio ainda não medido**)
+### G15 — Roteamento IPv6 via roteador: quatro defeitos encadeados
+Medido em 2026-10-29 com `research/logs/2026-10-29/g15/g15probe.c`, o host como roteador (RA com router lifetime 600 + PIO SLAAC):
+
+- **G15a — gateway reescrito (confirmado).** Detalhe abaixo: `nd6_rtrequest()` sem o `return` do FreeBSD 4.11 para `RTF_GATEWAY`.
+- **G15b — a rota default de RA nunca é instalada (confirmado).** `defrouter_select()` chama `rtrequest(RTM_ADD, ::, gw, NULL, RTF_GATEWAY)`. Sem máscara, a chave `::` é rota de host e colide com o nó-raiz zero da árvore radix; o `RTM_ADD` falha e o `RTM_GET` não acha nem `::`. Na prática, **o AROS nunca teve rota default IPv6 aprendida de RA**. Por isso o envio a destino global dá `EADDRNOTAVAIL` mesmo com endereço SLAAC. A rota default precisa de máscara `::/0` explícita, e o `nd6_router_route()` da S8 repetiu esse erro para `plen = 0`.
+- **G15c — o próximo salto não resolve pelo vizinho do gateway (no código; medir depois de a/b).** `nd6_resolve()` guarda o estado de vizinho na própria rota do destino e pergunta (NS) pelo endereço que recebe. Falta o desvio para a entrada de vizinho do gateway, que o `nd6_output()` do KAME faz (`rt_gwroute`). O NA do roteador atualiza a entrada de vizinho dele, não a rota, então ela ficaria `INCOMPLETE` para sempre.
+- **G15d — a rota do prefixo sobrevive à remoção do endereço (confirmado).** `in6_control(SIOCAIFADDR_IN6)` faz `ia->ia6_flags = ifra->ifra_flags`, mas `ia6_flags` é `ia_ifa.ifa_flags`: os `IN6_IFF_*` do pedido sobrescrevem `IFA_ROUTE`, que o `in6_ifinit()` acabou de ligar, e vão para o campo errado (deveriam ir para `ia6_ifaflags`). Sem `IFA_ROUTE`, o `in6_ifscrub()` não apaga a rota do prefixo. Medido: `fd00:4d54:77::/64` (`flags=0x101`) continua depois de `SIOCDIFADDR_IN6`, apontando para o endereço liberado. **Causa provável do uso após liberação da ISSUE-0009**, e o motivo do comentário em `if_sana.c` sobre o `in6_ifscrub()` "not reliably" apagar a rota.
+- **G15e — endereços que não são link-local não passam por DAD (no código).** `nd6_dad_start()` só é chamado em `in6_if_up()`; SLAAC, temporários e estáticos (`SIOCAIFADDR_IN6`) nunca fazem DAD (RFC 4862 §5.4 exige DAD para todo unicast).
+
+Plano: PR "roteamento via roteador" (G15a, b, c, com teste) → PR "ciclo de vida de endereço" (G15d, e, G16; resolve a ISSUE-0009) → G14 → S8.
+
+#### G15a — detalhe
 - `nd6_rtrequest()` (`netinet6/nd6.c`) trata toda rota nova numa interface IPv6 como entrada de vizinho: no `RTM_ADD` cai no caminho de `RTM_RESOLVE`, troca o gateway por um `sockaddr_dl` vazio (`nd6_storelladdr()`) e aloca `llinfo_nd6`. O FreeBSD 4.11, que o comentário diz seguir, sai logo no início para rotas com gateway (`sys/netinet6/nd6.c:1103-1104`, `if ((rt->rt_flags & RTF_GATEWAY)) return;`). Essa linha foi omitida.
 - Evidência: na bancada RFC 4191, `RTM_GET` da rota instalada por RIO devolve `flags=0x413` (`RTF_UP|RTF_GATEWAY|…`), mas o gateway vem como `AF_LINK` (família 18, len 18), não como `fe80::4d54:a`.
 - Afeta toda rota via roteador: a default aprendida de RA (já antes da S8), rotas estáticas IPv6 e as rotas da RIO.

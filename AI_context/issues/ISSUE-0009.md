@@ -44,4 +44,6 @@ Implementar o tempo de vida do `ifaddr` como no 4.4BSD-Lite: rotas seguram refer
 
 # Log
 
+- 2026-10-29: **causa provável encontrada (G15d):** `SIOCAIFADDR_IN6` sobrescreve `ifa_flags` com os flags do pedido e apaga `IFA_ROUTE`, então `in6_ifscrub()` não remove a rota do prefixo; medido que `fd00:4d54:77::/64` sobrevive ao `SIOCDIFADDR_IN6` (`research/logs/2026-10-29/g15/`). O reload depois disso percorre uma rota cujo `rt_ifa` foi liberado. Não depende do `ifa_refcnt`: a rota não deveria sobreviver.
+
 - 2026-10-28: criada a partir do travamento observado durante a S1.
