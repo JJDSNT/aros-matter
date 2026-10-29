@@ -31,14 +31,13 @@
 #include <string.h>
 #include <errno.h>
 
-/* Not in the public headers yet; layout and guard as in netinet6/udp6_usrreq.c. */
-#ifndef IN6_PKTINFO_DEFINED
-#define IN6_PKTINFO_DEFINED
-struct in6_pktinfo {
+/* struct pktinfo6's layout (RFC 3542 section 6.1) under a name of our own:
+ * <netinet/in.h> declares it only since AROS #1947, and this file builds
+ * against SDKs from before and after. */
+struct pktinfo6 {
     struct in6_addr ipi6_addr;
     unsigned int    ipi6_ifindex;
 };
-#endif
 
 struct Library *SocketBase, *MiamiBase;
 
@@ -125,7 +124,7 @@ static int readable(int s, int ms)
 struct rx {
     int n; char buf[128];
     struct sockaddr_in6 from;
-    int have_pi; struct in6_pktinfo pi;
+    int have_pi; struct pktinfo6 pi;
 };
 
 /* Receive until a datagram starting with prefix arrives or ms elapse. */
@@ -136,7 +135,7 @@ static int rx_prefix(int s, const char *prefix, int ms, struct rx *r)
         if (!readable(s, 250)) { waited += 250; continue; }
         {
             struct iovec iov; struct msghdr mh; struct cmsghdr *c;
-            union { struct cmsghdr h; char b[CMSG_SPACE(sizeof(struct in6_pktinfo)) + 64]; } cb;
+            union { struct cmsghdr h; char b[CMSG_SPACE(sizeof(struct pktinfo6)) + 64]; } cb;
             memset(r, 0, sizeof(*r)); memset(&mh, 0, sizeof(mh));
             iov.iov_base = r->buf; iov.iov_len = sizeof(r->buf) - 1;
             mh.msg_name = &r->from; mh.msg_namelen = sizeof(r->from);

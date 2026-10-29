@@ -1,0 +1,34 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: CMSG_Suite
+  Test: IPV6_PKTINFO over ::1 ...FAILED
+    1. testCMSG_V6_PKTINFO:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-cmsg.c:105  - CU_ASSERT_EQUAL(pi.ipi6_ifindex,lo_index())
+  Test: IPV6_HOPLIMIT over ::1 ...FAILED
+    1. testCMSG_V6_HOPLIMIT:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-cmsg.c:128  - CU_ASSERT_PTR_NOT_NULL(c)
+  Test: both IPv6 messages arrive ...FAILED
+    1. testCMSG_V6_BOTH:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-cmsg.c:154  - CU_ASSERT_PTR_NOT_NULL(find(&mh, IPPROTO_IPV6, IPV6_HOPLIMIT))
+  Test: short control buffer sets MSG_CTRUNC ...FAILED
+    1. testCMSG_V6_CTRUNC:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-cmsg.c:175  - mh.msg_flags & MSG_CTRUNC
+  Test: IP_RECVDSTADDR over 127.0.0.1 ...FAILED
+    1. testCMSG_V4_RECVDSTADDR:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-cmsg.c:200  - CU_ASSERT_EQUAL(a.s_addr,htonl(INADDR_LOOPBACK))
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       33         8       n/a       n/a
+     Tests        :        5         5         0         0
+
+Elapsed Time: 0.020(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       33         8       n/a       n/a
+     Tests        :        5         5         0         0
+
+Elapsed Time: 0.000(s)
+
