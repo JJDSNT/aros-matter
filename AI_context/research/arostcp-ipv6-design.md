@@ -63,6 +63,9 @@ Referências do AROS na revisão `4c2c268a53`; do FreeBSD em `freebsd-src@389ae8
 ### G10 — Tempo de vida endereço × rotas
 - `ifa_refcnt` existe em `struct ifaddr`, mas não é usado; `in6_purgeaddr()` libera o endereço mesmo com rotas apontando para ele. Uso após liberação intermitente observado em `rtrequest()`. Ver [ISSUE-0009](../issues/ISSUE-0009.md).
 
+### G12 — Ancillary data truncada em LP64
+- `udp6_saveopt()` faz `cmsg_len = sizeof(struct cmsghdr) + size`, mas o dado começa em `CMSG_DATA()`, alinhado após o cabeçalho de 12 bytes (offset 16 no x86-64). Os últimos 4 bytes do dado ficam fora: `ipi6_ifindex` chega com lixo e `IPV6_HOPLIMIT` sem valor. Em 32 bits não há preenchimento. Correção: `CMSG_LEN()`/`CMSG_SPACE()`, como o `sbcreatecontrol()` do BSD. Encontrado na bancada da S2 (`link.pktinfo`). Vai na S5.
+
 ### G11 — BPF para programas
 - ~~Não há `<net/bpf.h>` público~~ → resolvido no #1924, a pedido do Kal (2026-10-29).
 - ~~`BIOCGDLT` anuncia `DLT_EN10MB`, mas a captura vem sem cabeçalho de enlace~~ → corrigido pelo Kal em `13743b3160` (cabeçalho Ethernet reconstruído; `DLT_RAW` nos outros tipos SANA-II; `BIOCSETIF` recusa `lo0`/`sit0`).

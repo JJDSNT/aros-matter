@@ -1,0 +1,32 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: MCAST6_Suite
+  Test: a member receives a group datagram ...FAILED
+    1. testMCAST6_MEMBER_RECEIVES:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-mcast6.c:138  - got(r, "member", 2)
+  Test: every socket on the port gets a copy ...FAILED
+    1. testMCAST6_EVERY_SOCKET:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-mcast6.c:156  - got(b, "both", 2)
+  Test: a socket on the port without a membership receives ...FAILED
+    1. testMCAST6_PORT_WITHOUT_MEMBERSHIP:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-mcast6.c:174  - got(plain, "port", 2)
+  Test: IPV6_MULTICAST_LOOP 0 keeps it off the host ...passed
+  Test: a group nobody joined is not delivered ...passed
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       21         4       n/a       n/a
+     Tests        :        5         3         0         0
+
+Elapsed Time: 10.080(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       21         4       n/a       n/a
+     Tests        :        5         3         0         0
+
+Elapsed Time: 10.020(s)
+

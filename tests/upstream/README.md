@@ -1,6 +1,6 @@
 # Upstream-style tests (for the AROS PRs)
 
-Upstream so far: `cunit-net-mld6.c`, merged with the S1 changes in [AROS #1924](https://github.com/aros-development-team/AROS/pull/1924) (`42cb8e8f34`).
+Upstream so far: `cunit-net-mld6.c`, merged with the S1 changes in [AROS #1924](https://github.com/aros-development-team/AROS/pull/1924) (`42cb8e8f34`); `cunit-net-mcast6.c` with S2-S4 in [AROS #1945](https://github.com/aros-development-team/AROS/pull/1945) (in review).
 
 This directory mirrors paths in the AROS tree. Every file here is meant to go upstream with the PR that fixes what the file tests, in the format the stack's own tests already use: CUnit under `developer/debug/test/net/socket/`, with the `socktest.h` helpers and JUnit XML output (bsdsocket `Readme.md` §13). The larger harness in `../ipv6/` stays in aros-matter. It needs a peer on the host, and no upstream test does that.
 

@@ -36,7 +36,8 @@ Fica de fora: MLDv2 com filtro de fontes (RFC 3678 SSM), roteamento multicast, I
 - [x] Mantenedor revisa o desenho e decide D1–D4
 - [x] S0: suíte de testes IPv6 (`tests/ipv6/`, 18 casos; base em `research/logs/2026-10-28/s0-baseline/`)
 - [x] S1: ciclo de vida das associações → **AROS #1924** (https://github.com/aros-development-team/AROS/pull/1924), branch `review/arostcp-ipv6-membership` (`667b0e7218`, base `d68c0a784c`); evidência em `research/logs/2026-10-28/s1-ab/` e `pr-review/`
-- [ ] S2–S5: recepção, entrega UDP, loopback, ancillary data
+- [~] S2+S3+S4 (entrada por associação, entrega a todos os sockets, loopback multicast) → **AROS #1945** (https://github.com/aros-development-team/AROS/pull/1945), branch `review/arostcp-ipv6-mcast-delivery` (`b5fa279299`, base `42cb8e8f34`), com `cunit-net-mcast6` (master 3/5 falham, branch 5/5)
+- [ ] S5: ancillary data — bug de LP64 no `udp6_saveopt()` (`cmsg_len` sem o preenchimento de `CMSG_DATA`: `ipi6_ifindex` lixo, `IPV6_HOPLIMIT` perdido em x86-64) + `struct in6_pktinfo` público
 - [ ] S6–S7: zonas e seleção de origem (após D1/D4)
 - [ ] S8: RIO (RFC 4191)
 - [ ] PRs upstream separados por etapa, cada um com o teste CUnit no padrão do upstream (`tests/upstream/`, ex.: `cunit-net-mld6.c` para a S1)
@@ -62,6 +63,7 @@ Fica de fora: MLDv2 com filtro de fontes (RFC 3678 SSM), roteamento multicast, I
 - 2026-10-28: decisões registradas; pronta para S0/S1.
 - 2026-10-28: S0 concluída; S1 implementada e validada (A/B: upstream morre em `mld.ifdetach`, S1 passa 53 verificações, 14 falhas restantes = S2–S7). Achado à parte: ISSUE-0009 (tempo de vida rota/endereço).
 - 2026-10-28: testes do upstream (`developer/debug/test/net/socket`, CUnit, loopback) passam inalterados com a S1. Criado `tests/upstream/.../cunit-net-mld6.c`, que observa o próprio MLD via BPF: upstream falha 4/5 (controle passa), S1 passa 5/5.
+- 2026-10-29: S2/S3/S4 juntas no PR #1945: o teste autocontido precisa do loopback para provar a entrada sem par na rede. Bancada: 57 checks / 10 falhas (envio = S7, `pktinfo-ifindex` = S5, `source-scope-id` = S6).
 - 2026-10-29: **#1924 mesclado** pelo Kal (squash `42cb8e8f34`). Antes, ele commitou `13743b3160` ("BPF captures carry the link header the link type promises"), que resolve o G11-DLT apontado no PR. Validado no master mesclado: 5 CUnit passam (mld6 5/5 com quadros Ethernet), bancada 53 checks / 14 falhas (= S2–S7). Próximo: S2 sobre `upstream/master`.
 - 2026-10-29: review do Kal no #1924: tornar `<net/bpf.h>` público. Feito num commit novo no início da série (público em `common/include/net/bpf.h`, local com `bpf_d`/`KERNEL`, includes por aspas conforme Readme §12); teste sem `-iquote`; série rebaseada em `e1e6ef20be` (push forçado autorizado pelo mantenedor); `.text` da pilha idêntico; impacto nos apps do core: nenhum (dhcp `bpf.c` e `l2_packet_freebsd.c` fora do build, `linux/list.h` dos hidds de vídeo só com `!__AROS__`). Resposta: https://github.com/aros-development-team/AROS/pull/1924#issuecomment-6503166297
 - 2026-10-28: PR AROS #1924 aberto (4 commits: teste, socket, endereço, interface), sem assinatura.

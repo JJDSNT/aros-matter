@@ -38,7 +38,7 @@ Fase de pesquisa (M0). Toolchain validada (ISSUE-0002 concluída). Testes IPv6 n
 
 ## Ordem sugerida
 
-ISSUE-0008: S0 ✅, S1 ✅ **mesclada** no upstream ([AROS #1924](https://github.com/aros-development-team/AROS/pull/1924), `42cb8e8f34`) → S2–S5 (IPv6 no AROSTCP: S0–S5 primeiro, S6–S7 após decisão de desenho). Em paralelo, se houver tempo: ISSUE-0003 (crypto). Depois fechar ISSUE-0001 → ISSUE-0006 (spike M1) → ISSUE-0004.
+ISSUE-0008: S0 ✅, S1 ✅ **mesclada** no upstream ([AROS #1924](https://github.com/aros-development-team/AROS/pull/1924), `42cb8e8f34`), S2–S4 em revisão ([AROS #1945](https://github.com/aros-development-team/AROS/pull/1945)) → S5 (ancillary/LP64) e S7 (seleção de interface/origem) (IPv6 no AROSTCP: S0–S5 primeiro, S6–S7 após decisão de desenho). Em paralelo, se houver tempo: ISSUE-0003 (crypto). Depois fechar ISSUE-0001 → ISSUE-0006 (spike M1) → ISSUE-0004.
 
 ## Decisões em aberto para o mantenedor
 
