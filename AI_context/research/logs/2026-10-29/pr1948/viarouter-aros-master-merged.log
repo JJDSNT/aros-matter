@@ -1,0 +1,6 @@
+sendto -1 errno 49
+sendto -1 errno 49
+sendto -1 errno 49
+sendto -1 errno 49
+sendto -1 errno 49
+*** 'C:viarouter' returned with unfreed signal 0x10000

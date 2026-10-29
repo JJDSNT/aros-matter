@@ -1,0 +1,30 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: ROUTE6_Suite
+  Test: a route through a router keeps its gateway ...FAILED
+    1. testROUTE6_KEEPS_GATEWAY:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-route6.c:235  - via_gw(DST)
+  Test: a default route covers every destination ...FAILED
+    1. testROUTE6_DEFAULT_COVERS_ALL:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-route6.c:245  - via_gw("2001:db8:4d54:fff::1")
+  Test: a routed datagram asks for the router ...FAILED
+    1. testROUTE6_ASKS_FOR_ROUTER:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-route6.c:263  - ns_for(GW, 3)
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :        9         5       n/a       n/a
+     Tests        :        3         3         0         0
+
+Elapsed Time: 3.020(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :        9         5       n/a       n/a
+     Tests        :        3         3         0         0
+
+Elapsed Time: 3.020(s)
+

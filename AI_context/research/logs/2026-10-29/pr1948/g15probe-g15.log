@@ -1,0 +1,6 @@
+default route, key ::                  ::                     FOUND flags=0x13
+default route, other destination       2001:db8:ffff::1       FOUND flags=0x13
+add fd00:4d54:77::1/64 rc=0
+prefix route while address exists      fd00:4d54:77::2        FOUND flags=0x101
+delete fd00:4d54:77::1 rc=0
+prefix route after address deleted     fd00:4d54:77::2        FOUND flags=0x101

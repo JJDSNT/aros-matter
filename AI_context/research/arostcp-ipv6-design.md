@@ -77,7 +77,9 @@ Medido em 2026-10-29 com `research/logs/2026-10-29/g15/g15probe.c`, o host como 
 - **G15d — a rota do prefixo sobrevive à remoção do endereço (confirmado).** `in6_control(SIOCAIFADDR_IN6)` faz `ia->ia6_flags = ifra->ifra_flags`, mas `ia6_flags` é `ia_ifa.ifa_flags`: os `IN6_IFF_*` do pedido sobrescrevem `IFA_ROUTE`, que o `in6_ifinit()` acabou de ligar, e vão para o campo errado (deveriam ir para `ia6_ifaflags`). Sem `IFA_ROUTE`, o `in6_ifscrub()` não apaga a rota do prefixo. Medido: `fd00:4d54:77::/64` (`flags=0x101`) continua depois de `SIOCDIFADDR_IN6`, apontando para o endereço liberado. **Causa provável do uso após liberação da ISSUE-0009**, e o motivo do comentário em `if_sana.c` sobre o `in6_ifscrub()` "not reliably" apagar a rota.
 - **G15e — endereços que não são link-local não passam por DAD (no código).** `nd6_dad_start()` só é chamado em `in6_if_up()`; SLAAC, temporários e estáticos (`SIOCAIFADDR_IN6`) nunca fazem DAD (RFC 4862 §5.4 exige DAD para todo unicast).
 
-Plano: PR "roteamento via roteador" (G15a, b, c, com teste) → PR "ciclo de vida de endereço" (G15d, e, G16; resolve a ISSUE-0009) → G14 → S8.
+**G15a/b/c → AROS #1948** (https://github.com/aros-development-team/AROS/pull/1948): `cunit-net-route6` (master 3/3 falham, branch 3/3), e de ponta a ponta com o host como roteador: master `EADDRNOTAVAIL` ×5 e host recebe 0; branch NS para o roteador e host recebe 5. A G15c ficou confirmada pela medição (NS para o roteador, não para o destino).
+
+Plano: ~~PR "roteamento via roteador" (G15a, b, c, com teste)~~ → PR "ciclo de vida de endereço" (G15d, e, G16; resolve a ISSUE-0009) → G14 → S8.
 
 #### G15a — detalhe
 - `nd6_rtrequest()` (`netinet6/nd6.c`) trata toda rota nova numa interface IPv6 como entrada de vizinho: no `RTM_ADD` cai no caminho de `RTM_RESOLVE`, troca o gateway por um `sockaddr_dl` vazio (`nd6_storelladdr()`) e aloca `llinfo_nd6`. O FreeBSD 4.11, que o comentário diz seguir, sai logo no início para rotas com gateway (`sys/netinet6/nd6.c:1103-1104`, `if ((rt->rt_flags & RTF_GATEWAY)) return;`). Essa linha foi omitida.

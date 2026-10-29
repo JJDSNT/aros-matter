@@ -1,0 +1,6 @@
+HOST got b'R:via-router' from 2001:db8:4d54:1:505a:788:4b9b:1c6a
+HOST got b'R:via-router' from 2001:db8:4d54:1:505a:788:4b9b:1c6a
+HOST got b'R:via-router' from 2001:db8:4d54:1:505a:788:4b9b:1c6a
+HOST got b'R:via-router' from 2001:db8:4d54:1:505a:788:4b9b:1c6a
+HOST got b'R:via-router' from 2001:db8:4d54:1:505a:788:4b9b:1c6a
+HOST total 5
