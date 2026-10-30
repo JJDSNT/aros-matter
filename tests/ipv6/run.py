@@ -18,6 +18,8 @@ ROOT = os.path.dirname(os.path.dirname(HERE))
 CROSS = os.environ.get("AROS_CROSS",
     os.path.expanduser("~/aros-midihub/build-aros-linux/bin/linux-x86_64/tools/crosstools/x86_64-aros-gcc"))
 IFACE = "aros0"
+MATTER_GROUP = "ff35:40:fd00::100:101"   # fabric 1, group 0x0101 (TC_SC_5_3's example)
+MATTER_IANA = "ff05::fa"
 AROS_IP = "192.168.166.2"
 
 
@@ -36,6 +38,17 @@ class Peer(threading.Thread):
         s.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_MULTICAST_LOOP, 0)
         self.sock, self.stop, self.rx, self.sent = s, threading.Event(), [], 0
         self.iface, self.ping = iface, None
+        # Matter groupcast (Core spec 4.3, TC_SC_5_3): UDP 5540 on a per-group
+        # address FF35:0040:FD<fabric>00:<group> and on the IANA ff05::fa
+        g = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM)
+        g.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        g.bind(("::", 5540))
+        for grp in (MATTER_GROUP, MATTER_IANA):
+            g.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_JOIN_GROUP,
+                         socket.inet_pton(socket.AF_INET6, grp) + struct.pack("@I", self.idx))
+        g.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_MULTICAST_IF, self.idx)
+        g.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_MULTICAST_LOOP, 0)
+        self.gsock, self.gsent = g, 0
 
     def run(self):
         nxt = 0.0
@@ -46,12 +59,14 @@ class Peer(threading.Thread):
                 try:
                     self.sock.sendto(b"H:%d" % self.sent, ("ff02::fb", 5353, 0, self.idx))
                     self.sent += 1
+                    self.gsock.sendto(b"G:%d" % self.gsent, (MATTER_GROUP, 5540, 0, self.idx))
+                    self.gsent += 1
                 except OSError:
                     pass  # the tap is down until AROS opens it
-            r, _, _ = select.select([self.sock], [], [], max(0.0, nxt - time.time()))
-            if r:
-                data, src = self.sock.recvfrom(512)
-                if not data.startswith(b"H:"):
+            r, _, _ = select.select([self.sock, self.gsock], [], [], max(0.0, nxt - time.time()))
+            for sk in r:
+                data, src = sk.recvfrom(512)
+                if not data.startswith((b"H:", b"G:")):
                     lt = time.localtime()
                     self.rx.append({"t": time.time(), "tod": lt.tm_hour * 3600 + lt.tm_min * 60 + lt.tm_sec + (time.time() % 1),
                                     "data": data.decode(errors="replace"), "src": src[0], "port": src[1]})

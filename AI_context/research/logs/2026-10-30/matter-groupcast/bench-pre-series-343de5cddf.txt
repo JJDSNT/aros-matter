@@ -1,0 +1,22 @@
+/home/jaime/aros-matter/tests/ipv6/ipv6test.c: In function 'c_recv_fanout':
+/home/jaime/aros-matter/tests/ipv6/ipv6test.c:276:48: warning: 'strncpy' output may be truncated copying 127 bytes from a string of length 127 [-Wstringop-truncation]
+  276 |     gb = rx_prefix(b, "H:", 1000, &r); if (gb) strncpy(sb, r.buf, sizeof(sb) - 1);
+      |                                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/jaime/aros-matter/tests/ipv6/ipv6test.c:275:48: warning: 'strncpy' output may be truncated copying 127 bytes from a string of length 127 [-Wstringop-truncation]
+  275 |     ga = rx_prefix(a, "H:", 4000, &r); if (ga) strncpy(sa, r.buf, sizeof(sa) - 1);
+      |                                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/jaime/aros-matter/tests/ipv6/ipv6test.c:276:48: warning: 'strncpy' output may be truncated copying 127 bytes from a string of length 127 [-Wstringop-truncation]
+  276 |     gb = rx_prefix(b, "H:", 1000, &r); if (gb) strncpy(sb, r.buf, sizeof(sb) - 1);
+      |                                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+info  setup if=eth0 index=2 link-local=fe80::2814:49ff:fe83:47a6
+PASS  matter.group-recv bind-5540
+PASS  matter.group-recv join
+FAIL  matter.group-recv received-group-datagram
+PASS  matter.group-recv host:mld # wire: report,leave (want report,leave)
+PASS  matter.group-send bind-5540
+PASS  matter.group-send MULTICAST_IF
+FAIL  matter.group-send sendto-group # Cannot assign requested address
+FAIL  matter.group-send sendto-iana # Cannot assign requested address
+FAIL  matter.group-send host:received # host saw nothing
+FAIL  matter.group-send host:received # host saw nothing
+image=/home/jaime/aros-build-ipv6-hosted/bin/linux-x86_64/AROS arostcp=/home/jaime/aros-build-ipv6-hosted/ab/AROSTCP.master-1950  checks=10  failed=5  boot=ok

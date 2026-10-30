@@ -545,6 +545,53 @@ static void c_addr_delete_reload(void)
     res(if_nametoindex((char *)g_if) > 0, "stack-still-up", NULL);
 }
 
+/* matter.*: Matter groupcast (Core spec 4.3; certification TC_SC_5_3). Group
+ * messages are UDP to port 5540 on the per-group address
+ * FF35:0040:FD<fabric>00:<group> (here fabric 1, group 0x0101) or on the IANA
+ * address ff05::fa, both site-local (scope 5). */
+#define PORT_MATTER 5540
+#define MATTER_GROUP "ff35:40:fd00::100:101"
+#define MATTER_IANA  "ff05::fa"
+
+static int send_port(int s, const char *payload, const char *dst, int port, unsigned scope)
+{
+    struct sockaddr_in6 d; sa6(&d, dst, port, scope);
+    return sendto(s, (char *)payload, strlen(payload), 0, (struct sockaddr *)&d, sizeof(d));
+}
+
+/* matter.group-recv: joining the group on the interface reports it from the
+ * link-local (RFC 3810 section 5) and delivers the host's group datagrams;
+ * closing the socket leaves the group. */
+static void c_matter_group_recv(void)
+{
+    struct rx r; int s = udp6(1), got;
+    res(bind_any(s, PORT_MATTER) == 0, "bind-5540", NULL);
+    CHK(group(s, IPV6_JOIN_GROUP, MATTER_GROUP, g_idx) == 0, "join");
+    got = rx_prefix(s, "G:", 4000, &r);
+    res(got, "received-group-datagram", got ? "%s from %s" : NULL, r.buf, ntop(&r.from.sin6_addr));
+    CloseSocket(s);
+    Delay(2 * 50);
+    host("mld " MATTER_GROUP " report,leave");
+}
+
+/* matter.group-send: a socket on [::]:5540 that names the interface with
+ * IPV6_MULTICAST_IF sends to the per-group and to the IANA group address;
+ * the host, a member of both, receives each from port 5540. */
+static void c_matter_group_send(void)
+{
+    int s = udp6(1), n1, n2;
+    res(bind_any(s, PORT_MATTER) == 0, "bind-5540", NULL);
+    CHK(setsockopt(s, IPPROTO_IPV6, IPV6_MULTICAST_IF, &g_idx, sizeof(g_idx)) == 0, "MULTICAST_IF");
+    n1 = send_port(s, "M:group", MATTER_GROUP, PORT_MATTER, 0);
+    { int e = errno; res(n1 > 0, "sendto-group", n1 < 0 ? "%s" : NULL, strerror(e)); }
+    n2 = send_port(s, "M:iana", MATTER_IANA, PORT_MATTER, 0);
+    { int e = errno; res(n2 > 0, "sendto-iana", n2 < 0 ? "%s" : NULL, strerror(e)); }
+    host("received M:group from-port 5540");
+    host("received M:iana from-port 5540");
+    Delay(50);
+    CloseSocket(s);
+}
+
 /* ----------------------------------------------------------------- driver */
 
 struct tcase { const char *name; void (*fn)(void); int link; int optin; };
@@ -564,6 +611,8 @@ static const struct tcase cases[] = {
     { "mld.leave-explicit",   c_mld_leave,       1 },
     { "mld.close-leaves",     c_mld_close,       1 },
     { "link.nd-reachable",    c_nd,              1 },
+    { "matter.group-recv",    c_matter_group_recv, 1 },
+    { "matter.group-send",    c_matter_group_send, 1 },
     { "mld.ifdetach",         c_mld_ifdetach,    1 },   /* reloads the stack */
     { "mld.addr-owned",       c_mld_addr,        1 },
     { "addr.delete-then-reload", c_addr_delete_reload, 1, 1 },  /* opt-in */
