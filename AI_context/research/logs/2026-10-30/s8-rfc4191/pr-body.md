@@ -26,7 +26,7 @@ There is no API or ABI change; `struct nd_defrouter` and the new `struct nd_rout
 
 ## Reproduction and validation
 
-Hosted linux-x86_64, with `tap.device` attached to a host tap that sends no Router Advertisements. The series is on master `<MASTER>`.
+Hosted linux-x86_64, with `tap.device` attached to a host tap that sends no Router Advertisements. The series is on master `d50355747a`.
 
 **How the test works.** The test sends its Router Advertisements from a raw ICMPv6 socket, with hop limit 255, to the interface's own link-local address. They loop back and are received on that interface as if a router on the link had sent them. None goes out on the link, where other hosts would take this one for a router. A second link-local address stands for a second router. Routes are read back with `RTM_GET`.
 
@@ -55,7 +55,7 @@ The cunit socket, tcp, udp, inet6, mld6, route6, cmsg, addr6, srcaddr6, mcast6, 
 
 ## Notes
 
-- **Dependency.** The test's Router Advertisements must be received on the interface, not on `lo0`. That needs #1974: on master, a packet to our own link-local is received on `lo0`, and the routes land on the wrong interface.
+- **Why the test relies on #1974.** The test's Router Advertisements must be received on the interface, not on `lo0`. Sending them to our own link-local address works only since #1974, which receives such packets on the interface that owns the address.
 - **Not covered here:**
   - **Reachability-based router selection** (§3.2/3.5): an unreachable preferred router is not skipped yet.
   - **Redirects** are not touched.

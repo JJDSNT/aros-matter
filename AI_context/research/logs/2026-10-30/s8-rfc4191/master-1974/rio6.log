@@ -1,0 +1,36 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: RIO6_Suite
+  Test: a Route Information Option installs its route ...FAILED
+    1. testRIO6_INSTALLS_ROUTE:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-rio6.c:193  - via("2001:db8:4d54:10::1", &r1)
+  Test: lifetime 0 removes the route ...FAILED
+    1. testRIO6_LIFETIME_ZERO_REMOVES:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-rio6.c:202  - via("2001:db8:4d54:11::1", &r1)
+  Test: the more preferred router wins ...FAILED
+    1. testRIO6_PREFERENCE_WINS:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-rio6.c:216  - via("2001:db8:4d54:12::1", &r1)
+  Test: the longest prefix is used ...FAILED
+    1. testRIO6_LONGEST_PREFIX:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-rio6.c:228  - via("2001:db8:4d54:99::1", &r1)
+  Test: an invalid option is ignored ...passed
+  Test: the more preferred default router wins ...passed
+  Test: a ::/0 option overrides the router lifetime ...FAILED
+    1. testRIO6_DEFAULT_OPTION_OVERRIDES:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-rio6.c:265  - via("2001:db8:ffff::1", &r1)
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       19         7       n/a       n/a
+     Tests        :        7         5         0         0
+
+Elapsed Time: 10.040(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       19         7       n/a       n/a
+     Tests        :        7         5         0         0
+
+Elapsed Time: 10.020(s)
+
