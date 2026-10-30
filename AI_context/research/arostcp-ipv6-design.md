@@ -93,6 +93,27 @@ Plano: ~~PR "roteamento via roteador" (G15a, b, c, com teste)~~ → PR "ciclo de
 - Para medir: o AROS precisa de um endereço global (o RA do host deve trazer PIO com SLAAC); só com link-local, `sendto()` para destino global devolve `EADDRNOTAVAIL`, o que está correto (RFC 4291: link-local não é roteado).
 - Impacto Matter: é o caminho do controlador até um dispositivo Thread atrás do border router (rota da RIO → gateway = BR).
 
+### G18 — Pendências registradas nas notas dos PRs (reunidas em 2026-10-30)
+Itens que cada PR declarou como "não coberto aqui". Nenhum bloqueia o Matter hoje; ficam como trabalho futuro, com a origem anotada.
+
+**Roteamento (RFC 4191 / RFC 4861) — do #1976**
+- **G18a — Seleção por alcançabilidade (RFC 4191 §3.2/§3.5, RFC 4861 §6.3.6):** um roteador preferido que o NUD julga inalcançável não é pulado; a rota continua por ele. O correto é preferir roteadores alcançáveis e, depois, a preferência.
+- **G18b — Redirects (RFC 4861 §8):** `nd6_redirect_input()` não foi tocado; falta verificar se ele valida e aplica redirects corretamente com as rotas aprendidas.
+
+**SLAAC / prefixos — achados na S8b (não reproduzidos)**
+- **G18c — `nd6_prefix_lookup()` ignora a interface:** o mesmo prefixo anunciado em duas interfaces vira uma entrada só, da primeira.
+- **G18d — Endereço SLAAC apagado à mão:** depois de `SIOCDIFADDR_IN6` num endereço SLAAC, o prefixo fica com `ndpr_autoconf = 1` e o RA seguinte não o recria até o prefixo expirar.
+
+**Seleção de origem e de interface**
+- **G18e — RFC 6724 regras 1, 5, 6 e 8 (do #1970):** só as regras 2, 3 e 7 estão em `in6_ifawithifp()`; as outras escolhem entre interfaces ou precisam da tabela de políticas.
+- **G18f — `IPV6_PKTINFO` × endereço vinculado (do #1973):** o endereço vinculado ganha da origem dada por `IPV6_PKTINFO`, como já era para socket conectado. A RFC 3542 §6.1 e o KAME dão precedência ao `IPV6_PKTINFO`.
+- **G18g — `connect()` a um grupo (do #1975):** a origem vem da zona (#1974) ou da tabela de rotas, não de `IPV6_MULTICAST_IF`.
+- **G18h — Fallback da primeira interface (do #1975):** sem interface nenhuma indicada, o `ip6_output()` ainda manda multicast pela primeira interface ativa.
+
+**API / decisões deixadas ao Kal**
+- **G18i — Zona em `inp_boundif` (do #1974):** `SO_BINDTODEVICE` continua só IPv4; `connect()` link-scope sem `sin6_scope_id` mantém o comportamento antigo (o Linux devolve `EINVAL`).
+- `IPV6_CHECKSUM` (G13), ICMPv6 Parameter Problem para next header desconhecido e os auxiliares de cmsg compartilhados com o UDP6 já estavam anotados em G14.
+
 ### G17 — `sendto()` prende a origem UDP6 ao socket (→ AROS #1973)
 - `udp6_output()` fazia `sendto()` com `in6_pcbconnect()` + `in6_pcbdisconnect()`, e o disconnect só limpa o par: a origem escolhida ficava em `inp_laddr6`. Depois do primeiro datagrama, um socket em `[::]` só recebia no endereço de onde enviou (um responder em `[::]:5353` que responde por unicast deixa de ouvir `ff02::fb`), e nem `IPV6_PKTINFO` nem o `sin6_scope_id` escolhiam a origem (`sendto(ff02::fb%eth0)` dava `EADDRNOTAVAIL`). O IPv4 salva e restaura `inp_laddr`; o KAME nunca conecta.
 - Encontrado em 2026-10-30 ao levantar a S6. Correção: destino e origem por datagrama, sem mexer no PCB (só a porta efêmera fica). `cunit-net-sendto6` master 3/3 falham, branch 3/3; bancada: `link.send-scopeid` passa a funcionar, sem regressão. Impacto Matter direto (mDNS em `[::]:5353`).
