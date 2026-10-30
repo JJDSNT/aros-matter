@@ -1,0 +1,70 @@
+/home/jaime/aros-matter/tests/ipv6/ipv6test.c: In function 'c_recv_fanout':
+/home/jaime/aros-matter/tests/ipv6/ipv6test.c:276:48: warning: 'strncpy' output may be truncated copying 127 bytes from a string of length 127 [-Wstringop-truncation]
+  276 |     gb = rx_prefix(b, "H:", 1000, &r); if (gb) strncpy(sb, r.buf, sizeof(sb) - 1);
+      |                                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/jaime/aros-matter/tests/ipv6/ipv6test.c:275:48: warning: 'strncpy' output may be truncated copying 127 bytes from a string of length 127 [-Wstringop-truncation]
+  275 |     ga = rx_prefix(a, "H:", 4000, &r); if (ga) strncpy(sa, r.buf, sizeof(sa) - 1);
+      |                                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/jaime/aros-matter/tests/ipv6/ipv6test.c:276:48: warning: 'strncpy' output may be truncated copying 127 bytes from a string of length 127 [-Wstringop-truncation]
+  276 |     gb = rx_prefix(b, "H:", 1000, &r); if (gb) strncpy(sb, r.buf, sizeof(sb) - 1);
+      |                                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+info  setup if=eth0 index=2 link-local=fe80::1c1b:c1ff:fefd:32e0
+PASS  local.unicast socket
+PASS  local.unicast bind-::1
+PASS  local.unicast sendto-::1
+PASS  local.unicast recv-::1
+PASS  local.join-semantics join
+PASS  local.join-semantics join-twice-EADDRINUSE # rc=-1 errno=48
+PASS  local.join-semantics leave
+PASS  local.join-semantics leave-again-EADDRNOTAVAIL # rc=-1 errno=49
+PASS  local.reuseport-bind bind-first
+PASS  local.reuseport-bind bind-second
+PASS  link.linklocal if_nametoindex # eth0=2
+PASS  link.linklocal has-link-local # fe80::1c1b:c1ff:fefd:32e0
+PASS  link.send-mcast-if MULTICAST_IF
+PASS  link.send-mcast-if sendto
+PASS  link.send-mcast-if host:received # from fe80::1c1b:c1ff:fefd:32e0 port 5353
+PASS  link.send-scopeid sendto
+PASS  link.send-scopeid host:received # from fe80::1c1b:c1ff:fefd:32e0 port 5353
+PASS  link.recv-joined join
+PASS  link.recv-joined recv # H:17 from fe80::e090:2aff:fe98:97bd
+PASS  link.recv-fanout recv-first
+PASS  link.recv-fanout recv-second
+info  link.recv-fanout first=H:18 second=H:18
+PASS  link.recv-port-parity recv-without-membership
+PASS  link.pktinfo RECVPKTINFO
+PASS  link.pktinfo recv
+PASS  link.pktinfo pktinfo-present
+PASS  link.pktinfo pktinfo-ifindex # 2
+PASS  link.pktinfo pktinfo-dst # ff02::fb
+PASS  link.recv-scopeid recv
+PASS  link.recv-scopeid source-scope-id # fe80::e090:2aff:fe98:97bd%2
+PASS  link.mcast-loop sendto-loop-on
+PASS  link.mcast-loop local-copy-with-loop
+PASS  link.mcast-loop no-local-copy-without-loop
+PASS  link.mcast-loop host:received # from fe80::1c1b:c1ff:fefd:32e0
+PASS  mld.leave-explicit join
+PASS  mld.leave-explicit leave
+PASS  mld.leave-explicit host:mld # wire: report,leave (want report,leave)
+PASS  mld.close-leaves join
+PASS  mld.close-leaves rejoin
+PASS  mld.close-leaves host:mld # wire: report,leave,report,leave (want report,leave,report,leave)
+PASS  link.nd-reachable host:nd # ping6 fe80::1c1b:c1ff:fefd:32e0%aros0 rc=0
+PASS  mld.ifdetach join
+PASS  mld.ifdetach read-interfaces-db
+PASS  mld.ifdetach drop-interface-from-db
+PASS  mld.ifdetach reload-without-interface # rc=0
+PASS  mld.ifdetach interface-gone
+PASS  mld.ifdetach restore-db
+PASS  mld.ifdetach reload-with-interface # rc=0
+PASS  mld.ifdetach interface-back # index 2 -> 3
+PASS  mld.ifdetach link-local-back # fe80::207d:b1ff:fe1e:93b1
+PASS  mld.ifdetach join-on-new-interface
+PASS  mld.ifdetach no-crash
+PASS  mld.ifdetach host:mldwin # between P:readded and P:rejoined: report
+PASS  mld.ifdetach host:mldwin # between P:rejoined and P:oldclosed: nothing
+PASS  mld.ifdetach host:mldwin # between P:oldclosed and P:end: leave
+PASS  mld.addr-owned add-address
+PASS  mld.addr-owned delete-address
+PASS  mld.addr-owned host:mld # wire: report,leave (want report,leave)
+image=/home/jaime/aros-build-ipv6-hosted/bin/linux-x86_64/AROS arostcp=/home/jaime/aros-build-ipv6-hosted/ab/AROSTCP.both  checks=57  failed=0  boot=ok

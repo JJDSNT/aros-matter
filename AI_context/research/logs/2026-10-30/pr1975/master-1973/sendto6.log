@@ -1,0 +1,29 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: SENDTO6_Suite
+  Test: sendto() leaves the socket unbound ...passed
+  Test: after sendto() the socket receives on its other addresses ...passed
+  Test: an IPV6_PKTINFO source is used ...passed
+  Test: IPV6_MULTICAST_IF names a group datagram's source ...FAILED
+    1. testSENDTO6_MULTICAST_IF:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-sendto6.c:187  - memcmp(&from.sin6_addr, &linklocal, sizeof(linklocal)) == 0
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       21         3       n/a       n/a
+     Tests        :        4         1         0         0
+
+Elapsed Time: 2.020(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       21         3       n/a       n/a
+     Tests        :        4         1         0         0
+
+Elapsed Time: 2.020(s)
+
