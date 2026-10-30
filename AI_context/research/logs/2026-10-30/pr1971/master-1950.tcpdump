@@ -1,0 +1,5 @@
+10:20:20.435155 IP6 (hlim 64, next-header ICMPv6 (58) payload length: 8) :: > ff02::1: [icmp6 sum ok] ICMP6, echo request, id 19796, seq 5
+10:20:20.440087 IP6 (hlim 64, next-header ICMPv6 (58) payload length: 8) :: > ff02::1: [icmp6 sum ok] ICMP6, echo request, id 19796, seq 6
+10:20:26.470134 IP6 (hlim 64, next-header ICMPv6 (58) payload length: 8) :: > ff02::1: [icmp6 sum ok] ICMP6, echo request, id 19796, seq 5
+10:20:26.470217 IP6 (hlim 64, next-header ICMPv6 (58) payload length: 8) :: > ff02::1: [icmp6 sum ok] ICMP6, echo request, id 19796, seq 6
+

@@ -45,11 +45,12 @@ Atualizado 2026-10-30. **IPv6 no AROSTCP (ISSUE-0008):**
 | [#1924](https://github.com/aros-development-team/AROS/pull/1924) | S1: ciclo de vida das associações multicast | mesclado (`42cb8e8f34`) |
 | [#1947](https://github.com/aros-development-team/AROS/pull/1947) | S5: ancillary data (LP64, cadeia, `in6_pktinfo`, `IPV6_RECVHOPLIMIT`) | mesclado (`0b1e1de27d`) |
 | [#1948](https://github.com/aros-development-team/AROS/pull/1948) | G15a/b/c: rotas via roteador, próximo salto, default de RA | mesclado (`6053248953`) |
-| [#1945](https://github.com/aros-development-team/AROS/pull/1945) | S2–S4: entrega multicast aos membros | aberto, atualizado com o master, sem revisão ainda |
-| [#1950](https://github.com/aros-development-team/AROS/pull/1950) | G15d/e, G16b: ciclo de vida de endereço | aberto; review do Kal (`nd6_dad_stop` no `in6_purgeaddr`) atendida em `db0ab8f11b` |
-| [#1970](https://github.com/aros-development-team/AROS/pull/1970) | G16a: origem IPv6 por escopo (RFC 6724 regras 2/3/7), MLD da link-local | aberto 2026-10-30 |
+| [#1950](https://github.com/aros-development-team/AROS/pull/1950) | G15d/e, G16b: ciclo de vida de endereço | mesclado (`343de5cddf`) |
+| [#1945](https://github.com/aros-development-team/AROS/pull/1945) | S2–S4: entrega multicast aos membros | aberto, sem revisão; master `343de5cddf` mesclado na branch |
+| [#1970](https://github.com/aros-development-team/AROS/pull/1970) | G16a: origem IPv6 por escopo (RFC 6724 regras 2/3/7), MLD da link-local | aberto 2026-10-30; master `343de5cddf` mesclado na branch |
+| [#1971](https://github.com/aros-development-team/AROS/pull/1971) | G14: sockets raw IPv6 (RFC 3542 §3): `inpcb`, opções, `ICMP6_FILTER`, todo ICMPv6 | aberto 2026-10-30 |
 
-Próximos: **G14** (raw IPv6 com opções) → **S8** (RFC 4191; WIP local `f16bbd4f8f`, rebasear sobre o master e corrigir a máscara da default) → **S6/S7** (com o Kal). Bancada no master+#1945: 9 falhas = S7 (envio multicast de `[::]`) ×8 + S6 (`sin6_scope_id` recebido) ×1.
+Próximos: **S8** (RFC 4191; WIP local `f16bbd4f8f`, rebasear sobre o master e corrigir a máscara da default) → **S6/S7** (com o Kal). Bancada no master+#1945: 9 falhas = S7 (envio multicast de `[::]`) ×8 + S6 (`sin6_scope_id` recebido) ×1.
 
 Lição (2026-10-30): todo programa CUnit do AROS roda a suíte duas vezes (básica e automática). Validar **os dois** resumos; o Kal achou no #1950 uma falha que só aparecia na segunda.
 

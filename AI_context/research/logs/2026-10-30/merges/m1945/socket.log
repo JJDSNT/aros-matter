@@ -1,0 +1,39 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: Socket_Suite
+  Test: socket() ...passed
+  Test: socket() bad args ...passed
+  Test: CloseSocket() bad fd ...passed
+  Test: getsockopt(SO_TYPE) ...passed
+  Test: setsockopt(SO_REUSEADDR) ...passed
+  Test: setsockopt(SO_RCVBUF) ...passed
+  Test: setsockopt(TCP_NODELAY) ...passed
+  Test: bind()/getsockname() ...passed
+  Test: listen() ...passed
+  Test: getpeername() unconnected ...passed
+  Test: IoctlSocket(FIONBIO) ...passed
+  Test: inet_addr() ...passed
+  Test: Inet_NtoA() ...passed
+  Test: htonl()/htons() ...passed
+  Test: loopback TCP echo ...passed
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       55         0       n/a       n/a
+     Tests        :       15         0         0         0
+
+Elapsed Time: 0.000(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       55         0       n/a       n/a
+     Tests        :       15         0         0         0
+
+Elapsed Time: 0.000(s)
+

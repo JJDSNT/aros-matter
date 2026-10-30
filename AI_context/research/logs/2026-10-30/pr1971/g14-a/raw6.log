@@ -1,0 +1,34 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: RAW6_Suite
+  Test: IPV6_UNICAST_HOPS is kept ...passed
+  Test: an ICMPv6 socket sees Echo Request and Reply ...FAILED
+    1. testRAW6_ECHO_REQUEST_AND_REPLY:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-raw6.c:190  - CU_ASSERT_EQUAL(recv_echo(s, ICMP6_ECHO_REQUEST, 1, 2, NULL),sizeof(struct icmp6_hdr))
+  Test: ICMP6_FILTER keeps blocked types away ...passed
+  Test: data arrives without the IPv6 header ...passed
+  Test: IPV6_RECVHOPLIMIT gives the hop limit ...FAILED
+    1. testRAW6_RECVHOPLIMIT:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-raw6.c:247  - CU_ASSERT_EQUAL(hlim,77)
+  Test: IPV6_MULTICAST_HOPS applies on the wire ...passed
+  Test: multicast hop limit defaults to 1 ...passed
+  Test: IPV6_HOPLIMIT ancillary data applies on the wire ...passed
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       40         3       n/a       n/a
+     Tests        :        8         2         0         0
+
+Elapsed Time: 6.040(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       40         3       n/a       n/a
+     Tests        :        8         2         0         0
+
+Elapsed Time: 6.020(s)
+

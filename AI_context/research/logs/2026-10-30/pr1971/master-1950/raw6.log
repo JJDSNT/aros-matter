@@ -1,0 +1,40 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: RAW6_Suite
+  Test: IPV6_UNICAST_HOPS is kept ...FAILED
+    1. testRAW6_UNICAST_HOPS:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-raw6.c:179  - CU_ASSERT_EQUAL(v,77)
+  Test: an ICMPv6 socket sees Echo Request and Reply ...FAILED
+    1. testRAW6_ECHO_REQUEST_AND_REPLY:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-raw6.c:190  - CU_ASSERT_EQUAL(recv_echo(s, ICMP6_ECHO_REQUEST, 1, 2, NULL),sizeof(struct icmp6_hdr))
+  Test: ICMP6_FILTER keeps blocked types away ...FAILED
+    1. testRAW6_FILTER:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-raw6.c:214  - CU_ASSERT_EQUAL(recv_echo(s, ICMP6_ECHO_REPLY, 3, 2, NULL),0)
+  Test: data arrives without the IPv6 header ...FAILED
+    1. testRAW6_NO_IPV6_HEADER:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-raw6.c:232  - n >= 4 && memcmp(buf, "RAW6", 4) == 0
+  Test: IPV6_RECVHOPLIMIT gives the hop limit ...FAILED
+    1. testRAW6_RECVHOPLIMIT:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-raw6.c:247  - CU_ASSERT_EQUAL(hlim,77)
+  Test: IPV6_MULTICAST_HOPS applies on the wire ...FAILED
+    1. testRAW6_MULTICAST_HOPS:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-raw6.c:261  - CU_ASSERT_EQUAL(wire_hlim(5, 2),255)
+  Test: multicast hop limit defaults to 1 ...FAILED
+    1. testRAW6_MULTICAST_DEFAULT_HOPS:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-raw6.c:273  - CU_ASSERT_EQUAL(wire_hlim(6, 2),1)
+  Test: IPV6_HOPLIMIT ancillary data applies on the wire ...FAILED
+    1. testRAW6_HOPLIMIT_CMSG:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-raw6.c:321  - CU_ASSERT_EQUAL(wire_hlim(7, 2),255)
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       40        12       n/a       n/a
+     Tests        :        8         8         0         0
+
+Elapsed Time: 6.040(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       40        12       n/a       n/a
+     Tests        :        8         8         0         0
+
+Elapsed Time: 6.000(s)
+

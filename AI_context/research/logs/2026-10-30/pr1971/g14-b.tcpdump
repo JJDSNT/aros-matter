@@ -1,0 +1,7 @@
+10:20:42.162171 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 8) fe80::e80f:53ff:feda:8944 > ff02::1: [icmp6 sum ok] ICMP6, echo request, id 19796, seq 5
+10:20:42.163483 IP6 (hlim 1, next-header ICMPv6 (58) payload length: 8) fe80::e80f:53ff:feda:8944 > ff02::1: [icmp6 sum ok] ICMP6, echo request, id 19796, seq 6
+10:20:42.165081 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 8) fe80::e80f:53ff:feda:8944 > ff02::1: [icmp6 sum ok] ICMP6, echo request, id 19796, seq 7
+10:20:44.178166 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 8) fe80::e80f:53ff:feda:8944 > ff02::1: [icmp6 sum ok] ICMP6, echo request, id 19796, seq 5
+10:20:44.178253 IP6 (hlim 1, next-header ICMPv6 (58) payload length: 8) fe80::e80f:53ff:feda:8944 > ff02::1: [icmp6 sum ok] ICMP6, echo request, id 19796, seq 6
+10:20:44.178354 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 8) fe80::e80f:53ff:feda:8944 > ff02::1: [icmp6 sum ok] ICMP6, echo request, id 19796, seq 7
+
