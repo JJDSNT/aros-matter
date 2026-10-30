@@ -1,6 +1,6 @@
 # Estado atual — aros-matter
 
-Atualizado: 2026-10-28
+Atualizado: 2026-10-30
 
 ## Foco atual (desde 2026-10-28)
 
@@ -38,7 +38,21 @@ Fase de pesquisa (M0). Toolchain validada (ISSUE-0002 concluída). Testes IPv6 n
 
 ## Ordem sugerida
 
-ISSUE-0008: S0 ✅, S1 ✅ **mesclada** no upstream ([AROS #1924](https://github.com/aros-development-team/AROS/pull/1924), `42cb8e8f34`), S2–S4 ([AROS #1945](https://github.com/aros-development-team/AROS/pull/1945)) e S5 ([AROS #1947](https://github.com/aros-development-team/AROS/pull/1947)) em revisão → S8 (RFC 4191) em andamento, bloqueada pela G15 (rotas via roteador perdem o gateway; corrigir antes); S6/S7 (zonas, seleção de interface/origem): levar o desenho ao Kal antes. Achados novos: G14 (raw IPv6 ignora opções), G15, G16 (a confirmar). Ordem decidida: **G15 (roteamento via roteador: a, b, c; em revisão como [AROS #1948](https://github.com/aros-development-team/AROS/pull/1948)) → endereços (G15d, G15e, G16b em revisão como [AROS #1950](https://github.com/aros-development-team/AROS/pull/1950); falta G16a = origem link-local do MLD / `in6_ifawithifp`) → G14 → S8**, cada um em PR com teste. G15b: o AROS nunca teve rota default IPv6 de RA. (IPv6 no AROSTCP: S0–S5 primeiro, S6–S7 após decisão de desenho). Em paralelo, se houver tempo: ISSUE-0003 (crypto). Depois fechar ISSUE-0001 → ISSUE-0006 (spike M1) → ISSUE-0004.
+Atualizado 2026-10-30. **IPv6 no AROSTCP (ISSUE-0008):**
+
+| PR | Conteúdo | Estado |
+|---|---|---|
+| [#1924](https://github.com/aros-development-team/AROS/pull/1924) | S1: ciclo de vida das associações multicast | mesclado (`42cb8e8f34`) |
+| [#1947](https://github.com/aros-development-team/AROS/pull/1947) | S5: ancillary data (LP64, cadeia, `in6_pktinfo`, `IPV6_RECVHOPLIMIT`) | mesclado (`0b1e1de27d`) |
+| [#1948](https://github.com/aros-development-team/AROS/pull/1948) | G15a/b/c: rotas via roteador, próximo salto, default de RA | mesclado (`6053248953`) |
+| [#1945](https://github.com/aros-development-team/AROS/pull/1945) | S2–S4: entrega multicast aos membros | aberto, atualizado com o master, sem revisão ainda |
+| [#1950](https://github.com/aros-development-team/AROS/pull/1950) | G15d/e, G16b: ciclo de vida de endereço | aberto; review do Kal (`nd6_dad_stop` no `in6_purgeaddr`) atendida em `db0ab8f11b` |
+
+Próximos: **G16a** (origem link-local do MLD; `in6_ifawithifp` troca o escopo certo por um maior) → **G14** (raw IPv6 com opções) → **S8** (RFC 4191; WIP local `f16bbd4f8f`, rebasear sobre o master e corrigir a máscara da default) → **S6/S7** (com o Kal). Bancada no master+#1945: 9 falhas = S7 (envio multicast de `[::]`) ×8 + S6 (`sin6_scope_id` recebido) ×1.
+
+Lição (2026-10-30): todo programa CUnit do AROS roda a suíte duas vezes (básica e automática). Validar **os dois** resumos; o Kal achou no #1950 uma falha que só aparecia na segunda.
+
+Depois do IPv6: ISSUE-0003 (crypto) → fechar ISSUE-0001 → ISSUE-0006 (spike M1) → ISSUE-0004.
 
 ## Decisões em aberto para o mantenedor
 
