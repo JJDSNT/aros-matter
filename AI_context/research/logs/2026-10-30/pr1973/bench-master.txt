@@ -1,0 +1,65 @@
+/home/jaime/aros-matter/tests/ipv6/ipv6test.c: In function 'c_recv_fanout':
+/home/jaime/aros-matter/tests/ipv6/ipv6test.c:276:48: warning: 'strncpy' output may be truncated copying 127 bytes from a string of length 127 [-Wstringop-truncation]
+  276 |     gb = rx_prefix(b, "H:", 1000, &r); if (gb) strncpy(sb, r.buf, sizeof(sb) - 1);
+      |                                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/jaime/aros-matter/tests/ipv6/ipv6test.c:275:48: warning: 'strncpy' output may be truncated copying 127 bytes from a string of length 127 [-Wstringop-truncation]
+  275 |     ga = rx_prefix(a, "H:", 4000, &r); if (ga) strncpy(sa, r.buf, sizeof(sa) - 1);
+      |                                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/jaime/aros-matter/tests/ipv6/ipv6test.c:276:48: warning: 'strncpy' output may be truncated copying 127 bytes from a string of length 127 [-Wstringop-truncation]
+  276 |     gb = rx_prefix(b, "H:", 1000, &r); if (gb) strncpy(sb, r.buf, sizeof(sb) - 1);
+      |                                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+info  setup if=eth0 index=2 link-local=fe80::64b6:a9ff:fe79:71c1
+PASS  local.unicast socket
+PASS  local.unicast bind-::1
+PASS  local.unicast sendto-::1
+PASS  local.unicast recv-::1
+PASS  local.join-semantics join
+PASS  local.join-semantics join-twice-EADDRINUSE # rc=-1 errno=48
+PASS  local.join-semantics leave
+PASS  local.join-semantics leave-again-EADDRNOTAVAIL # rc=-1 errno=49
+PASS  local.reuseport-bind bind-first
+PASS  local.reuseport-bind bind-second
+PASS  link.linklocal if_nametoindex # eth0=2
+PASS  link.linklocal has-link-local # fe80::64b6:a9ff:fe79:71c1
+PASS  link.send-mcast-if MULTICAST_IF
+FAIL  link.send-mcast-if sendto # Cannot assign requested address
+FAIL  link.send-mcast-if host:received # host saw nothing
+FAIL  link.send-scopeid sendto # Cannot assign requested address
+FAIL  link.send-scopeid host:received # host saw nothing
+PASS  link.recv-joined join
+FAIL  link.recv-joined recv
+FAIL  link.recv-fanout recv-first
+FAIL  link.recv-fanout recv-second
+FAIL  link.recv-port-parity recv-without-membership
+PASS  link.pktinfo RECVPKTINFO
+FAIL  link.pktinfo recv
+FAIL  link.recv-scopeid recv
+FAIL  link.mcast-loop sendto-loop-on # Cannot assign requested address
+FAIL  link.mcast-loop local-copy-with-loop
+FAIL  link.mcast-loop no-local-copy-without-loop
+FAIL  link.mcast-loop host:received # host saw nothing
+PASS  mld.leave-explicit join
+PASS  mld.leave-explicit leave
+PASS  mld.leave-explicit host:mld # wire: report,leave (want report,leave)
+PASS  mld.close-leaves join
+PASS  mld.close-leaves rejoin
+PASS  mld.close-leaves host:mld # wire: report,leave,report,leave (want report,leave,report,leave)
+PASS  link.nd-reachable host:nd # ping6 fe80::64b6:a9ff:fe79:71c1%aros0 rc=0
+PASS  mld.ifdetach join
+PASS  mld.ifdetach read-interfaces-db
+PASS  mld.ifdetach drop-interface-from-db
+PASS  mld.ifdetach reload-without-interface # rc=0
+PASS  mld.ifdetach interface-gone
+PASS  mld.ifdetach restore-db
+PASS  mld.ifdetach reload-with-interface # rc=0
+PASS  mld.ifdetach interface-back # index 2 -> 3
+PASS  mld.ifdetach link-local-back # fe80::e4f1:e9ff:fe4c:1103
+PASS  mld.ifdetach join-on-new-interface
+PASS  mld.ifdetach no-crash
+PASS  mld.ifdetach host:mldwin # between P:readded and P:rejoined: report
+PASS  mld.ifdetach host:mldwin # between P:rejoined and P:oldclosed: nothing
+PASS  mld.ifdetach host:mldwin # between P:oldclosed and P:end: leave
+PASS  mld.addr-owned add-address
+PASS  mld.addr-owned delete-address
+PASS  mld.addr-owned host:mld # wire: report,leave (want report,leave)
+image=/home/jaime/aros-build-ipv6-hosted/bin/linux-x86_64/AROS arostcp=/home/jaime/aros-build-ipv6-hosted/ab/AROSTCP.master-1950  checks=53  failed=14  boot=ok

@@ -49,8 +49,9 @@ Atualizado 2026-10-30. **IPv6 no AROSTCP (ISSUE-0008):**
 | [#1945](https://github.com/aros-development-team/AROS/pull/1945) | S2–S4: entrega multicast aos membros | aberto, sem revisão; master `343de5cddf` mesclado na branch |
 | [#1970](https://github.com/aros-development-team/AROS/pull/1970) | G16a: origem IPv6 por escopo (RFC 6724 regras 2/3/7), MLD da link-local | aberto 2026-10-30; master `343de5cddf` mesclado na branch |
 | [#1971](https://github.com/aros-development-team/AROS/pull/1971) | G14: sockets raw IPv6 (RFC 3542 §3): `inpcb`, opções, `ICMP6_FILTER`, todo ICMPv6 | aberto 2026-10-30 |
+| [#1973](https://github.com/aros-development-team/AROS/pull/1973) | G17: `sendto()` UDP6 escolhe a origem só para o datagrama (não prende `inp_laddr6`) | aberto 2026-10-30 |
 
-Próximos: **S8** (RFC 4191; WIP local `f16bbd4f8f`, rebasear sobre o master e corrigir a máscara da default) → **S6/S7** (com o Kal). Bancada no master+#1945: 9 falhas = S7 (envio multicast de `[::]`) ×8 + S6 (`sin6_scope_id` recebido) ×1.
+Próximos: **S6** (zonas, código primeiro; branch local `review/arostcp-ipv6-zones` sobre o #1945) → **S8** (RFC 4191; WIP local `f16bbd4f8f`, rebasear sobre o master e corrigir a máscara da default) → **S6/S7** (com o Kal). Bancada no master+#1945: 9 falhas = S7 (envio multicast de `[::]`) ×8 + S6 (`sin6_scope_id` recebido) ×1.
 
 Lição (2026-10-30): todo programa CUnit do AROS roda a suíte duas vezes (básica e automática). Validar **os dois** resumos; o Kal achou no #1950 uma falha que só aparecia na segunda.
 

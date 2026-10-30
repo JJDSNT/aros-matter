@@ -90,6 +90,15 @@ Plano: ~~PR "roteamento via roteador" (G15a, b, c, com teste)~~ → PR "ciclo de
 - Para medir: o AROS precisa de um endereço global (o RA do host deve trazer PIO com SLAAC); só com link-local, `sendto()` para destino global devolve `EADDRNOTAVAIL`, o que está correto (RFC 4291: link-local não é roteado).
 - Impacto Matter: é o caminho do controlador até um dispositivo Thread atrás do border router (rota da RIO → gateway = BR).
 
+### G17 — `sendto()` prende a origem UDP6 ao socket (→ AROS #1973)
+- `udp6_output()` fazia `sendto()` com `in6_pcbconnect()` + `in6_pcbdisconnect()`, e o disconnect só limpa o par: a origem escolhida ficava em `inp_laddr6`. Depois do primeiro datagrama, um socket em `[::]` só recebia no endereço de onde enviou (um responder em `[::]:5353` que responde por unicast deixa de ouvir `ff02::fb`), e nem `IPV6_PKTINFO` nem o `sin6_scope_id` escolhiam a origem (`sendto(ff02::fb%eth0)` dava `EADDRNOTAVAIL`). O IPv4 salva e restaura `inp_laddr`; o KAME nunca conecta.
+- Encontrado em 2026-10-30 ao levantar a S6. Correção: destino e origem por datagrama, sem mexer no PCB (só a porta efêmera fica). `cunit-net-sendto6` master 3/3 falham, branch 3/3; bancada: `link.send-scopeid` passa a funcionar, sem regressão. Impacto Matter direto (mDNS em `[::]:5353`).
+
+### S6 — levantamento (2026-10-30, master `343de5cddf` + #1945)
+- **Zona = `inp_boundif`** (o campo do `SO_BINDTODEVICE`, hoje só usado pelo UDP IPv4; o #1945 já o respeita na entrada multicast UDP6). É o modelo do Linux (`sk_bound_dev_if`) e não muda a ABI do `struct inpcb`.
+- Lacunas: `in6_pcbbind()` não confere que o endereço é nosso; `in6_pcbconnect()` ignora `sin6_scope_id`; `in6_setsockaddr()`/`in6_setpeeraddr()` e `udp6_input()` nunca preenchem `sin6_scope_id`; pacote para o próprio link-local volta por `lo0` com `rcvif = lo0` (o KAME passa o `origifp` ao `looutput()`); a conexão TCP aceita não guarda a zona (derivável do dono do endereço local link-scope).
+- Abordagem: código primeiro (o Kal não respondeu às perguntas de desenho; responde a PRs). Pontos de decisão vão nas notas do PR.
+
 ### G14 — Sockets raw IPv6 ignoram as opções IPv6
 - `rip6_ctloutput()` (`netinet6/icmp6.c`) é um stub que devolve 0 para qualquer opção: `setsockopt()` "funciona" sem efeito.
 - `rip6_output()` monta o cabeçalho com `ip6_defhlim` e chama `ip6_output()` com opções multicast `NULL`: `IPV6_MULTICAST_HOPS/IF/LOOP` e `IPV6_UNICAST_HOPS` não se aplicam; não há `ICMP6_FILTER`. O socket raw usa `struct rawcb`, sem lugar para opções (no KAME/FreeBSD, o raw IPv6 usa o `in6pcb` e herda as opções).
