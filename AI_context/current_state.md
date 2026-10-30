@@ -46,12 +46,12 @@ Atualizado 2026-10-30. **IPv6 no AROSTCP (ISSUE-0008):**
 | [#1947](https://github.com/aros-development-team/AROS/pull/1947) | S5: ancillary data (LP64, cadeia, `in6_pktinfo`, `IPV6_RECVHOPLIMIT`) | mesclado (`0b1e1de27d`) |
 | [#1948](https://github.com/aros-development-team/AROS/pull/1948) | G15a/b/c: rotas via roteador, próximo salto, default de RA | mesclado (`6053248953`) |
 | [#1950](https://github.com/aros-development-team/AROS/pull/1950) | G15d/e, G16b: ciclo de vida de endereço | mesclado (`343de5cddf`) |
-| [#1945](https://github.com/aros-development-team/AROS/pull/1945) | S2–S4: entrega multicast aos membros | aberto, sem revisão; master `343de5cddf` mesclado na branch |
-| [#1970](https://github.com/aros-development-team/AROS/pull/1970) | G16a: origem IPv6 por escopo (RFC 6724 regras 2/3/7), MLD da link-local | aberto 2026-10-30; master `343de5cddf` mesclado na branch |
-| [#1971](https://github.com/aros-development-team/AROS/pull/1971) | G14: sockets raw IPv6 (RFC 3542 §3): `inpcb`, opções, `ICMP6_FILTER`, todo ICMPv6 | aberto 2026-10-30 |
-| [#1973](https://github.com/aros-development-team/AROS/pull/1973) | G17: `sendto()` UDP6 escolhe a origem só para o datagrama (não prende `inp_laddr6`) | aberto 2026-10-30 |
+| [#1945](https://github.com/aros-development-team/AROS/pull/1945) | S2–S4: entrega multicast aos membros | mesclado (`62bd8216b1`) |
+| [#1970](https://github.com/aros-development-team/AROS/pull/1970) | G16a: origem IPv6 por escopo (RFC 6724 regras 2/3/7), MLD da link-local | mesclado (`f71efe2595`) |
+| [#1971](https://github.com/aros-development-team/AROS/pull/1971) | G14: sockets raw IPv6 (RFC 3542 §3): `inpcb`, opções, `ICMP6_FILTER`, todo ICMPv6 | mesclado (`273470fdd2`), com as correções do Codacy (cppcheck: `bzero`/`memcpy`, `optp`) |
+| [#1973](https://github.com/aros-development-team/AROS/pull/1973) | G17: `sendto()` UDP6 escolhe a origem só para o datagrama (não prende `inp_laddr6`) | aberto 2026-10-30; master `273470fdd2` mesclado na branch, todas as suítes passam |
 
-Próximos: **S6** (zonas, código primeiro; branch local `review/arostcp-ipv6-zones` sobre o #1945) → **S8** (RFC 4191; WIP local `f16bbd4f8f`, rebasear sobre o master e corrigir a máscara da default) → **S6/S7** (com o Kal). Bancada no master+#1945: 9 falhas = S7 (envio multicast de `[::]`) ×8 + S6 (`sin6_scope_id` recebido) ×1.
+Próximos: **S6** (zonas, código primeiro; agora direto do master, que já tem o #1945) → **S8** (RFC 4191; WIP local `f16bbd4f8f`, rebasear sobre o master e corrigir a máscara da default) → **S6/S7** (com o Kal). Bancada no master+#1945: 9 falhas = S7 (envio multicast de `[::]`) ×8 + S6 (`sin6_scope_id` recebido) ×1.
 
 Lição (2026-10-30): todo programa CUnit do AROS roda a suíte duas vezes (básica e automática). Validar **os dois** resumos; o Kal achou no #1950 uma falha que só aparecia na segunda.
 
