@@ -1,0 +1,4 @@
+12:09:31.202646 IP6 :: > ff02::1:ff79:f3b8: ICMP6, neighbor solicitation, who has fe80::a42f:3aff:fe79:f3b8, length 24
+12:09:32.202250 IP6 fe80::a42f:3aff:fe79:f3b8 > ff02::2: ICMP6, router solicitation, length 16
+12:09:36.202671 IP6 :: > ff02::1:ff54:2: ICMP6, neighbor solicitation, who has fe80::4d54:2, length 24
+12:09:37.202197 IP6 fe80::a42f:3aff:fe79:f3b8 > ff02::2: ICMP6, router solicitation, length 16

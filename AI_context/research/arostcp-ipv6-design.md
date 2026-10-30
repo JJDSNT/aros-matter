@@ -58,6 +58,7 @@ Referências do AROS na revisão `4c2c268a53`; do FreeBSD em `freebsd-src@389ae8
 
 ### G8 — Route Information Option (RFC 4191)
 - `nd6_rtr.c:745-794` trata SLLAO, PIO e MTU; a RIO (tipo 24) é ignorada.
+- **S8 pronta (2026-10-30)**, branch `review/arostcp-ipv6-rfc4191-v2` sobre o #1974: host tipo C (preferência do roteador default, RIO por (prefixo, roteador), `::/0` sobrepõe o cabeçalho, lifetimes de 32 bits) e limpeza dos roteadores da interface no deconfigure/detach (as entradas ficavam `installed` e a default nunca voltava depois de um reload). Teste `cunit-net-rio6` manda os RAs ao próprio link-local, sem nada no fio. Evidência: `logs/2026-10-30/s8-rfc4191/`.
 - Impacto Matter: o border router Thread anuncia o prefixo OMR da malha na rede de infraestrutura como RIO nos seus RAs ([OpenThread Border Routing](https://openthread.io/reference/group/api-border-routing)). Sem RIO, o controlador só alcança os dispositivos Thread se o border router for também o roteador default.
 
 ### G10 — Tempo de vida endereço × rotas
