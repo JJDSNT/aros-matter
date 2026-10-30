@@ -1,0 +1,29 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: ADDR6_Suite
+  Test: deleting an address removes its prefix route ...passed
+  Test: a new address goes through DAD ...passed
+  Test: deleting an address stops its DAD ...FAILED
+    1. testADDR6_DELETE_STOPS_DAD:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-addr6.c:205  - CU_ASSERT_EQUAL(ns,0)
+  Test: adding an address solicits no routers ...passed
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       11         1       n/a       n/a
+     Tests        :        4         1         0         0
+
+Elapsed Time: 11.220(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       11         2       n/a       n/a
+     Tests        :        4         2         0         0
+
+Elapsed Time: 11.200(s)
+
