@@ -1,0 +1,29 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: SRC6_Suite
+  Test: a link-scope destination gets the link-local source ...passed
+  Test: a global destination gets a global source ...passed
+  Test: MLD for a link-scope group comes from the link-local ...passed
+  Test: MLD for a wider group comes from the link-local ...FAILED
+    1. testSRC6_MLD_WIDER_GROUP:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-srcaddr6.c:209  - memcmp(&src, &linklocal, sizeof(src)) == 0
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       10         1       n/a       n/a
+     Tests        :        4         1         0         0
+
+Elapsed Time: 0.020(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       10         1       n/a       n/a
+     Tests        :        4         1         0         0
+
+Elapsed Time: 0.000(s)
+

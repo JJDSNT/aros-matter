@@ -65,6 +65,7 @@ Referências do AROS na revisão `4c2c268a53`; do FreeBSD em `freebsd-src@389ae8
 
 ### G16 — Observações a confirmar (captura de 2026-10-29, host como roteador com PIO/SLAAC)
 - **MLD com origem global:** os Listener Reports saem de `2001:db8:4d54:1:…`; RFC 3810 §5 / RFC 2710 §3 exigem origem link-local.
+  - **G16a, confirmada e corrigida → AROS #1970.** Duas causas: `in6_ifawithifp()` deixava um endereço de escopo maior, mais adiante na lista, substituir o de escopo exato (um destino link-local recebia origem global); e o MLD pedia a origem com o grupo como destino, o que dá origem global para grupos `ff05::`/`ff0e::`. Correção: comparação RFC 6724 §5 regras 2/3/7 e MLD sempre via `in6_ifaof_ifpforlinklocal()`. Evidência: `logs/2026-10-30/pr1970/`.
 - **Endereços temporários se acumulando:** 5 grupos solicited-node distintos depois de ~17 RAs iguais: parece um endereço temporário (RFC 4941) novo por RA, em vez de um por prefixo até a regeneração.
 - **Envio para destino global falha com `EADDRNOTAVAIL`** mesmo com endereço global SLAAC já formado: a seleção de origem via a rota default não acha o endereço. Pode ser G15 (rota default corrompida) ou outra causa; investigar junto com a G15.
 
