@@ -1,7 +1,7 @@
 ---
 id: ISSUE-0009
 title: "AROSTCP: rotas não seguram referência ao endereço (ifa_refcnt sem uso) — uso após liberação intermitente"
-status: review
+status: done
 priority: high
 type: upstream
 owner: jaime
