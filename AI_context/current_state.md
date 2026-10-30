@@ -51,10 +51,10 @@ Atualizado 2026-10-30. **IPv6 no AROSTCP (ISSUE-0008):**
 | [#1971](https://github.com/aros-development-team/AROS/pull/1971) | G14: sockets raw IPv6 (RFC 3542 §3): `inpcb`, opções, `ICMP6_FILTER`, todo ICMPv6 | mesclado (`273470fdd2`), com as correções do Codacy (cppcheck: `bzero`/`memcpy`, `optp`) |
 | [#1973](https://github.com/aros-development-team/AROS/pull/1973) | G17: `sendto()` UDP6 escolhe a origem só para o datagrama (não prende `inp_laddr6`) | mesclado (`c8e79a9cc3`) |
 | [#1974](https://github.com/aros-development-team/AROS/pull/1974) | S6: zonas de endereços link-scope em bind/connect/getsockname/getpeername/recvfrom; loopback do próprio link-local pela interface real | mesclado (`d50355747a`) |
-| [#1975](https://github.com/aros-development-team/AROS/pull/1975) | Resto da S7: `IPV6_MULTICAST_IF` escolhe a origem do datagrama multicast UDP6 | aberto 2026-10-30; bancada: master 7 falhas, #1975 1, #1974 + #1975 juntos **0 de 57** |
-| [#1976](https://github.com/aros-development-team/AROS/pull/1976) | S8: RFC 4191 (preferência do roteador default, RIO, `::/0`) + limpeza dos roteadores da interface | aberto 2026-10-30; rio6 master 5/7 falham, branch 7/7; nenhum RA no fio |
+| [#1975](https://github.com/aros-development-team/AROS/pull/1975) | Resto da S7: `IPV6_MULTICAST_IF` escolhe a origem do datagrama multicast UDP6 | mesclado |
+| [#1976](https://github.com/aros-development-team/AROS/pull/1976) | S8: RFC 4191 (preferência do roteador default, RIO, `::/0`) + limpeza dos roteadores da interface | aberto; Codacy (escopo de `pp`) corrigido em `bc6e8b74ce`, checks verdes |
 
-Próximos: **S8b** (endereço SLAAC não volta depois de reload da interface; reproduzir primeiro) (RFC 4191; WIP local `f16bbd4f8f`, rebasear sobre o master e corrigir a máscara da default) → **S6/S7** (com o Kal). Bancada no master+#1945: 9 falhas = S7 (envio multicast de `[::]`) ×8 + S6 (`sin6_scope_id` recebido) ×1.
+Próximos: **S8b** (em validação, branch local `review/arostcp-ipv6-slaac-reload` sobre o #1976: o reload apagava o link-local e deixava os prefixos com estado velho) → pendências G18a–i (declaradas nos PRs; ver o documento de desenho). Bancada: com #1974 + #1975 no master, 0 falhas de 57.
 
 Lição (2026-10-30): todo programa CUnit do AROS roda a suíte duas vezes (básica e automática). Validar **os dois** resumos; o Kal achou no #1950 uma falha que só aparecia na segunda.
 
