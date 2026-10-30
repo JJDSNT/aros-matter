@@ -56,7 +56,7 @@ Atualizado 2026-10-30. **IPv6 no AROSTCP (ISSUE-0008):**
 | [#1977](https://github.com/aros-development-team/AROS/pull/1977) | ISSUE-0009: `in6_purgeaddr()` apaga as rotas que usam o endereço (`rt_purgeifa`, como o IPv4); o reload travava com `rt_ifa` liberado | mesclado |
 | [#1979](https://github.com/aros-development-team/AROS/pull/1979) | S8b: o reload devolve o link-local e os endereços SLAAC (`in6_if_up()` no `addifent()`, `nd6_purge_prefixes()`) | aberto 2026-10-30; slaac6 master falha, branch passa |
 
-Próximos: classificar os "a conferir" do stackprobe (S3–S7, A1–A2) e as lacunas R1–R11, ambos em `research/2026-10-30-riptide-comparison.md`; candidatos baratos: S1 (`localhost`), R1 (portas efêmeras). Pendências G18a–i. Bancada no master: 57/57.
+Próximos: **G19c+d** (fragmentação IPv6: só o primeiro fragmento sai, e com o bit M trocado) → **G19b** (MSS do TCP em IPv6) → G19e (T/TCP no SYN) → G19h, R1 → G19i. Juntas, G19b–d impedem TCP sobre IPv6 de transferir dados por um link real (bancada `tests/tcp/`). Depois: S1 (`localhost`), R4, R7, G18a–i.
 
 Lição (2026-10-30): todo programa CUnit do AROS roda a suíte duas vezes (básica e automática). Validar **os dois** resumos; o Kal achou no #1950 uma falha que só aparecia na segunda.
 

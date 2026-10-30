@@ -1,0 +1,20 @@
+1793388416.795561 IP6 (hlim 64, next-header TCP (6) payload length: 52) fe80::bc7f:9aff:fe7e:67f6.1024 > fe80::e090:2aff:fe98:97bd.7002: Flags [S], cksum 0x3d2c (correct), seq 1096551983, win 65535, options [mss 1460,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 0 ecr 0,nop,nop,ccnew 2], length 0
+1793388416.795608 IP6 (flowlabel 0x7a165, hlim 64, next-header TCP (6) payload length: 40) fe80::e090:2aff:fe98:97bd.7002 > fe80::bc7f:9aff:fe7e:67f6.1024: Flags [S.], cksum 0x5828 (correct), seq 3290313649, ack 1096551984, win 64260, options [mss 1440,sackOK,TS val 2152247544 ecr 0,nop,wscale 10], length 0
+1793388416.795702 IP6 (hlim 64, next-header TCP (6) payload length: 32) fe80::bc7f:9aff:fe7e:67f6.1024 > fe80::e090:2aff:fe98:97bd.7002: Flags [.], cksum 0x01e8 (correct), ack 1, win 32768, options [nop,nop,TS val 0 ecr 2152247544], length 0
+1793388416.795926 IP6 (hlim 64, next-header Fragment (44) payload length: 1456) fe80::bc7f:9aff:fe7e:67f6 > fe80::e090:2aff:fe98:97bd: frag (0x00000001:256|1448)
+1793388418.173956 IP6 (hlim 64, next-header Fragment (44) payload length: 1456) fe80::bc7f:9aff:fe7e:67f6 > fe80::e090:2aff:fe98:97bd: frag (0x00000002:256|1448)
+1793388421.173820 IP6 (hlim 64, next-header Fragment (44) payload length: 1456) fe80::bc7f:9aff:fe7e:67f6 > fe80::e090:2aff:fe98:97bd: frag (0x00000003:256|1448)
+--
+1793388427.173892 IP6 (hlim 64, next-header Fragment (44) payload length: 1456) fe80::bc7f:9aff:fe7e:67f6 > fe80::e090:2aff:fe98:97bd: frag (0x00000004:256|1448)
+--
+1793388439.174198 IP6 (hlim 64, next-header Fragment (44) payload length: 1456) fe80::bc7f:9aff:fe7e:67f6 > fe80::e090:2aff:fe98:97bd: frag (0x00000005:256|1448)
+--
+1793388463.173955 IP6 (hlim 64, next-header Fragment (44) payload length: 1456) fe80::bc7f:9aff:fe7e:67f6 > fe80::e090:2aff:fe98:97bd: frag (0x00000006:256|1448)
+--
+1793388511.174065 IP6 (hlim 64, next-header Fragment (44) payload length: 1456) fe80::bc7f:9aff:fe7e:67f6 > fe80::e090:2aff:fe98:97bd: frag (0x00000007:256|1448)
+--
+1793388575.179008 IP6 (hlim 64, next-header Fragment (44) payload length: 1456) fe80::bc7f:9aff:fe7e:67f6 > fe80::e090:2aff:fe98:97bd: frag (0x00000008:256|1448)
+--
+1793388639.179154 IP6 (hlim 64, next-header Fragment (44) payload length: 1456) fe80::bc7f:9aff:fe7e:67f6 > fe80::e090:2aff:fe98:97bd: frag (0x00000009:256|1448)
+--
+1793388703.179076 IP6 (hlim 64, next-header Fragment (44) payload length: 1456) fe80::bc7f:9aff:fe7e:67f6 > fe80::e090:2aff:fe98:97bd: frag (0x0000000a:256|1448)

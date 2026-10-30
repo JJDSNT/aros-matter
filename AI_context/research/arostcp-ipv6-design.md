@@ -93,6 +93,19 @@ Plano: ~~PR "roteamento via roteador" (G15a, b, c, com teste)~~ → PR "ciclo de
 - Para medir: o AROS precisa de um endereço global (o RA do host deve trazer PIO com SLAAC); só com link-local, `sendto()` para destino global devolve `EADDRNOTAVAIL`, o que está correto (RFC 4291: link-local não é roteado).
 - Impacto Matter: é o caminho do controlador até um dispositivo Thread atrás do border router (rota da RIO → gateway = BR).
 
+### G19 — TCP no fio (bancada `tests/tcp/`, 2026-10-30, master `be237767fa`)
+Bancada nova: o AROS é cliente do Linux do host pela tap, em IPv6; `tc` molda o link (descarte na entrada do host, atraso na saída) e o `tcpdump` lê o resultado. Evidência: `logs/2026-10-30/tcp-wire/`.
+- **G19a — TCP sobre IPv6 não transfere dados em volume por um link real.** ✔ O handshake completa; cada segmento de dados sai fragmentado e só um fragmento chega ao fio; o host nunca remonta, o AROS retransmite para sempre. Três defeitos encadeados:
+  - **G19b — `tcp_mss()`/`tcp_mssopt()` não conhecem IPv6.** ✔ `tcp_mss()` procura a rota pelo `inp_faddr` (IPv4, zero numa conexão IPv6): sem rota, fixa `t_maxseg = tcp_mssdflt` (1460) e retorna **antes de aplicar o MSS do par** (o Linux anunciou 1440; RFC 9293 §3.7.1). `tcp_mssopt()` anuncia MTU − `sizeof(struct tcpiphdr)` (40, IPv4): em IPv6 os cabeçalhos são 60 (RFC 6691), o certo é 1440. Segmento de 1460 + 32 (TCP com timestamps) + 40 = 1532 > 1500.
+  - **G19c — a fragmentação IPv6 manda só o primeiro fragmento.** ✔ Em `ip6_output()` o laço recalcula `flen`/`more` com `m->m_pkthdr.len`, que não diminui; só `off2` avança. A segunda volta pede `m_copy()` além do fim, recebe NULL e descarta o pacote com `ENOBUFS`. Afeta também UDP maior que o MTU.
+  - **G19d — o bit M (mais fragmentos) na ordem de bytes errada.** ✔ `IP6F_MORE_FRAG` já está na ordem da rede (0x0100 em little-endian); o código faz `offlg |= IP6F_MORE_FRAG` e depois `htons(offlg)`: no fio sai "offset 256, sem M" (`frag (…:256|1448)`). Em big-endian (m68k, PPC) não aparece.
+- **G19e — T/TCP ainda no SYN.** ✔ O SYN leva `ccnew` (RFC 1644, Histórico pela RFC 6247; permite transação com SYN falsificado). Retirar.
+- **G19f — ECN não pedido no SYN** (flags só `S`). ? O Readme diz que há suporte; ver se está desligado por padrão.
+- **G19g — portas efêmeras sequenciais** (1024, 1025, …): ✔ confirma R1 no fio. ISNs aleatórios ✔.
+- **G19h — fechar com dados não lidos manda FIN, não RST** (RFC 1122 §4.2.2.13, SHOULD). ✔
+- **G19i — RTO: primeira retransmissão em 1,4 s, a segunda só 9 s depois** (esperado ~2,8 s com backoff). ? A investigar (relógio de 500 ms, backoff).
+- Ordem proposta: G19c+d (fragmentação, simples e grave) → G19b (MSS IPv6) → G19e (T/TCP) → G19h, G19g/R1 → G19i.
+
 ### G18 — Pendências registradas nas notas dos PRs (reunidas em 2026-10-30)
 Itens que cada PR declarou como "não coberto aqui". Nenhum bloqueia o Matter hoje; ficam como trabalho futuro, com a origem anotada.
 

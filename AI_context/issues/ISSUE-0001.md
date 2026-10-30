@@ -51,7 +51,7 @@ Requisitos de rede do Matter (Core spec; endereços de grupo conferidos no SDK `
 | Relógio (validação de certificados) | **lacuna** | sem SNTP na pilha (R7) |
 | DNS em rede só IPv6 (RDNSS) | lacuna | R4; o Matter usa mDNS, então não bloqueia |
 | `localhost` | lacuna | `hosts` padrão vazio (stackprobe S1) |
-| TCP do Matter 1.3+ (opcional) | **a medir** | bancada TCP no fio (próximo) |
+| TCP sobre IPv6 (Matter 1.3+, opcional; e qualquer serviço TCP v6) | **quebrado por link real** | bancada `tests/tcp/`: dados em volume não passam (G19a: MSS IPv6 errado + fragmentação IPv6 quebrada) |
 | DNS-SD (`minimal_mdns`) | aberto | ISSUE-0004 |
 | Entropia / persistência / timers | aberto | ISSUE-0002, -0003; passos abaixo |
 
