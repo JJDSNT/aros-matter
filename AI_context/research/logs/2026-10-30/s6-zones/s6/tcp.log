@@ -1,0 +1,32 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: TCP_Suite
+  Test: handshake ...passed
+  Test: getsockname/getpeername ...passed
+  Test: echo ...passed
+  Test: large transfer (window scaling) ...passed
+  Test: multiple connections (SYN cache) ...passed
+  Test: half-close (shutdown) ...passed
+  Test: connect refused ...passed
+  Test: TCP_MAXSEG ...passed
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       38         0       n/a       n/a
+     Tests        :        8         0         0         0
+
+Elapsed Time: 0.020(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       38         0       n/a       n/a
+     Tests        :        8         0         0         0
+
+Elapsed Time: 0.000(s)
+

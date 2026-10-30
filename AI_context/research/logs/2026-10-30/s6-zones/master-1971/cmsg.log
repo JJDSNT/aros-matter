@@ -1,0 +1,29 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: CMSG_Suite
+  Test: IPV6_PKTINFO over ::1 ...passed
+  Test: IPV6_HOPLIMIT over ::1 ...passed
+  Test: both IPv6 messages arrive ...passed
+  Test: short control buffer sets MSG_CTRUNC ...passed
+  Test: IP_RECVDSTADDR over 127.0.0.1 ...passed
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       35         0       n/a       n/a
+     Tests        :        5         0         0         0
+
+Elapsed Time: 0.020(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       35         0       n/a       n/a
+     Tests        :        5         0         0         0
+
+Elapsed Time: 0.000(s)
+

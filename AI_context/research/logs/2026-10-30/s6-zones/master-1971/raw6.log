@@ -1,0 +1,32 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: RAW6_Suite
+  Test: IPV6_UNICAST_HOPS is kept ...passed
+  Test: an ICMPv6 socket sees Echo Request and Reply ...passed
+  Test: ICMP6_FILTER keeps blocked types away ...passed
+  Test: data arrives without the IPv6 header ...passed
+  Test: IPV6_RECVHOPLIMIT gives the hop limit ...passed
+  Test: IPV6_MULTICAST_HOPS applies on the wire ...passed
+  Test: multicast hop limit defaults to 1 ...passed
+  Test: IPV6_HOPLIMIT ancillary data applies on the wire ...passed
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       40         0       n/a       n/a
+     Tests        :        8         0         0         0
+
+Elapsed Time: 2.020(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       40         0       n/a       n/a
+     Tests        :        8         0         0         0
+
+Elapsed Time: 2.020(s)
+

@@ -1,0 +1,40 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: SCOPE6_Suite
+  Test: bind() refuses an address that is not ours ...FAILED
+    1. testSCOPE6_BIND_NOT_OURS:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-scope6.c:85  - CU_ASSERT_EQUAL(Errno(),EADDRNOTAVAIL)
+  Test: a link-local address binds in its zone ...FAILED
+    1. testSCOPE6_BIND_LINKLOCAL:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-scope6.c:102  - CU_ASSERT_EQUAL(l.sin6_scope_id,ifindex)
+  Test: a link-local address does not bind in another zone ...FAILED
+    1. testSCOPE6_BIND_WRONG_ZONE:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-scope6.c:116  - CU_ASSERT_EQUAL(Errno(),EADDRNOTAVAIL)
+  Test: connect() takes the peer's zone ...FAILED
+    1. testSCOPE6_CONNECT_ZONE:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-scope6.c:136  - CU_ASSERT_EQUAL(a.sin6_scope_id,ifindex)
+  Test: connect() refuses an unknown zone ...FAILED
+    1. testSCOPE6_CONNECT_BAD_ZONE:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-scope6.c:149  - CU_ASSERT_EQUAL(Errno(),ENXIO)
+  Test: recvfrom() reports the source's zone ...FAILED
+    1. testSCOPE6_RECVFROM_ZONE:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-scope6.c:170  - CU_ASSERT_EQUAL(from.sin6_scope_id,ifindex)
+  Test: IPV6_PKTINFO gives the link-local's own link ...FAILED
+    1. testSCOPE6_PKTINFO_IFINDEX:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-scope6.c:211  - got && pi.ipi6_ifindex == ifindex
+  Test: TCP over a link-local address reports the zone ...FAILED
+    1. testSCOPE6_TCP_ACCEPT_ZONE:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-scope6.c:242  - CU_ASSERT_EQUAL(a.sin6_scope_id,ifindex)
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       46        14       n/a       n/a
+     Tests        :        8         8         0         0
+
+Elapsed Time: 0.040(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       46        14       n/a       n/a
+     Tests        :        8         8         0         0
+
+Elapsed Time: 0.000(s)
+

@@ -1,0 +1,1 @@
+S6 branch review/arostcp-ipv6-zones (7b9fa8dde3, 19e7944149, a90bc77549) on master 273470fdd2. scope6: master 8/8 fail, after commit 2 7/8, branch 8/8 pass. Bench: master 9 failures, S6 6 (all IPV6_MULTICAST_IF source). PR not opened yet: SSH key refused by GitHub on 2026-10-30.
