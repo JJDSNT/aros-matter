@@ -55,8 +55,9 @@ Atualizado 2026-10-30. **IPv6 no AROSTCP (ISSUE-0008):**
 | [#1976](https://github.com/aros-development-team/AROS/pull/1976) | S8: RFC 4191 (preferência do roteador default, RIO, `::/0`) + limpeza dos roteadores da interface | mesclado (`1fef6c415e`) |
 | [#1977](https://github.com/aros-development-team/AROS/pull/1977) | ISSUE-0009: `in6_purgeaddr()` apaga as rotas que usam o endereço (`rt_purgeifa`, como o IPv4); o reload travava com `rt_ifa` liberado | mesclado |
 | [#1979](https://github.com/aros-development-team/AROS/pull/1979) | S8b: o reload devolve o link-local e os endereços SLAAC (`in6_if_up()` no `addifent()`, `nd6_purge_prefixes()`) | aberto 2026-10-30; slaac6 master falha, branch passa |
+| [#1983](https://github.com/aros-development-team/AROS/pull/1983) | G19c+d: fragmentação IPv6 (todos os fragmentos, bit M na ordem certa, `rt` NULL em multicast) | aberto 2026-10-30; frag6 master trava, branch 4/4; TCP 2 MB passa |
 
-Próximos: **G19c+d** (fragmentação IPv6: só o primeiro fragmento sai, e com o bit M trocado) → **G19b** (MSS do TCP em IPv6) → G19e (T/TCP no SYN) → G19h, R1 → G19i. Juntas, G19b–d impedem TCP sobre IPv6 de transferir dados por um link real (bancada `tests/tcp/`). Depois: S1 (`localhost`), R4, R7, G18a–i.
+Próximos: **G19b** (MSS do TCP em IPv6) → G19e (T/TCP no SYN) → G19h, R1 → G19i. Juntas, G19b–d impedem TCP sobre IPv6 de transferir dados por um link real (bancada `tests/tcp/`). Depois: S1 (`localhost`), R4, R7, G18a–i.
 
 Lição (2026-10-30): todo programa CUnit do AROS roda a suíte duas vezes (básica e automática). Validar **os dois** resumos; o Kal achou no #1950 uma falha que só aparecia na segunda.
 
