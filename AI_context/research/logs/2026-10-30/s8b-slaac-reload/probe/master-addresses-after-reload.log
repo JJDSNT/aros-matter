@@ -1,0 +1,35 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: SLAAC6_Suite
+  Test: an autonomous prefix gives an address ...passed
+  Test: after a reload the prefix gives the address again ...DBG after-reload ifindex=2: lo0=::1
+DBG after-reload+10s ifindex=2: lo0=::1
+DBG send_ra=-1 errno=49
+DBG after-ra ifindex=2: lo0=::1
+FAILED
+    1. testSLAAC6_ADDRESS_AFTER_RELOAD:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-slaac6.c:226  - wait_addr(5)
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :        5         1       n/a       n/a
+     Tests        :        2         1         0         0
+
+Elapsed Time: 28.240(s)
+
+DBG after-reload ifindex=2: lo0=::1
+DBG after-reload+10s ifindex=2: lo0=::1
+DBG send_ra=-1 errno=49
+DBG after-ra ifindex=2: lo0=::1
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :        5         3       n/a       n/a
+     Tests        :        2         2         0         0
+
+Elapsed Time: 33.040(s)
+

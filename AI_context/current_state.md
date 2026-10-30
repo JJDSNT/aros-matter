@@ -27,7 +27,7 @@ Fase de pesquisa (M0). Toolchain validada (ISSUE-0002 concluída). Testes IPv6 n
 | ID | Título | Status | Prio | Marco |
 |---|---|---|---|---|
 | [0008](issues/ISSUE-0008.md) | AROSTCP IPv6: zonas, seleção de origem, multicast | ready | critical | M0 |
-| [0009](issues/ISSUE-0009.md) | AROSTCP: rotas sem referência ao endereço (UAF intermitente) | backlog | high | M0 |
+| [0009](issues/ISSUE-0009.md) | AROSTCP: rotas sem referência ao endereço (UAF intermitente) | review (#1977) | high | M0 |
 | [0001](issues/ISSUE-0001.md) | Matriz de capacidades M0 com evidência | doing | high | M0 |
 | [0002](issues/ISSUE-0002.md) | Toolchain C++17 e primeiro alvo AROS | done | critical | M0/M1 |
 | [0003](issues/ISSUE-0003.md) | Backend crypto: SDK × mbedTLS 3.6.7 do AROS | ready | high | M0/M1 |
@@ -52,9 +52,10 @@ Atualizado 2026-10-30. **IPv6 no AROSTCP (ISSUE-0008):**
 | [#1973](https://github.com/aros-development-team/AROS/pull/1973) | G17: `sendto()` UDP6 escolhe a origem só para o datagrama (não prende `inp_laddr6`) | mesclado (`c8e79a9cc3`) |
 | [#1974](https://github.com/aros-development-team/AROS/pull/1974) | S6: zonas de endereços link-scope em bind/connect/getsockname/getpeername/recvfrom; loopback do próprio link-local pela interface real | mesclado (`d50355747a`) |
 | [#1975](https://github.com/aros-development-team/AROS/pull/1975) | Resto da S7: `IPV6_MULTICAST_IF` escolhe a origem do datagrama multicast UDP6 | mesclado |
-| [#1976](https://github.com/aros-development-team/AROS/pull/1976) | S8: RFC 4191 (preferência do roteador default, RIO, `::/0`) + limpeza dos roteadores da interface | aberto; Codacy (escopo de `pp`) corrigido em `bc6e8b74ce`, checks verdes |
+| [#1976](https://github.com/aros-development-team/AROS/pull/1976) | S8: RFC 4191 (preferência do roteador default, RIO, `::/0`) + limpeza dos roteadores da interface | mesclado (`1fef6c415e`) |
+| [#1977](https://github.com/aros-development-team/AROS/pull/1977) | ISSUE-0009: `in6_purgeaddr()` apaga as rotas que usam o endereço (`rt_purgeifa`, como o IPv4); o reload travava com `rt_ifa` liberado | aberto 2026-10-30 |
 
-Próximos: **S8b** (em validação, branch local `review/arostcp-ipv6-slaac-reload` sobre o #1976: o reload apagava o link-local e deixava os prefixos com estado velho) → pendências G18a–i (declaradas nos PRs; ver o documento de desenho). Bancada: com #1974 + #1975 no master, 0 falhas de 57.
+Próximos: **S8b** pronta na branch `review/arostcp-ipv6-slaac-reload-v2` (o reload apagava o link-local e deixava os prefixos com estado velho; slaac6 master falha, branch passa). O PR espera o **#1977**: sem ele, a sequência completa de suítes trava no reload do teste. Corpo em `research/logs/2026-10-30/s8b-slaac-reload/pr-body.md` → pendências G18a–i. Bancada no master atual: 57/57.
 
 Lição (2026-10-30): todo programa CUnit do AROS roda a suíte duas vezes (básica e automática). Validar **os dois** resumos; o Kal achou no #1950 uma falha que só aparecia na segunda.
 

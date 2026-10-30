@@ -1,0 +1,18 @@
+CRASH pc=0x49960900
+== info registers rip rsp rbp rax rbx rdi rsi
+rip            0x49960900          0x49960900
+rsp            0x49a61a30          0x49a61a30
+rbp            0x49a61aa0          0x49a61aa0
+rax            0x916751feff5f6164  -7969310859960819356
+rbx            0x405               1029
+rdi            0x2                 2
+rsi            0x49a67f50          1235648336
+
+== bt 30
+#0  0x0000000049960900 in ?? ()
+#1  0x00000000499602a0 in ?? ()
+#2  0x0000000000000000 in ?? ()
+
+== x/64gx $sp
+symbolized (text base from DIAG main @ 0x499b76c0 - nm main 0x59410):
+rtrequest+0x400 <- (static in route.c: rt_purge) <- rt_purgeif <- (static) sana_if_deconfigure <- sana_reconfig_teardown <- ... <- net_reload <- main

@@ -1,14 +1,14 @@
 ---
 id: ISSUE-0009
 title: "AROSTCP: rotas não seguram referência ao endereço (ifa_refcnt sem uso) — uso após liberação intermitente"
-status: backlog
+status: review
 priority: high
 type: upstream
 owner: jaime
 milestone: M0
 area: network
 created_at: 2026-10-28
-updated_at: 2026-10-28
+updated_at: 2026-10-30
 tags: [upstream, arostcp, route, ifaddr, use-after-free, ipv4, ipv6]
 blockers: []
 depends_on: []
@@ -47,3 +47,11 @@ Implementar o tempo de vida do `ifaddr` como no 4.4BSD-Lite: rotas seguram refer
 - 2026-10-29: **causa provável encontrada (G15d):** `SIOCAIFADDR_IN6` sobrescreve `ifa_flags` com os flags do pedido e apaga `IFA_ROUTE`, então `in6_ifscrub()` não remove a rota do prefixo; medido que `fd00:4d54:77::/64` sobrevive ao `SIOCDIFADDR_IN6` (`research/logs/2026-10-29/g15/`). O reload depois disso percorre uma rota cujo `rt_ifa` foi liberado. Não depende do `ifa_refcnt`: a rota não deveria sobreviver.
 
 - 2026-10-28: criada a partir do travamento observado durante a S1.
+
+# Atualização 2026-10-30: causa confirmada, correção em AROS #1977
+
+- **Reprodução:** as suítes CUnit numa só sessão, seguidas de um reload (`cunit-net-slaac6`), travam o master `1fef6c415e` sempre que `srcaddr6` e `rio6` rodam com pelo menos outra suíte entre elas (bisseção em `research/logs/2026-10-30/pr1977/bisect.txt`). A suíte do meio só serve para reaproveitar a memória liberada.
+- **Símbolos:** com um AROSTCP de diagnóstico que imprime o endereço de `main` (base do `.text` = endereço − valor no `nm`), o PC cai em `rtrequest+0x400` (`ifa->ifa_rtrequest(RTM_DELETE, …)`), chamado por `rt_purge`/`rt_purgeif` ← `sana_if_deconfigure` ← `sana_reconfig_teardown` ← `net_reload`. Mesmo ponto do travamento da S1.
+- **Causa:** o IPv4 (`netinet/in.c`, `SIOCDIFADDR`) chama `rt_purgeifa(ia)` antes de liberar o endereço; o IPv6 (`in6_purgeaddr()`) não. As rotas de host clonadas do prefixo, para resolução de vizinho, ficavam com `rt_ifa` liberado; o #1950 só tirou a rota do prefixo.
+- **Correção (#1977):** `rt_purgeifa()` no `in6_purgeaddr()`, como o IPv4. Teste determinístico em `cunit-net-addr6` (a rota clonada sobra no master). Com a correção, a sequência que travava completa sem trap e a bancada passa 57/57.
+- **Fica em aberto:** a contagem de referências (`ifa_refcnt` sem uso) proposta acima. Com o mesmo padrão nas duas famílias, ela deixa de ser necessária para este caso; registrar com o Kal se ele quer o modelo BSD completo.

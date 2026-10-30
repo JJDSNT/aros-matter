@@ -1,0 +1,14 @@
+halfA: socket tcp udp inet6 mld6 route6 cmsg addr6 slaac6  traps=0
+halfB: srcaddr6 mcast6 raw6 sendto6 scope6 rio6 slaac6  traps=370408
+hB2: srcaddr6 mcast6 raw6 sendto6 scope6 rio6 slaac6  traps=362008
+noSrc: mcast6 raw6 sendto6 scope6 rio6 slaac6  traps=0
+noMc: srcaddr6 raw6 sendto6 scope6 rio6 slaac6  traps=1
+noRaw: srcaddr6 mcast6 sendto6 scope6 rio6 slaac6  traps=1
+noSend: srcaddr6 mcast6 raw6 scope6 rio6 slaac6  traps=1
+noScope: srcaddr6 mcast6 raw6 sendto6 rio6 slaac6  traps=1
+noRio: srcaddr6 mcast6 raw6 sendto6 scope6 slaac6  traps=0
+pair1: srcaddr6 rio6 slaac6  traps=0
+pair2: rio6 srcaddr6 slaac6  traps=0
+waitpair: srcaddr6 rio6 slaac6  traps=0
+trio1: srcaddr6 scope6 rio6 slaac6  traps=1
+trio2: srcaddr6 raw6 rio6 slaac6  traps=1
