@@ -54,8 +54,9 @@ Atualizado 2026-10-30. **IPv6 no AROSTCP (ISSUE-0008):**
 | [#1975](https://github.com/aros-development-team/AROS/pull/1975) | Resto da S7: `IPV6_MULTICAST_IF` escolhe a origem do datagrama multicast UDP6 | mesclado |
 | [#1976](https://github.com/aros-development-team/AROS/pull/1976) | S8: RFC 4191 (preferência do roteador default, RIO, `::/0`) + limpeza dos roteadores da interface | mesclado (`1fef6c415e`) |
 | [#1977](https://github.com/aros-development-team/AROS/pull/1977) | ISSUE-0009: `in6_purgeaddr()` apaga as rotas que usam o endereço (`rt_purgeifa`, como o IPv4); o reload travava com `rt_ifa` liberado | mesclado |
+| [#1979](https://github.com/aros-development-team/AROS/pull/1979) | S8b: o reload devolve o link-local e os endereços SLAAC (`in6_if_up()` no `addifent()`, `nd6_purge_prefixes()`) | aberto 2026-10-30; slaac6 master falha, branch passa |
 
-Próximos: abrir o PR da **S8b** (reload: link-local e prefixos; o #1977 já entrou) → **porte local do stackprobe** (GPL, fora dos repositórios) para medir o AROSTCP → lacunas R1–R11 (`research/2026-10-30-riptide-comparison.md`) e G18a–i. Bancada no master: 57/57.
+Próximos: classificar os "a conferir" do stackprobe (S3–S7, A1–A2) e as lacunas R1–R11, ambos em `research/2026-10-30-riptide-comparison.md`; candidatos baratos: S1 (`localhost`), R1 (portas efêmeras). Pendências G18a–i. Bancada no master: 57/57.
 
 Lição (2026-10-30): todo programa CUnit do AROS roda a suíte duas vezes (básica e automática). Validar **os dois** resumos; o Kal achou no #1950 uma falha que só aparecia na segunda.
 

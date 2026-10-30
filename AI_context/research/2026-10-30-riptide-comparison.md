@@ -37,3 +37,26 @@ Legenda: ✔ conferido no código do AROSTCP (master `1fef6c415e`+); ? a conferi
 ## Metodologia a aproveitar
 - **stackprobe** (~215 testes de comportamento da API `bsdsocket`, só pela interface pública, JSON/CSV): portar para o AROS hosted, **só para uso local** (GPL), e rodar contra o AROSTCP para uma lista objetiva de lacunas. Status: ver `current_state.md`.
 - **Fuzzing de entrada** (segmentos e fragmentos aleatórios): o crash por fragmento IPv4 em 64 bits e o UAF da ISSUE-0009 são o tipo de defeito que ele acha antes.
+
+## stackprobe contra o AROSTCP (2026-10-30, master `be237767fa`, hosted x86-64)
+
+Porte local em `~/aros-local/stackprobe` (fora de qualquer repositório, GPL). O porte exigiu: chamadas pelo número do vetor (`AROS_LCn`), layouts de 64 bits (tag lists em `IPTR`, `iovec`, `netent`, `addrinfo`), constantes do AROS e **ordem de bytes** (o stackprobe supõe host big-endian). Os primeiros resultados (trap, 36 FAILs) eram artefatos do porte, não do AROS: o resultado só vale depois de conferido.
+
+**Resultado:** 173 passaram, 14 falharam, 21 "não suportado", 5 pulados (precisam de par na rede).
+
+| Item | Classificação | Evidência |
+|---|---|---|
+| **S1 — `localhost` não resolve** (`gethostbyname`, `gethostbyaddr(127.0.0.1)`, `gethostbyname2(AF_INET6)`, `getaddrinfo("localhost")`) | ✔ real (configuração) | `Env/db/hosts` padrão só tem comentários. Correção: `localhost` para `127.0.0.1`/`::1` no `hosts`, ou nome especial no resolvedor (RFC 6761 §6.3) |
+| **S2 — `servent.s_port` na ordem do host** | ✔ real (portabilidade em LE) | `amiga_netdb.c` guarda o número lido; `getservbyport()` compara direto. BSD/POSIX: ordem da rede. Mudar pode quebrar programas AROS que já compensam: decisão de compatibilidade (Kal) |
+| S3 — `MSG_DONTWAIT` bloqueia | ? a conferir | ausente dos headers públicos; ver se o kernel trata 0x80 |
+| S4 — fechar com dados não lidos não manda RST | ? a conferir | RFC 2525 §2.17 recomenda RST; ver `tcp_usrreq` PRU_DETACH/soclose |
+| S5 — `getnetbyaddr(127)` não acha | ? a conferir | `networks` tem `loop 127 loopback`; ver formato esperado do argumento |
+| S6 — Roadshow `ObtainInterfaceList`/`QueryInterfaceTagList`/`GetRouteInfo` com `ECONNREFUSED` | ? a conferir | pode ser assinatura/semântica diferente da que o stackprobe supõe |
+| S7 — `In_CanForward()` devolve 1 para 8.8.8.8 e 127.0.0.1 | ? a conferir | semântica a definir pela documentação, não pelo stackprobe |
+| S8 — `ObtainRoadshowData`/`GetNetworkStatistics` `ENOSYS`; tags `SBTC_HAVE_*` do Roadshow ausentes | ✔ não implementado | stubs (Readme §11) |
+
+**ABI (achados ao portar, a conferir contra o SDK oficial do Roadshow, que não estava acessível — espelho 403):**
+- **A1 — família `getaddrinfo` do Roadshow um slot depois:** AROS `freeaddrinfo` 135, `getaddrinfo` 136, `gai_strerror` 137, `getnameinfo` 138 (`ipf_set_interrupt_mask` em 134); stackprobe/Riptide: 134/135/…/137. No porte segui o AROS.
+- **A2 — `mbuf_*` trocados aos pares** em relação ao SDK do netstack do MorphOS (Aminet `comm/tcp/MOSNet-SDK`): `mbuf_copydata`/`mbuf_copyback` (105/106) e `mbuf_adj`/`mbuf_cat` (112/113). 90 outras funções casam.
+- **A3 — `struct addrinfo` com campos `long` e `ai_addrlen` `size_t`** (POSIX: `int`/`socklen_t`). Não é defeito para programas AROS; registrar como diferença de ABI em 64 bits.
+- **A4 — constantes:** `FIO*`/`SIOCATMARK` codificam tamanho 8 em x86-64; `SO_REUSEPORT`, `TCP_MAXSEG`, `MSG_DONTWAIT`, `SO_USELOOPBACK`, `SBTC_COMPAT43` ausentes dos headers públicos; `IPV6_V6ONLY` 26 (G13).

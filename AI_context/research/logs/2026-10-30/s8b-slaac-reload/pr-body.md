@@ -24,7 +24,7 @@ There is no API, ABI or structure change.
 
 ## Reproduction and validation
 
-Hosted linux-x86_64, with `tap.device` attached to a host tap that sends no Router Advertisements. The series is on master `1fef6c415e`.
+Hosted linux-x86_64, with `tap.device` attached to a host tap that sends no Router Advertisements. The series is on master `be237767fa`.
 
 `cunit-net-slaac6 eth0` works like this:
 
@@ -39,9 +39,9 @@ Hosted linux-x86_64, with `tap.device` attached to a host tap that sends no Rout
 | after a reload the prefix gives the address again (first run) | **FAILED** | **FAILED** | passed |
 | both tests (second run, after the reload of the first) | **FAILED** 2/2 | **FAILED** 2/2 | passed |
 
-The cunit socket, tcp, udp, inet6, mld6, route6, cmsg, addr6, srcaddr6, mcast6, raw6, sendto6, scope6 and rio6 suites pass unchanged on master and on this branch, in both runs. They run before `cunit-net-slaac6`, which reloads the stack.
+The cunit socket, tcp, udp, inet6, mld6, route6, cmsg, addr6, srcaddr6, mcast6, raw6, sendto6, scope6 and rio6 suites pass unchanged on master and on this branch, in both runs. They run before `cunit-net-slaac6`, which reloads the stack; with #1977 in, that reload no longer crashes.
 
-**End to end:** my wider IPv6 harness (57 checks, not part of this PR) includes two cases that reload the stack: an interface removed and added back, and an address deleted before a reload. Its results are <BENCH>.
+**End to end:** my wider IPv6 harness (57 checks, not part of this PR) includes two cases that reload the stack: an interface removed and added back, and an address deleted before a reload. It passes all checks on both master and this branch.
 
 **Additional validation:** each commit builds `workbench-network-stacks-arostcp`; `test-socket-yes-cunit` builds; `git diff --check` is clean. Only hosted x86-64 was built and run.
 
