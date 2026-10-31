@@ -1,0 +1,35 @@
+{
+ "host_addresses": [
+  "fe80::e090:2aff:fe98:97bd",
+  "fe80::1"
+ ],
+ "ptb": {
+  "time": 1793488327.6719925,
+  "aros": "fe80::702a:a5ff:feba:6e0e",
+  "host": "fe80::e090:2aff:fe98:97bd",
+  "quoted_len": 1232
+ },
+ "host_bytes": [
+  2000000,
+  2000000,
+  0
+ ],
+ "boot": "did not finish",
+ "before_ptb": {
+  "packets": 12,
+  "largest": 1500,
+  "fragments": 0,
+  "over_mtu": 2
+ },
+ "after_ptb": {
+  "packets": 3906,
+  "largest": 1500,
+  "fragments": 0,
+  "over_mtu": 54
+ },
+ "syn_mss": [
+  1440,
+  1220,
+  1440
+ ]
+}
