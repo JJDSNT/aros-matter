@@ -1,0 +1,6 @@
+1793485132.867208 IP6 (hlim 64, next-header UDP (17) payload length: 1460) 2001:db8:4d55:0:d96c:dbce:5492:e44b.64651 > 2001:db8:4d54::1.9999: UDP, length 1452
+1793485132.867490 IP6 (flowlabel 0x40e40, hlim 64, next-header ICMPv6 (58) payload length: 1360) 2001:db8:4d54::1 > 2001:db8:4d55:0:d96c:dbce:5492:e44b: ICMP6, packet too big, mtu 1400
+1793485137.867103 IP6 (hlim 64, next-header Fragment (44) payload length: 1360) 2001:db8:4d55:0:d96c:dbce:5492:e44b > 2001:db8:4d54::2: frag (0x00000001:0|1352) 52788 > 9999: UDP, length 1452
+1793485137.867139 IP6 (hlim 64, next-header Fragment (44) payload length: 116) 2001:db8:4d55:0:d96c:dbce:5492:e44b > 2001:db8:4d54::2: frag (0x00000001:1352|108)
+1793485140.867384 IP6 (hlim 64, next-header Fragment (44) payload length: 1360) 2001:db8:4d55:0:d96c:dbce:5492:e44b > 2001:db8:4d54::1: frag (0x00000002:0|1352) 56148 > 9999: UDP, length 1452
+1793485140.867411 IP6 (hlim 64, next-header Fragment (44) payload length: 116) 2001:db8:4d55:0:d96c:dbce:5492:e44b > 2001:db8:4d54::1: frag (0x00000002:1352|108)

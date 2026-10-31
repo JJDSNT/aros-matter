@@ -21,7 +21,7 @@ Wire tests use `tests/tcp/pmtud_probe.py`. The host (Linux, tap `aros0`) capture
 
 1. ✔ **In review as AROS #2002.** **P4 + P5:** a PTB updates a cloned host route for its destination (`RTF_DYNAMIC`, as KAME), not the default or prefix route; that route expires after 10 minutes, giving the MTU back. Test: CUnit with a raw socket sending a PTB about one destination, then checking `IPV6_PATHMTU` (RFC 3542 §11.2), or the fragmenting of a datagram, for another one.
 2. **P3:** `tcp6_ctlinput()` takes `PRC_MSGSIZE`. `icmp6_notify_error()` calls it for a PTB, a check against the connection's sequence window (P6) included, and `tcp_mtudisc()` lowers `t_maxseg` and retransmits, as FreeBSD's `tcp_mtudisc`. That changes Kal's "no socket is told" note: it needs his view in the PR.
-3. **P7:** a small ND hold queue per neighbour (e.g. 16 packets, oldest dropped first).
+3. ✔ **In review as AROS #2003.** **P7:** a small ND hold queue per neighbour (e.g. 16 packets, oldest dropped first).
 4. **P1:** IPv4 PMTUD with DF on TCP is a policy change for the whole IPv4 stack; ask Kal before doing it.
 
 Matter runs over IPv6 and keeps its messages under 1280, so none of these blocks it. P3 and P4 matter to any IPv6 TCP over a path with a smaller MTU (tunnels, VPNs); P7 to the first burst towards a new neighbour.

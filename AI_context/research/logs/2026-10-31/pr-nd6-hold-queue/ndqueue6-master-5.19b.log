@@ -1,0 +1,28 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: NDQUEUE6_Suite
+  Test: a datagram fragmented while resolving leaves whole ...FAILED
+    1. testND6_QUEUE_FRAGMENTS:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-ndqueue6.c:256  - CU_ASSERT_EQUAL(bytes,8 + BIG)
+  Test: a failed resolution tells the sender ...FAILED
+    1. testND6_UNREACHABLE:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-ndqueue6.c:284  - err == EHOSTUNREACH || err == EHOSTDOWN
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :        9         3       n/a       n/a
+     Tests        :        2         2         0         0
+
+Elapsed Time: 11.040(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :        9         3       n/a       n/a
+     Tests        :        2         2         0         0
+
+Elapsed Time: 11.020(s)
+
