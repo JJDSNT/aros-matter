@@ -1,0 +1,44 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: PORTS_Suite
+  Test: TCP bind to port 0 ...FAILED
+    1. check_ports:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-ports.c:78  - steps < (n - 1) / 2
+  Test: UDP bind to port 0 ...FAILED
+    1. check_ports:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-ports.c:78  - steps < (n - 1) / 2
+  Test: TCP6 bind to port 0 ...FAILED
+    1. check_ports:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-ports.c:78  - steps < (n - 1) / 2
+  Test: UDP6 bind to port 0 ...FAILED
+    1. check_ports:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-ports.c:78  - steps < (n - 1) / 2
+  Test: bind to an address and port 0 ...FAILED
+    1. check_ports:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-ports.c:78  - steps < (n - 1) / 2
+  Test: bind to an IPv6 address and port 0 ...FAILED
+    1. check_ports:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-ports.c:78  - steps < (n - 1) / 2
+  Test: connect() without bind ...FAILED
+    1. check_ports:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-ports.c:74  - ok
+  Test: connect() without bind (IPv6) ...FAILED
+    1. check_ports:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-ports.c:74  - ok
+  Test: sendto() without bind ...FAILED
+    1. check_ports:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-ports.c:78  - steps < (n - 1) / 2
+  Test: sendto() without bind (IPv6) ...FAILED
+    1. check_ports:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-ports.c:78  - steps < (n - 1) / 2
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       32        18       n/a       n/a
+     Tests        :       10        10         0         0
+
+Elapsed Time: 0.040(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       32        18       n/a       n/a
+     Tests        :       10        10         0         0
+
+Elapsed Time: 0.000(s)
+

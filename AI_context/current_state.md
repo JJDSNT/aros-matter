@@ -58,19 +58,20 @@ Atualizado 2026-10-30. **IPv6 no AROSTCP (ISSUE-0008):**
 | [#1983](https://github.com/aros-development-team/AROS/pull/1983) | G19c+d: fragmentação IPv6 (todos os fragmentos, bit M na ordem certa, `rt` NULL em multicast) | **merged** (b35c81ec1a); revalidado com build limpo pós-merge |
 | [#1991](https://github.com/aros-development-team/AROS/pull/1991) | follow-up do #1980 (Codex): `header` com escopo reduzido em `mdnsd.c` (Codacy variableScope) | **merged** 2026-10-31 |
 | [#1992](https://github.com/aros-development-team/AROS/pull/1992) | follow-up do #1986 (Codex): AROSTCP 5.15 / kernel v0.54 em `bsdsocket/version.h`, pedido do Kal | **merged** 2026-10-31 (7a6f655644) |
-| [#1995](https://github.com/aros-development-team/AROS/pull/1995) | G19b: MSS do TCP em IPv6 (60 bytes de cabeçalho, default 1220, respeita o MSS do peer, SYN-ACK do syncache) + 5.16 / v0.55 | aberto 2026-10-31; evidência em `research/logs/2026-10-31/pr-tcp-mss6/` |
+| [#1995](https://github.com/aros-development-team/AROS/pull/1995) | G19b: MSS do TCP em IPv6 (60 bytes de cabeçalho, default 1220, respeita o MSS do peer, SYN-ACK do syncache) + 5.16 / v0.55 | **merged** 2026-10-31; evidência em `research/logs/2026-10-31/pr-tcp-mss6/` |
 | [#1996](https://github.com/aros-development-team/AROS/pull/1996) | G19e: T/TCP desligado por padrão (`tcp_do_rfc1644 = 0`; RFC 6247), teste `cunit-net-tcpsyn6` (BPF no SYN), Readme §5.4, 5.16 | aberto 2026-10-31; conflita com o #1995 em `version.h`/mmakefile: quem entrar depois sobe para 5.17. Evidência em `research/logs/2026-10-31/pr-ttcp-off/` |
 | [#1997](https://github.com/aros-development-team/AROS/pull/1997) | G19h: `close()` com dados não lidos manda RST (RFC 9293 §3.6.1 SHLD-2), 4 casos novos no `cunit-net-tcp`, Readme §10, 5.16 | aberto 2026-10-31; evidência em `research/logs/2026-10-31/pr-close-rst/` |
+| [#1998](https://github.com/aros-development-team/AROS/pull/1998) | R1/G19g: portas efêmeras aleatórias em 49152–65535 (RFC 6056 alg. 1, RFC 6335), `in_pcbpickport()`, `EADDRNOTAVAIL` ao esgotar, teste `cunit-net-ports`, Readme §10 | aberto 2026-10-31; evidência em `research/logs/2026-10-31/pr-ephemeral-ports/` |
 
 **Build isolado (2026-10-30):** o Codex compilou em `~/aros-build-ipv6-hosted` a partir de `/tmp/aros-udp6-hops`; o `udp6_usrreq.o` dele entrou nos binários "frag" (#1983) e "mss". A partir de agora o build próprio é `~/aros-build-ipv6-hosted-claude` (mesma configuração, toolchain do midihub, cache de fontes copiado). Não usar o diretório antigo para validar.
 
-**Revisão do AROSTCP:** todo PR funcional no AROSTCP sobe REVISION/DATE/VERS/VERSTAG/kernel em `bsdsocket/version.h` (Kal no #1986). #1995, #1996 e #1997 levam 5.16 / v0.55; cada um que entrar depois de outro é rebaseado para a revisão seguinte.
+**Revisão do AROSTCP:** todo PR funcional no AROSTCP sobe REVISION/DATE/VERS/VERSTAG/kernel em `bsdsocket/version.h` (Kal no #1986). #1995 entrou como 5.16. #1996, #1997 e #1998 foram rebaseados e levam 5.17 / v0.56; a cada merge, os restantes sobem para a revisão seguinte.
 
 **Lição de teste (2026-10-31):** num teste CUnit que conecta a um vizinho, o vizinho pode recusar (RST) antes de `connect()` voltar; o PCB some e `getsockname()` dá EINVAL. Fazer `bind()` + `getsockname()` antes do `connect()`. A falha só aparecia sem `printf` (timing) e na segunda execução.
 
 **Bench (2026-10-31):** o caso `mss advmss=0` vazio era do bench: um tap recém-criado não tem link-local até ter carrier, e o script mandava `None` como host (errno 49). `tools/tap-up.sh` agora dá `fe80::1` (nodad) a um tap sem link-local, e `run_tcp.py` aborta sem link-local. `mld.ifdetach` (janela de MLD no host) falhou 1 vez em 4 com master e com o fix: timing, não regressão.
 
-Próximos: aguardar #1995/#1996/#1997 → R1 (portas RFC 6056) → G19i. Depois: S1 (`localhost`), R4, R7, G18a–i. #1980 foi mesclado (Codex); o follow-up do Codacy foi o #1991.
+Próximos: aguardar #1996/#1997/#1998 → G19i (RTO) e G19j (TSval 0), ambos pesquisa primeiro. Depois: S1 (`localhost`), R4, R7, G18a–i. #1980 foi mesclado (Codex); o follow-up do Codacy foi o #1991.
 
 **Backlog 2 (2026-10-31):** matriz de reconciliação em [research/2026-10-31-backlog2-reconciliation.md](research/2026-10-31-backlog2-reconciliation.md). B2 ainda não é ativado como frente própria: G19e/G19h/R1 cobrem B2-A e G19i cobre B2-C. G19f explicado (`tcp_do_ecn = 0`, desligado por padrão). Achado: as opções `TCP_KEEP*` estão só no header, sem `tcp_ctloutput()`. Primeiro candidato B2 depois disso: auditoria de PMTUD (B2-B, só pesquisa).
 
