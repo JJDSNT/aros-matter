@@ -2,6 +2,8 @@
 
 **Status:** planejado, com ativação incremental delegada ao agente. **Data:** 2026-10-31.
 
+**Prioridade relativa ao Matter:** nenhuma precedência global é imposta entre este backlog e os marcos Matter M0–M6. O agente pode avançar no Matter antes, durante ou depois de itens B2, de acordo com dependências técnicas verificadas, valor, risco e custo. Preservar M0–M6 significa preservar objetivos e critérios de aceite, não congelar a ordem de execução entre frentes.
+
 > Documento de continuidade. Não é uma fila de execução nem autorização para alterar o backlog atual. O agente deve seguir `AI_context/current_state.md` e as issues ativas até que o agente identifique e documente uma oportunidade técnica de ativação.
 
 ## 1. Propósito e referências
@@ -85,7 +87,7 @@ Referências canônicas:
 
 O agente pode **decidir e executar** ativação, antecipação, adiamento, divisão, descarte ou nova ordem com base na realidade do desenvolvimento. Para cada proposta registrar: revisão upstream e arquivos analisados; estado implementado/habilitado/testado/ausente/inconclusivo; evidência reproduzível; riscos em IPv4/IPv6/LP64/68k; dependências; custo relativo; e motivo da prioridade.
 
-Pode ativar frentes e ajustar a sequência de pequenas entregas, documentando a decisão. **Pode repriorizar issues e ativar frentes B2 quando houver evidência e não prejudicar entregas ativas**, mas não pode, sem aprovação do mantenedor,, iniciar refatoração transversal, alterar ABI pública, ativar globalmente PRR/ECN ou alterar os marcos Matter.
+Pode ativar frentes e ajustar a sequência de pequenas entregas, documentando a decisão. **Pode repriorizar issues e ativar frentes B2 quando houver evidência e não prejudicar entregas ativas**, mas não pode, sem aprovação do mantenedor, iniciar refatoração transversal, alterar ABI pública, ativar globalmente PRR/ECN ou alterar os marcos Matter.
 
 ## 7. Qualidade, upstream e encerramento
 
