@@ -13,7 +13,7 @@ States:
 | G19b — MSS IPv6 | B2-B | in review (#1995) | fixes the MSS only; PMTUD audit not done |
 | R1/G19g — RFC 6056 ports | B2-A | current | sequential ports from 1024 measured on the wire (tcp-wire 2026-10-30); done here satisfies B2-A R1 |
 | G19e — T/TCP `ccnew` in the SYN | B2-A (compatibility) | in review (#1996) | `tcp_do_rfc1644 = 1` (`tcp_subr.c:314`); RFC 6247 moved T/TCP to Historic |
-| G19h — close with unread data sends FIN | B2-A | current | = stackprobe S4; RFC 1122 §4.2.2.13 / RFC 2525 §2.17 |
+| G19h — close with unread data sends FIN | B2-A | in review (#1997) | = stackprobe S4; RFC 1122 §4.2.2.13 / RFC 2525 §2.17 |
 | G19i — RTO 1.4 s then 9 s gap | B2-C | current, research | measure timer granularity before touching anything (RFC 6298) |
 | G19f — no ECN in the SYN | B2-C | explained | `tcp_do_ecn = 0` (`tcp_subr.c:317`): off by default, not a defect. Enabling it globally needs maintainer approval (B2 §6) |
 | R2 — RFC 5961 | B2-A | pending, research | RST in `tcp_input.c:1411` acts on any in-window RST: no exact-sequence check, no challenge ACK. Needs a blind-RST/SYN test first |
