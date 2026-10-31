@@ -207,7 +207,8 @@ def main():
             f.write("C:tcpbench eth0 %s send 7002 %d >SYS:out/send1.log\n" % (host_ll, SEND_BYTES))
             f.write("Wait 2\n")
             f.write("C:tcpbench eth0 %s send 7002 %d >SYS:out/send2.log\n" % (host_ll, SEND_BYTES))
-            f.write("C:tcpbench eth0 %s send 7002 %d >SYS:out/send3.log\n" % (other_ll, SEND_BYTES))
+            if not a.router:    # behind the router only the first address gets a Packet Too Big
+                f.write("C:tcpbench eth0 %s send 7002 %d >SYS:out/send3.log\n" % (other_ll, SEND_BYTES))
     env = dict(os.environ, AROS_HOSTED_IMAGE=a.image, AROS_TAP_IP=run_tcp.AROS_IP, AROS_RUN_TIMEOUT="300")
     if a.arostcp:
         env["AROS_AROSTCP"] = a.arostcp
