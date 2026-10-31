@@ -1,0 +1,28 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: TCPMSS6_Suite
+  Test: TCP MSS over the link-local address fits the MTU ...FAILED
+    1. testTCPMSS6_LINKLOCAL:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-tcpmss6.c:120  - sm > 0 && sm <= mtu - 60
+  Test: TCP MSS over a unique local address fits the MTU ...FAILED
+    1. testTCPMSS6_ULA:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-tcpmss6.c:130  - sm > 0 && sm <= mtu - 60
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :        6         4       n/a       n/a
+     Tests        :        2         2         0         0
+
+Elapsed Time: 0.020(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :        6         4       n/a       n/a
+     Tests        :        2         2         0         0
+
+Elapsed Time: 0.000(s)
+

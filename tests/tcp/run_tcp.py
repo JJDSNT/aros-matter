@@ -192,6 +192,7 @@ def main():
     ap.add_argument("--arostcp")
     ap.add_argument("--no-shape", action="store_true", help="leave the link alone (no tc)")
     ap.add_argument("--only", help="comma-separated modes to run (connect,send,unread,stall)")
+    ap.add_argument("--advmss", type=int, help="make the host advertise this MSS to AROS (route advmss)")
     ap.add_argument("--out", default=os.path.join(ROOT, "tests", "tcp", "out", time.strftime("%Y%m%d-%H%M%S")))
     a = ap.parse_args()
     global SHAPE
@@ -202,11 +203,17 @@ def main():
                     os.path.join(HERE, "tcpbench.c")], check=True)
     subprocess.run([os.path.join(ROOT, "tools", "tap-up.sh")], check=True, stdout=subprocess.DEVNULL)
     tc_clear()
+    if a.advmss:
+        # the kernel's own link-local route (metric 256) is the one that applies
+        subprocess.run(["sudo", "-n", "ip", "-6", "route", "replace", "fe80::/64", "dev", IFACE,
+                        "proto", "kernel", "metric", "256", "advmss", str(a.advmss)], check=True)
     host_ll = None
     for line in subprocess.run(["ip", "-6", "addr", "show", "dev", IFACE], capture_output=True, text=True).stdout.splitlines():
         m = re.search(r"inet6 (fe80::\S+)/", line)
         if m:
             host_ll = m.group(1)
+    if host_ll is None:
+        sys.exit("no IPv6 link-local address on %s" % IFACE)
     lst = Listeners()
     pcap = os.path.join(a.out, "tcp.pcap")
     dump = subprocess.Popen(["sudo", "-n", "tcpdump", "-i", IFACE, "-n", "-s", "128", "-w", pcap, os.environ.get("TCP_BENCH_FILTER", "ip6 and tcp")],
@@ -233,6 +240,12 @@ def main():
         subprocess.run(["sudo", "-n", "kill", "-INT", pid])
     dump.wait(timeout=10)
     tc_clear()
+    if a.advmss:
+        # put the route back as the kernel made it: one route, no advmss
+        subprocess.run(["sudo", "-n", "ip", "-6", "route", "del", "fe80::/64", "dev", IFACE,
+                        "proto", "kernel", "metric", "256"])
+        subprocess.run(["sudo", "-n", "ip", "-6", "route", "add", "fe80::/64", "dev", IFACE,
+                        "proto", "kernel", "metric", "256"])
     text = subprocess.run(["sudo", "-n", "tcpdump", "-tt", "-nn", "-S", "-v", "-r", pcap],
                           capture_output=True, text=True).stdout
     open(os.path.join(a.out, "tcp.txt"), "w").write(text)
