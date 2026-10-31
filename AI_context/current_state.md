@@ -55,11 +55,15 @@ Atualizado 2026-10-30. **IPv6 no AROSTCP (ISSUE-0008):**
 | [#1976](https://github.com/aros-development-team/AROS/pull/1976) | S8: RFC 4191 (preferência do roteador default, RIO, `::/0`) + limpeza dos roteadores da interface | mesclado (`1fef6c415e`) |
 | [#1977](https://github.com/aros-development-team/AROS/pull/1977) | ISSUE-0009: `in6_purgeaddr()` apaga as rotas que usam o endereço (`rt_purgeifa`, como o IPv4); o reload travava com `rt_ifa` liberado | mesclado |
 | [#1979](https://github.com/aros-development-team/AROS/pull/1979) | S8b: o reload devolve o link-local e os endereços SLAAC (`in6_if_up()` no `addifent()`, `nd6_purge_prefixes()`) | aberto 2026-10-30; slaac6 master falha, branch passa |
-| [#1983](https://github.com/aros-development-team/AROS/pull/1983) | G19c+d: fragmentação IPv6 (todos os fragmentos, bit M na ordem certa, `rt` NULL em multicast) | aberto 2026-10-30; **revalidar com build limpo**: o binário validado incluía o `udp6_usrreq.o` do Codex (ver abaixo) |
+| [#1983](https://github.com/aros-development-team/AROS/pull/1983) | G19c+d: fragmentação IPv6 (todos os fragmentos, bit M na ordem certa, `rt` NULL em multicast) | **merged** (b35c81ec1a); revalidado com build limpo pós-merge |
+| [#1991](https://github.com/aros-development-team/AROS/pull/1991) | follow-up do #1980 (Codex): `header` com escopo reduzido em `mdnsd.c` (Codacy variableScope) | aberto 2026-10-31 |
+| [#1992](https://github.com/aros-development-team/AROS/pull/1992) | follow-up do #1986 (Codex): AROSTCP 5.15 / kernel v0.54 em `bsdsocket/version.h`, pedido do Kal | aberto 2026-10-31 |
 
 **Build isolado (2026-10-30):** o Codex compilou em `~/aros-build-ipv6-hosted` a partir de `/tmp/aros-udp6-hops`; o `udp6_usrreq.o` dele entrou nos binários "frag" (#1983) e "mss". A partir de agora o build próprio é `~/aros-build-ipv6-hosted-claude` (mesma configuração, toolchain do midihub, cache de fontes copiado). Não usar o diretório antigo para validar.
 
-Próximos: build limpo → revalidar #1983 → abrir o PR do **G19b** (MSS do TCP em IPv6; commits prontos em `review/arostcp-ipv6-tcp-mss`) → #1980 (mdnsd IPv6, do Codex) só se o Codex parar de mexer nele → G19e (T/TCP no SYN) → G19h, R1 → G19i. Depois: S1 (`localhost`), R4, R7, G18a–i.
+**Revisão do AROSTCP:** todo PR funcional no AROSTCP sobe REVISION/DATE/VERS/VERSTAG/kernel em `bsdsocket/version.h` (Kal no #1986). O PR do MSS leva 5.16 / v0.55 por cima do #1992.
+
+Próximos: rerodar o caso `mss advmss=0` do bench TCP (veio vazio) → abrir o PR do **G19b** (MSS do TCP em IPv6; commits prontos em `review/arostcp-ipv6-tcp-mss`) → #1980 (mdnsd IPv6, do Codex) só se o Codex parar de mexer nele → G19e (T/TCP no SYN) → G19h, R1 → G19i. Depois: S1 (`localhost`), R4, R7, G18a–i.
 
 Lição (2026-10-30): todo programa CUnit do AROS roda a suíte duas vezes (básica e automática). Validar **os dois** resumos; o Kal achou no #1950 uma falha que só aparecia na segunda.
 
