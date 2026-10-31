@@ -65,6 +65,10 @@ Lição (2026-10-30): todo programa CUnit do AROS roda a suíte duas vezes (bás
 
 Depois do IPv6: ISSUE-0003 (crypto) → fechar ISSUE-0001 → ISSUE-0006 (spike M1) → ISSUE-0004.
 
+## Planejamento futuro — não ativado
+
+- [Backlog 2 — modernização incremental do AROSTCP](backlog2.md): segurança, PMTUD, recuperação, temporizadores e TCP avançado. **Documento de continuidade, sem alterar a ordem das issues atuais ou M0–M6.** Ativar somente após decisão do mantenedor e reconciliação com upstream e trabalho em andamento.
+
 ## Decisões em aberto para o mantenedor
 
 - ~~Primeiro alvo~~ → decidido: AROS hosted linux-x86_64 (2026-10-28).
