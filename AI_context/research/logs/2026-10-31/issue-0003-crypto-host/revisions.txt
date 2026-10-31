@@ -1,0 +1,3 @@
+connectedhomeip 3bcdd56 (v1.6.1.0)
+mbedtls 3.6.7 (AROS ports cache)
+nlio 0e72550 nlassert c5892c5 googletest 6dae7eb

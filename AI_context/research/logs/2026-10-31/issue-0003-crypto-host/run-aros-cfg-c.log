@@ -1,0 +1,224 @@
+Running main() from /home/jaime/aros-local/connectedhomeip/third_party/googletest/googletest/src/gtest_main.cc
+[==========] Running 74 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 74 tests from TestChipCryptoPAL
+[ RUN      ] TestChipCryptoPAL.TestAES_CTR_128CryptTestVectors
+[       OK ] TestChipCryptoPAL.TestAES_CTR_128CryptTestVectors (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestAES_CCM_128EncryptTestVectors
+[       OK ] TestChipCryptoPAL.TestAES_CCM_128EncryptTestVectors (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestAES_CCM_128DecryptTestVectors
+[       OK ] TestChipCryptoPAL.TestAES_CCM_128DecryptTestVectors (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestAES_CCM_128InPlaceEncryption
+[       OK ] TestChipCryptoPAL.TestAES_CCM_128InPlaceEncryption (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestAES_CCM_128InPlaceDecryption
+[       OK ] TestChipCryptoPAL.TestAES_CCM_128InPlaceDecryption (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestAES_CCM_128EncryptInvalidNonceLen
+[       OK ] TestChipCryptoPAL.TestAES_CCM_128EncryptInvalidNonceLen (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestAES_CCM_128EncryptInvalidTagLen
+[       OK ] TestChipCryptoPAL.TestAES_CCM_128EncryptInvalidTagLen (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestAES_CCM_128DecryptInvalidNonceLen
+[       OK ] TestChipCryptoPAL.TestAES_CCM_128DecryptInvalidNonceLen (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestSymmetricKeyHandleOpaqueBytesRoundTrip
+[       OK ] TestChipCryptoPAL.TestSymmetricKeyHandleOpaqueBytesRoundTrip (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestSensitiveDataBuffer
+[       OK ] TestChipCryptoPAL.TestSensitiveDataBuffer (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestSensitiveDataFixedBuffer
+[       OK ] TestChipCryptoPAL.TestSensitiveDataFixedBuffer (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestAsn1Conversions
+[       OK ] TestChipCryptoPAL.TestAsn1Conversions (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestRawIntegerToDerValidCases
+[       OK ] TestChipCryptoPAL.TestRawIntegerToDerValidCases (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestRawIntegerToDerInvalidCases
+[       OK ] TestChipCryptoPAL.TestRawIntegerToDerInvalidCases (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestReadDerLengthValidCases
+[       OK ] TestChipCryptoPAL.TestReadDerLengthValidCases (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestReadDerLengthInvalidCases
+[       OK ] TestChipCryptoPAL.TestReadDerLengthInvalidCases (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestHash_SHA256
+[       OK ] TestChipCryptoPAL.TestHash_SHA256 (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestHash_SHA256_Stream
+[       OK ] TestChipCryptoPAL.TestHash_SHA256_Stream (1 ms)
+[ RUN      ] TestChipCryptoPAL.TestHMAC_SHA256_RawKey
+[       OK ] TestChipCryptoPAL.TestHMAC_SHA256_RawKey (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestHMAC_SHA256_KeyHandle
+[       OK ] TestChipCryptoPAL.TestHMAC_SHA256_KeyHandle (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestHKDF_SHA256
+[       OK ] TestChipCryptoPAL.TestHKDF_SHA256 (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestDRBG_InvalidInputs
+[       OK ] TestChipCryptoPAL.TestDRBG_InvalidInputs (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestDRBG_Output
+[       OK ] TestChipCryptoPAL.TestDRBG_Output (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestECDSA_Signing_SHA256_Msg
+[       OK ] TestChipCryptoPAL.TestECDSA_Signing_SHA256_Msg (9 ms)
+[ RUN      ] TestChipCryptoPAL.TestECDSA_Signing_SHA256_Hash
+[       OK ] TestChipCryptoPAL.TestECDSA_Signing_SHA256_Hash (22 ms)
+[ RUN      ] TestChipCryptoPAL.TestECDSA_ValidationFailsDifferentMessage
+[CR] mbedTLS error: ECP - The signature is not valid
+[       OK ] TestChipCryptoPAL.TestECDSA_ValidationFailsDifferentMessage (8 ms)
+[ RUN      ] TestChipCryptoPAL.TestECDSA_ValidationFailIncorrectMsgSignature
+[CR] mbedTLS error: ECP - The signature is not valid
+[       OK ] TestChipCryptoPAL.TestECDSA_ValidationFailIncorrectMsgSignature (8 ms)
+[ RUN      ] TestChipCryptoPAL.TestECDSA_ValidationFailIncorrectHashSignature
+[CR] mbedTLS error: ECP - The signature is not valid
+[       OK ] TestChipCryptoPAL.TestECDSA_ValidationFailIncorrectHashSignature (8 ms)
+[ RUN      ] TestChipCryptoPAL.TestECDSA_SigningMsgInvalidParams
+[       OK ] TestChipCryptoPAL.TestECDSA_SigningMsgInvalidParams (1 ms)
+[ RUN      ] TestChipCryptoPAL.TestECDSA_ValidationMsgInvalidParam
+[       OK ] TestChipCryptoPAL.TestECDSA_ValidationMsgInvalidParam (2 ms)
+[ RUN      ] TestChipCryptoPAL.TestECDSA_ValidationHashInvalidParam
+[       OK ] TestChipCryptoPAL.TestECDSA_ValidationHashInvalidParam (2 ms)
+[ RUN      ] TestChipCryptoPAL.TestP256_DeterministicECDSA_Sanity
+/home/jaime/aros-local/connectedhomeip/src/crypto/tests/TestChipCryptoPAL.cpp:1461: Skipped
+Skipping test: P256Keypair::ECDSA_sign_msg_det not supported
+
+[  SKIPPED ] TestChipCryptoPAL.TestP256_DeterministicECDSA_Sanity (1 ms)
+[ RUN      ] TestChipCryptoPAL.TestP256_DeterministicECDSA_TestVectors
+/home/jaime/aros-local/connectedhomeip/src/crypto/tests/TestChipCryptoPAL.cpp:1498: Skipped
+Skipping test: P256Keypair::ECDSA_sign_msg_det not supported
+
+[  SKIPPED ] TestChipCryptoPAL.TestP256_DeterministicECDSA_TestVectors (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestECDH_EstablishSecret
+[       OK ] TestChipCryptoPAL.TestECDH_EstablishSecret (11 ms)
+[ RUN      ] TestChipCryptoPAL.TestAddEntropySources
+[       OK ] TestChipCryptoPAL.TestAddEntropySources (4 ms)
+[ RUN      ] TestChipCryptoPAL.TestPBKDF2_SHA256_TestVectors
+[       OK ] TestChipCryptoPAL.TestPBKDF2_SHA256_TestVectors (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestP256_Keygen
+[       OK ] TestChipCryptoPAL.TestP256_Keygen (8 ms)
+[ RUN      ] TestChipCryptoPAL.TestP256_InitializeFromBitsOrReject
+/home/jaime/aros-local/connectedhomeip/src/crypto/tests/TestChipCryptoPAL.cpp:1648: Skipped
+Skipping test: P256Keypair::InitializeFromBitsOrReject not supported
+
+[  SKIPPED ] TestChipCryptoPAL.TestP256_InitializeFromBitsOrReject (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestCSR_Verify
+[CR] mbedTLS error: ECP - The signature is not valid
+[       OK ] TestChipCryptoPAL.TestCSR_Verify (11 ms)
+[ RUN      ] TestChipCryptoPAL.TestCSR_GenDirect
+[CR] mbedTLS error: ECP - The signature is not valid
+[       OK ] TestChipCryptoPAL.TestCSR_GenDirect (14 ms)
+[ RUN      ] TestChipCryptoPAL.TestCSR_GenByKeypair
+[CR] mbedTLS error: ECP - The signature is not valid
+[       OK ] TestChipCryptoPAL.TestCSR_GenByKeypair (14 ms)
+[ RUN      ] TestChipCryptoPAL.TestKeypair_Serialize
+[       OK ] TestChipCryptoPAL.TestKeypair_Serialize (15 ms)
+[ RUN      ] TestChipCryptoPAL.TestSPAKE2P_spake2p_FEMul
+[       OK ] TestChipCryptoPAL.TestSPAKE2P_spake2p_FEMul (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestSPAKE2P_spake2p_FELoadWrite
+[       OK ] TestChipCryptoPAL.TestSPAKE2P_spake2p_FELoadWrite (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestSPAKE2P_spake2p_Mac
+[       OK ] TestChipCryptoPAL.TestSPAKE2P_spake2p_Mac (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestSPAKE2P_spake2p_PointMul
+[       OK ] TestChipCryptoPAL.TestSPAKE2P_spake2p_PointMul (82 ms)
+[ RUN      ] TestChipCryptoPAL.TestSPAKE2P_spake2p_PointMulAdd
+[       OK ] TestChipCryptoPAL.TestSPAKE2P_spake2p_PointMulAdd (165 ms)
+[ RUN      ] TestChipCryptoPAL.TestSPAKE2P_spake2p_PointLoadWrite
+[       OK ] TestChipCryptoPAL.TestSPAKE2P_spake2p_PointLoadWrite (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestSPAKE2P_spake2p_PointIsValid
+[       OK ] TestChipCryptoPAL.TestSPAKE2P_spake2p_PointIsValid (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestSPAKE2P_RFC
+[       OK ] TestChipCryptoPAL.TestSPAKE2P_RFC (165 ms)
+[ RUN      ] TestChipCryptoPAL.TestSPAKE2P_Reuse
+[       OK ] TestChipCryptoPAL.TestSPAKE2P_Reuse (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestCompressedFabricIdentifier
+[       OK ] TestChipCryptoPAL.TestCompressedFabricIdentifier (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestPubkey_x509Extraction
+[       OK ] TestChipCryptoPAL.TestPubkey_x509Extraction (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestX509_VerifyAttestationCertificateFormat
+[CR] mbedTLS error: X509 - The extension tag or value is invalid : ASN1 - ASN1 tag was of an unexpected value
+[CR] mbedTLS error: X509 - The extension tag or value is invalid : ASN1 - ASN1 tag was of an unexpected value
+[CR] mbedTLS error: X509 - The extension tag or value is invalid : ASN1 - ASN1 tag was of an unexpected value
+[CR] mbedTLS error: X509 - The extension tag or value is invalid : ASN1 - ASN1 tag was of an unexpected value
+[CR] mbedTLS error: X509 - The extension tag or value is invalid : ASN1 - ASN1 tag was of an unexpected value
+[       OK ] TestChipCryptoPAL.TestX509_VerifyAttestationCertificateFormat (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestX509_CertChainValidation
+[CR] mbedTLS error: X509 - Certificate verification failed, e.g. CRL, CA or signature check failed
+[CR] mbedTLS error: X509 - Certificate verification failed, e.g. CRL, CA or signature check failed
+[CR] mbedTLS error: X509 - Certificate verification failed, e.g. CRL, CA or signature check failed
+[CR] mbedTLS error: X509 - Certificate verification failed, e.g. CRL, CA or signature check failed
+[CR] mbedTLS error: X509 - The date tag or value is invalid
+[CR] mbedTLS error: X509 - The date tag or value is invalid
+[CR] mbedTLS error: X509 - The date tag or value is invalid
+[CR] mbedTLS error: X509 - The date tag or value is invalid
+[CR] mbedTLS error: X509 - The date tag or value is invalid
+[       OK ] TestChipCryptoPAL.TestX509_CertChainValidation (187 ms)
+[ RUN      ] TestChipCryptoPAL.TestX509_IssuingTimestampValidation
+[CR] mbedTLS error: ERROR - Generic error
+[       OK ] TestChipCryptoPAL.TestX509_IssuingTimestampValidation (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestSKID_x509Extraction
+[       OK ] TestChipCryptoPAL.TestSKID_x509Extraction (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestAKID_x509Extraction
+[       OK ] TestChipCryptoPAL.TestAKID_x509Extraction (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestCDPExtension_x509Extraction
+[       OK ] TestChipCryptoPAL.TestCDPExtension_x509Extraction (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestCDPCRLIssuerExtension_x509Extraction
+[       OK ] TestChipCryptoPAL.TestCDPCRLIssuerExtension_x509Extraction (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestSerialNumber_x509Extraction
+[       OK ] TestChipCryptoPAL.TestSerialNumber_x509Extraction (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestSubject_x509Extraction
+[       OK ] TestChipCryptoPAL.TestSubject_x509Extraction (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestIssuer_x509Extraction
+[       OK ] TestChipCryptoPAL.TestIssuer_x509Extraction (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestVIDPID_StringExtraction
+[CR] Checking VID/PID DN case 0. Expected: 0
+[CR] Checking VID/PID DN case 1. Expected: 0
+[CR] Checking VID/PID DN case 2. Expected: 0
+[CR] Checking VID/PID DN case 3. Expected: 0
+[CR] Checking VID/PID DN case 4. Expected: 59
+[CR] Checking VID/PID DN case 5. Expected: 59
+[CR] Checking VID/PID DN case 6. Expected: 59
+[CR] Checking VID/PID DN case 7. Expected: 59
+[CR] Checking VID/PID DN case 8. Expected: 59
+[CR] Checking VID/PID DN case 9. Expected: 59
+[CR] Checking VID/PID DN case 10. Expected: 59
+[CR] Checking VID/PID DN case 11. Expected: 59
+[CR] Checking VID/PID DN case 12. Expected: 59
+[CR] Checking VID/PID DN case 13. Expected: 59
+[CR] Checking VID/PID DN case 14. Expected: 0
+[CR] Checking VID/PID DN case 15. Expected: 0
+[CR] Checking VID/PID DN case 16. Expected: 0
+[CR] Checking VID/PID DN case 17. Expected: 0
+[CR] Checking VID/PID DN case 18. Expected: 0
+[CR] Checking VID/PID DN case 19. Expected: 0
+[CR] Checking VID/PID DN case 20. Expected: 0
+[CR] Checking VID/PID DN case 21. Expected: 0
+[CR] Checking VID/PID DN case 22. Expected: 59
+[CR] Checking VID/PID DN case 23. Expected: 59
+[CR] Checking VID/PID DN case 24. Expected: 59
+[CR] Checking VID/PID DN case 25. Expected: 59
+[CR] Checking VID/PID DN case 26. Expected: 59
+[CR] Checking VID/PID DN case 27. Expected: 0
+[CR] Checking VID/PID DN case 28. Expected: 59
+[CR] Checking VID/PID DN case 29. Expected: 0
+[CR] Checking VID/PID DN case 30. Expected: 0
+[CR] Checking VID/PID DN case 31. Expected: 2f
+[       OK ] TestChipCryptoPAL.TestVIDPID_StringExtraction (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestVIDPID_x509Extraction
+[CR] mbedTLS error: X509 - Input invalid
+[       OK ] TestChipCryptoPAL.TestVIDPID_x509Extraction (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestX509_ReplaceCertIfResignedCertFound
+[       OK ] TestChipCryptoPAL.TestX509_ReplaceCertIfResignedCertFound (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestGroup_OperationalKeyDerivation
+[       OK ] TestChipCryptoPAL.TestGroup_OperationalKeyDerivation (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestGroup_SessionIdDerivation
+[       OK ] TestChipCryptoPAL.TestGroup_SessionIdDerivation (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestGroup_PrivacyKeyDerivation
+[       OK ] TestChipCryptoPAL.TestGroup_PrivacyKeyDerivation (0 ms)
+[ RUN      ] TestChipCryptoPAL.GenerateVendorFabricBindingMessageWorks
+[       OK ] TestChipCryptoPAL.GenerateVendorFabricBindingMessageWorks (0 ms)
+[ RUN      ] TestChipCryptoPAL.GenerateVendorIdVerificationToBeSignedWorks
+[       OK ] TestChipCryptoPAL.GenerateVendorIdVerificationToBeSignedWorks (0 ms)
+[ RUN      ] TestChipCryptoPAL.PemEncodingWorks
+[       OK ] TestChipCryptoPAL.PemEncodingWorks (0 ms)
+[ RUN      ] TestChipCryptoPAL.KeyIdStringifierWorks
+[       OK ] TestChipCryptoPAL.KeyIdStringifierWorks (0 ms)
+[ RUN      ] TestChipCryptoPAL.TestHazardousOperationLoadKeypairFromRaw
+[       OK ] TestChipCryptoPAL.TestHazardousOperationLoadKeypairFromRaw (12 ms)
+[----------] 74 tests from TestChipCryptoPAL (764 ms total)
+
+[----------] Global test environment tear-down
+[==========] 74 tests from 1 test suite ran. (764 ms total)
+[  PASSED  ] 71 tests.
+[  SKIPPED ] 3 tests, listed below:
+[  SKIPPED ] TestChipCryptoPAL.TestP256_DeterministicECDSA_Sanity
+[  SKIPPED ] TestChipCryptoPAL.TestP256_DeterministicECDSA_TestVectors
+[  SKIPPED ] TestChipCryptoPAL.TestP256_InitializeFromBitsOrReject

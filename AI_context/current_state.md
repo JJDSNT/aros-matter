@@ -74,7 +74,7 @@ Atualizado 2026-10-30. **IPv6 no AROSTCP (ISSUE-0008):**
 
 **Bench (2026-10-31):** o caso `mss advmss=0` vazio era do bench: um tap recém-criado não tem link-local até ter carrier, e o script mandava `None` como host (errno 49). `tools/tap-up.sh` agora dá `fe80::1` (nodad) a um tap sem link-local, e `run_tcp.py` aborta sem link-local. `mld.ifdetach` (janela de MLD no host) falhou 1 vez em 4 com master e com o fix: timing, não regressão.
 
-Próximos: aguardar #2000/#2001. G19i explicado (sem defeito no RTO). Depois: S1 (`localhost`), R4, R7, G18a–i. #1980 foi mesclado (Codex); o follow-up do Codacy foi o #1991.
+Próximos: aguardar #2000/#2001. **Trilha Matter retomada (2026-10-31):** ISSUE-0003 passos 1–3 feitos no host (SDK crypto 71/71 com +4 opções na config do mbedTLS do AROS); falta o passo no AROS e o PR da config. G19i explicado (sem defeito no RTO). Depois: S1 (`localhost`), R4, R7, G18a–i. #1980 foi mesclado (Codex); o follow-up do Codacy foi o #1991.
 
 **Backlog 2 (2026-10-31):** matriz de reconciliação em [research/2026-10-31-backlog2-reconciliation.md](research/2026-10-31-backlog2-reconciliation.md). B2 ainda não é ativado como frente própria: G19e/G19h/R1 cobrem B2-A e G19i cobre B2-C. G19f explicado (`tcp_do_ecn = 0`, desligado por padrão). Achado: as opções `TCP_KEEP*` estão só no header, sem `tcp_ctloutput()`. Primeiro candidato B2 depois disso: auditoria de PMTUD (B2-B, só pesquisa).
 
@@ -91,7 +91,7 @@ Lição (2026-10-30): todo programa CUnit do AROS roda a suíte duas vezes (bás
 - ~~Primeiro alvo~~ → decidido: AROS hosted linux-x86_64 (2026-10-28).
 - ~~IPv6 D1–D4~~ → decididas (2026-10-28): modelo do Readme §6.6, coordenação com Kal, testes em `tests/`.
 - Upstream AROS: commits/PRs **sem assinatura do Claude Code**.
-- Fixar uma tag de release do connectedhomeip (ex.: `v1.4.x`) em vez de `master`?
+- ~~Fixar uma tag de release do connectedhomeip~~ → decidido (2026-10-31): **última stable, v1.6.1.0** (`3bcdd56ba5`).
 
 
 ## Coordenação com aros-midihub

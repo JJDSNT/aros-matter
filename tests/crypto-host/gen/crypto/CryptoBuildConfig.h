@@ -1,0 +1,15 @@
+// Hand-written stand-in for GN's crypto_buildconfig (chip_crypto = mbedtls)
+#pragma once
+#define CHIP_CRYPTO_MBEDTLS 1
+#define CHIP_CRYPTO_PSA 0
+#define CHIP_CRYPTO_SPAKE2P_MBEDTLS 1
+#define CHIP_CRYPTO_SPAKE2P_PSA 0
+#define CHIP_CRYPTO_SPAKE2P_CUSTOM 0
+#define CHIP_CRYPTO_PSA_AEAD_SINGLE_PART 0
+#define CHIP_CRYPTO_KEYSTORE_PSA 0
+#define CHIP_CRYPTO_KEYSTORE_RAW 1
+#define CHIP_CRYPTO_KEYSTORE_APP 0
+#define CHIP_CRYPTO_OPENSSL 0
+#define CHIP_CRYPTO_BORINGSSL 0
+#define CHIP_CRYPTO_PLATFORM 0
+#define CHIP_OP_KEYSTORE_ELE 0

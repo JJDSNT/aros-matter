@@ -1,0 +1,10 @@
+--- /home/jaime/aros-local/crypto-host/aros-cfg/mbedtls_aros_config.h	2026-10-31 17:36:21.140198612 -0300
++++ /home/jaime/aros-local/crypto-host/aros-cfg-b/mbedtls_aros_config.h	2026-10-31 17:42:18.058579312 -0300
+@@ -111,4 +111,7 @@
+ #define MBEDTLS_HKDF_C
+ #define MBEDTLS_VERSION_C
+ 
++/* Matter: PBKDF2 for the SPAKE2+ verifier (variant B) */
++#define MBEDTLS_PKCS5_C
++
+ #endif /* MBEDTLS_AROS_CONFIG_H */
