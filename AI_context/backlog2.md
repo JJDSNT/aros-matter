@@ -31,11 +31,11 @@ Referências canônicas:
 
 **Condição sugerida, não obrigatória:** IPv6 funcional estabilizado na bancada hosted/TAP, G19b concluído ou encaminhado, regressões críticas controladas e ausência de conflitos relevantes com PRs sobrepostos. Não exigir fechamento de todo G18 nem conclusão do SDK Matter.
 
-**A ativação depende de decisão do mantenedor.** Pode ser parcial, antecipada por bloqueio comprovado ou postergada por custo/risco. Ao ativar:
+**O agente está autorizado a ativar autonomamente itens deste backlog quando houver justificativa técnica documentada e sem prejudicar o trabalho em andamento.** Pode ser parcial, antecipada por bloqueio comprovado ou postergada por custo/risco. Ao ativar:
 1. Conferir `current_state.md`, issues, upstream/master e PRs recentes.
 2. Classificar cada candidato: concluído, em curso no backlog atual, pendente, precisa de pesquisa ou descartado.
 3. Propor até 2–3 entregas pequenas e seus critérios de aceite.
-4. Só após autorização criar issues necessárias no padrão `AI_context/issues/` e atualizar `current_state.md`.
+4. Criar autonomamente issues necessárias no padrão `AI_context/issues/` e atualizar `current_state.md`.
 5. Não renumerar ou reabrir issues antigas, nem reordenar M0–M6.
 
 ## 4. Frentes candidatas — prioridades iniciais revisáveis
@@ -83,9 +83,9 @@ Referências canônicas:
 
 ## 6. Autonomia do agente e limites
 
-O agente pode **propor** antecipação, adiamento, divisão, descarte ou nova ordem com base na realidade do desenvolvimento. Para cada proposta registrar: revisão upstream e arquivos analisados; estado implementado/habilitado/testado/ausente/inconclusivo; evidência reproduzível; riscos em IPv4/IPv6/LP64/68k; dependências; custo relativo; e motivo da prioridade.
+O agente pode **decidir e executar** antecipação, adiamento, divisão, descarte ou nova ordem com base na realidade do desenvolvimento. Para cada proposta registrar: revisão upstream e arquivos analisados; estado implementado/habilitado/testado/ausente/inconclusivo; evidência reproduzível; riscos em IPv4/IPv6/LP64/68k; dependências; custo relativo; e motivo da prioridade.
 
-Dentro de uma frente **já autorizada**, pode ajustar a sequência de pequenas entregas, documentando a decisão. **Não pode**, sem aprovação do mantenedor, mudar prioridades das issues ativas, iniciar refatoração transversal, alterar ABI pública, ativar globalmente PRR/ECN ou alterar os marcos Matter.
+Pode ativar frentes e ajustar a sequência de pequenas entregas, documentando a decisão. **Pode repriorizar issues quando houver evidência e não prejudicar entregas ativas**, mas não pode, sem aprovação do mantenedor,, iniciar refatoração transversal, alterar ABI pública, ativar globalmente PRR/ECN ou alterar os marcos Matter.
 
 ## 7. Qualidade, upstream e encerramento
 
