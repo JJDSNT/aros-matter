@@ -1,0 +1,30 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: UDP_Suite
+  Test: sendto/recvfrom ...passed
+  Test: connected UDP ...passed
+  Test: multiple datagrams ...passed
+  Test: bind/getsockname ...passed
+  Test: a closed port keeps refusing, paced ...FAILED
+    1. testUDP_REFUSED_PACED:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-udp.c:154  - refused >= 25
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       26         1       n/a       n/a
+     Tests        :        5         1         0         0
+
+Elapsed Time: 9.000(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       26         1       n/a       n/a
+     Tests        :        5         1         0         0
+
+Elapsed Time: 9.000(s)
+

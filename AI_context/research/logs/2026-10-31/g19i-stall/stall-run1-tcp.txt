@@ -1,0 +1,53 @@
+1793475931.453738 IP6 (hlim 1, next-header Options (0) payload length: 32) fe80::b87a:7fff:fee1:8b67 > ff02::1:ffe1:8b67: HBH (rtalert: 0x0000) (padn) [icmp6 sum ok] ICMP6, multicast listener reportmax resp delay: 0 addr: ff02::1:ffe1:8b67
+1793475931.463833 IP6 (hlim 1, next-header Options (0) payload length: 76) fe80::1 > ff02::16: HBH (rtalert: 0x0000) (padn) ICMP6, multicast listener report v2, 3 group record(s) [gaddr ff02::1:ff98:97bd to_ex, 0 source(s)] [gaddr ff02::fb to_ex, 0 source(s)] [|icmp6]
+1793475931.567781 IP6 (hlim 1, next-header Options (0) payload length: 76) fe80::1 > ff02::16: HBH (rtalert: 0x0000) (padn) ICMP6, multicast listener report v2, 3 group record(s) [gaddr ff02::1:ff98:97bd to_ex, 0 source(s)] [gaddr ff02::fb to_ex, 0 source(s)] [|icmp6]
+1793475932.111592 IP6 (hlim 1, next-header Options (0) payload length: 32) :: > ff02::fb: HBH (rtalert: 0x0000) (padn) [icmp6 sum ok] ICMP6, multicast listener reportmax resp delay: 0 addr: ff02::fb
+1793475932.627605 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 24) :: > ff02::1:ffe1:8b67: [icmp6 sum ok] ICMP6, neighbor solicitation, length 24, who has fe80::b87a:7fff:fee1:8b67
+1793475932.627646 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 24) :: > ff02::1:ffe1:8b67: [icmp6 sum ok] ICMP6, neighbor solicitation, length 24, who has fe80::b87a:7fff:fee1:8b67
+1793475932.155804 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 16) fe80::b87a:7fff:fee1:8b67 > ff02::2: [icmp6 sum ok] ICMP6, router solicitation, length 16
+	  source link-address option (1), length 8 (1): ba:7a:7f:e1:8b:67
+1793475932.155850 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 16) fe80::b87a:7fff:fee1:8b67 > ff02::2: [icmp6 sum ok] ICMP6, router solicitation, length 16
+	  source link-address option (1), length 8 (1): ba:7a:7f:e1:8b:67
+1793475932.395768 IP6 (hlim 255, next-header UDP (17) payload length: 109) fe80::b87a:7fff:fee1:8b67.5353 > ff02::fb.5353: 0 [2n] ANY (QM)? arosbox.local. (101)
+1793475932.655650 IP6 (hlim 255, next-header UDP (17) payload length: 109) fe80::b87a:7fff:fee1:8b67.5353 > ff02::fb.5353: 0 [2n] ANY (QM)? arosbox.local. (101)
+1793475932.915815 IP6 (hlim 255, next-header UDP (17) payload length: 90) fe80::b87a:7fff:fee1:8b67.5353 > ff02::fb.5353: 0*- [0q] 2/0/0 arosbox.local. (Cache flush) A 192.168.166.2, arosbox.local. (Cache flush) AAAA [|domain]
+1793475933.915895 IP6 (hlim 255, next-header UDP (17) payload length: 90) fe80::b87a:7fff:fee1:8b67.5353 > ff02::fb.5353: 0*- [0q] 2/0/0 arosbox.local. (Cache flush) A 192.168.166.2, arosbox.local. (Cache flush) AAAA [|domain]
+1793475935.517427 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::b87a:7fff:fee1:8b67 > ff02::1:ff00:1: [icmp6 sum ok] ICMP6, neighbor solicitation, length 32, who has fe80::1
+	  source link-address option (1), length 8 (1): ba:7a:7f:e1:8b:67
+1793475935.517452 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::1 > fe80::b87a:7fff:fee1:8b67: [icmp6 sum ok] ICMP6, neighbor advertisement, length 32, tgt is fe80::1, Flags [solicited, override]
+	  destination link-address option (2), length 8 (1): e2:90:2a:98:97:bd
+1793475935.517542 IP6 (hlim 64, next-header TCP (6) payload length: 44) fe80::b87a:7fff:fee1:8b67.1024 > fe80::1.7004: Flags [S], cksum 0xb5c6 (correct), seq 3839540303, win 65535, options [mss 1440,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 0 ecr 0], length 0
+1793475935.517583 IP6 (flowlabel 0x290be, hlim 64, next-header TCP (6) payload length: 40) fe80::1.7004 > fe80::b87a:7fff:fee1:8b67.1024: Flags [S.], cksum 0x29e9 (correct), seq 1336000952, ack 3839540304, win 64260, options [mss 1440,sackOK,TS val 3816926697 ecr 0,nop,wscale 10], length 0
+1793475935.517643 IP6 (hlim 64, next-header TCP (6) payload length: 32) fe80::b87a:7fff:fee1:8b67.1024 > fe80::1.7004: Flags [.], cksum 0xd35c (correct), ack 1336000953, win 32844, options [nop,nop,TS val 0 ecr 3816926697], length 0
+1793475937.515863 IP6 (hlim 64, next-header TCP (6) payload length: 132) fe80::b87a:7fff:fee1:8b67.1024 > fe80::1.7004: Flags [P.], seq 3839540304:3839540404, ack 1336000953, win 32844, options [nop,nop,TS val 4 ecr 3816926697], length 100
+1793475938.655348 IP6 (hlim 64, next-header TCP (6) payload length: 132) fe80::b87a:7fff:fee1:8b67.1024 > fe80::1.7004: Flags [P.], seq 3839540304:3839540404, ack 1336000953, win 32844, options [nop,nop,TS val 6 ecr 3816926697], length 100
+1793475940.547858 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::1 > fe80::b87a:7fff:fee1:8b67: [icmp6 sum ok] ICMP6, neighbor solicitation, length 32, who has fe80::b87a:7fff:fee1:8b67
+	  source link-address option (1), length 8 (1): e2:90:2a:98:97:bd
+1793475940.548028 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::b87a:7fff:fee1:8b67 > fe80::1: [icmp6 sum ok] ICMP6, neighbor advertisement, length 32, tgt is fe80::b87a:7fff:fee1:8b67, Flags [none]
+	  destination link-address option (2), length 8 (1): ba:7a:7f:e1:8b:67
+1793475941.571825 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::1 > fe80::b87a:7fff:fee1:8b67: [icmp6 sum ok] ICMP6, neighbor solicitation, length 32, who has fe80::b87a:7fff:fee1:8b67
+	  source link-address option (1), length 8 (1): e2:90:2a:98:97:bd
+1793475941.572029 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::b87a:7fff:fee1:8b67 > fe80::1: [icmp6 sum ok] ICMP6, neighbor advertisement, length 32, tgt is fe80::b87a:7fff:fee1:8b67, Flags [none]
+	  destination link-address option (2), length 8 (1): ba:7a:7f:e1:8b:67
+1793475941.655613 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::b87a:7fff:fee1:8b67 > ff02::1:ff00:1: [icmp6 sum ok] ICMP6, neighbor solicitation, length 32, who has fe80::1
+	  source link-address option (1), length 8 (1): ba:7a:7f:e1:8b:67
+1793475941.655685 IP6 (hlim 64, next-header TCP (6) payload length: 132) fe80::b87a:7fff:fee1:8b67.1024 > fe80::1.7004: Flags [P.], seq 3839540304:3839540404, ack 1336000953, win 32844, options [nop,nop,TS val 12 ecr 3816926697], length 100
+1793475942.155832 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::b87a:7fff:fee1:8b67 > ff02::1:ff00:1: [icmp6 sum ok] ICMP6, neighbor solicitation, length 32, who has fe80::1
+	  source link-address option (1), length 8 (1): ba:7a:7f:e1:8b:67
+1793475942.595537 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::1 > fe80::b87a:7fff:fee1:8b67: [icmp6 sum ok] ICMP6, neighbor solicitation, length 32, who has fe80::b87a:7fff:fee1:8b67
+	  source link-address option (1), length 8 (1): e2:90:2a:98:97:bd
+1793475942.595890 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::b87a:7fff:fee1:8b67 > fe80::1: [icmp6 sum ok] ICMP6, neighbor advertisement, length 32, tgt is fe80::b87a:7fff:fee1:8b67, Flags [none]
+	  destination link-address option (2), length 8 (1): ba:7a:7f:e1:8b:67
+1793475942.655724 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::b87a:7fff:fee1:8b67 > ff02::1:ff00:1: [icmp6 sum ok] ICMP6, neighbor solicitation, length 32, who has fe80::1
+	  source link-address option (1), length 8 (1): ba:7a:7f:e1:8b:67
+1793475943.135673 IP6 (hlim 1, next-header Options (0) payload length: 32) fe80::b87a:7fff:fee1:8b67 > ff02::fb: HBH (rtalert: 0x0000) (padn) [icmp6 sum ok] ICMP6, multicast listener reportmax resp delay: 0 addr: ff02::fb
+1793475943.135707 IP6 (hlim 1, next-header Options (0) payload length: 32) fe80::b87a:7fff:fee1:8b67 > ff02::1:ffe1:8b67: HBH (rtalert: 0x0000) (padn) [icmp6 sum ok] ICMP6, multicast listener reportmax resp delay: 0 addr: ff02::1:ffe1:8b67
+1793475947.655619 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::b87a:7fff:fee1:8b67 > ff02::1:ff00:1: [icmp6 sum ok] ICMP6, neighbor solicitation, length 32, who has fe80::1
+	  source link-address option (1), length 8 (1): ba:7a:7f:e1:8b:67
+1793475947.655677 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::1 > fe80::b87a:7fff:fee1:8b67: [icmp6 sum ok] ICMP6, neighbor advertisement, length 32, tgt is fe80::1, Flags [solicited, override]
+	  destination link-address option (2), length 8 (1): e2:90:2a:98:97:bd
+1793475947.655780 IP6 (hlim 64, next-header TCP (6) payload length: 132) fe80::b87a:7fff:fee1:8b67.1024 > fe80::1.7004: Flags [P.], seq 3839540304:3839540404, ack 1336000953, win 32844, options [nop,nop,TS val 24 ecr 3816926697], length 100
+1793475947.655829 IP6 (flowlabel 0x290be, hlim 64, next-header TCP (6) payload length: 32) fe80::1.7004 > fe80::b87a:7fff:fee1:8b67.1024: Flags [.], cksum 0x2384 (correct), ack 3839540404, win 63, options [nop,nop,TS val 3816938835 ecr 24], length 0
+1793475949.515700 IP6 (hlim 64, next-header TCP (6) payload length: 32) fe80::b87a:7fff:fee1:8b67.1024 > fe80::1.7004: Flags [F.], cksum 0xa371 (correct), seq 3839540404, ack 1336000953, win 32844, options [nop,nop,TS val 28 ecr 3816938835], length 0
+1793475949.515902 IP6 (flowlabel 0x290be, hlim 64, next-header TCP (6) payload length: 32) fe80::1.7004 > fe80::b87a:7fff:fee1:8b67.1024: Flags [F.], cksum 0x1c3a (correct), seq 1336000953, ack 3839540405, win 63, options [nop,nop,TS val 3816940695 ecr 28], length 0
+1793475949.515969 IP6 (hlim 64, next-header TCP (6) payload length: 32) fe80::b87a:7fff:fee1:8b67.1024 > fe80::1.7004: Flags [.], cksum 0x9c2c (correct), ack 1336000954, win 32844, options [nop,nop,TS val 28 ecr 3816940695], length 0

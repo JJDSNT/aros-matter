@@ -1,0 +1,200 @@
+1793475065.300029 IP6 :: > ff02::1:ffb7:dd07: ICMP6, neighbor solicitation, who has fe80::1894:1fff:feb7:dd07, length 24
+1793475065.300065 IP6 :: > ff02::1:ffb7:dd07: ICMP6, neighbor solicitation, who has fe80::1894:1fff:feb7:dd07, length 24
+1793475066.299761 IP6 fe80::1894:1fff:feb7:dd07 > ff02::2: ICMP6, router solicitation, length 16
+1793475066.299798 IP6 fe80::1894:1fff:feb7:dd07 > ff02::2: ICMP6, router solicitation, length 16
+1793475076.500548 IP6 fe80::e090:2aff:fe98:97bd > ff02::1:ffb7:dd07: ICMP6, neighbor solicitation, who has fe80::1894:1fff:feb7:dd07, length 32
+1793475076.500722 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475076.500780 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475076.500836 IP6 fe80::1894:1fff:feb7:dd07 > fe80::e090:2aff:fe98:97bd: ICMP6, neighbor advertisement, tgt is fe80::1894:1fff:feb7:dd07, length 32
+1793475076.500843 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475077.014550 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475077.014609 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475077.014758 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475077.518438 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475077.518500 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475077.518659 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475078.019811 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475078.019885 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475078.020076 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475078.523524 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475078.523566 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475078.523685 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475079.038491 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475079.038570 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475079.038723 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475079.538893 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475079.538958 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475079.539151 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475080.057700 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475080.057747 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475080.057937 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475080.559689 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475080.559793 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475080.559957 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475081.076722 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475081.076783 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475081.076942 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475081.578898 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475081.579003 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475081.579184 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475081.635801 IP6 fe80::1 > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor solicitation, who has fe80::1894:1fff:feb7:dd07, length 32
+1793475081.635997 IP6 fe80::1894:1fff:feb7:dd07 > fe80::1: ICMP6, neighbor advertisement, tgt is fe80::1894:1fff:feb7:dd07, length 32
+1793475082.081220 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475082.081281 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475082.081440 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475082.584548 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475082.584605 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475082.584751 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475082.659714 IP6 fe80::1 > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor solicitation, who has fe80::1894:1fff:feb7:dd07, length 32
+1793475082.660067 IP6 fe80::1894:1fff:feb7:dd07 > fe80::1: ICMP6, neighbor advertisement, tgt is fe80::1894:1fff:feb7:dd07, length 32
+1793475082.799736 IP6 fe80::1894:1fff:feb7:dd07 > ff02::1:ff98:97bd: ICMP6, neighbor solicitation, who has fe80::e090:2aff:fe98:97bd, length 32
+1793475082.799760 IP6 fe80::e090:2aff:fe98:97bd > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor advertisement, tgt is fe80::e090:2aff:fe98:97bd, length 32
+1793475083.102155 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475083.102211 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475083.102355 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475083.299702 IP6 fe80::1894:1fff:feb7:dd07 > ff02::1:ff98:97bd: ICMP6, neighbor solicitation, who has fe80::e090:2aff:fe98:97bd, length 32
+1793475083.299726 IP6 fe80::e090:2aff:fe98:97bd > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor advertisement, tgt is fe80::e090:2aff:fe98:97bd, length 32
+1793475083.609128 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475083.609196 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475083.609362 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475083.683880 IP6 fe80::1 > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor solicitation, who has fe80::1894:1fff:feb7:dd07, length 32
+1793475083.684195 IP6 fe80::1894:1fff:feb7:dd07 > fe80::1: ICMP6, neighbor advertisement, tgt is fe80::1894:1fff:feb7:dd07, length 32
+1793475083.800049 IP6 fe80::1894:1fff:feb7:dd07 > ff02::1:ff98:97bd: ICMP6, neighbor solicitation, who has fe80::e090:2aff:fe98:97bd, length 32
+1793475083.800069 IP6 fe80::e090:2aff:fe98:97bd > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor advertisement, tgt is fe80::e090:2aff:fe98:97bd, length 32
+1793475084.125384 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475084.125469 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475084.125636 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475084.628858 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475084.628948 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475084.629126 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475085.129505 IP6 fe80::e090:2aff:fe98:97bd > ff02::1:ffb7:dd07: ICMP6, neighbor solicitation, who has fe80::1894:1fff:feb7:dd07, length 32
+1793475085.129574 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475085.129709 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475085.129751 IP6 fe80::1894:1fff:feb7:dd07 > ff02::1:ff98:97bd: ICMP6, neighbor solicitation, who has fe80::e090:2aff:fe98:97bd, length 32
+1793475085.129762 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475085.129772 IP6 fe80::e090:2aff:fe98:97bd > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor advertisement, tgt is fe80::e090:2aff:fe98:97bd, length 32
+1793475085.129839 IP6 fe80::1894:1fff:feb7:dd07 > fe80::e090:2aff:fe98:97bd: ICMP6, neighbor advertisement, tgt is fe80::1894:1fff:feb7:dd07, length 32
+1793475085.633676 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475085.633735 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475085.633894 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475086.134078 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475086.134150 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475086.134269 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475086.634445 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475086.634506 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475086.634704 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475087.134742 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475087.134791 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475087.134921 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475087.635585 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475087.635644 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475087.635796 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475087.799862 IP6 fe80::1894:1fff:feb7:dd07 > ff02::1:ff00:1: ICMP6, neighbor solicitation, who has fe80::1, length 32
+1793475087.799886 IP6 fe80::1 > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor advertisement, tgt is fe80::1, length 32
+1793475088.136073 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475088.136126 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475088.136309 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475088.300045 IP6 fe80::1894:1fff:feb7:dd07 > ff02::1:ff00:1: ICMP6, neighbor solicitation, who has fe80::1, length 32
+1793475088.300069 IP6 fe80::1 > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor advertisement, tgt is fe80::1, length 32
+1793475088.636759 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475088.636816 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475088.636965 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475088.799954 IP6 fe80::1894:1fff:feb7:dd07 > ff02::1:ff00:1: ICMP6, neighbor solicitation, who has fe80::1, length 32
+1793475088.799977 IP6 fe80::1 > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor advertisement, tgt is fe80::1, length 32
+1793475089.139012 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475089.139071 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475089.139552 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475089.639427 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475089.639457 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475089.639608 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475090.141328 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475090.141387 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475090.141594 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475090.339770 IP6 fe80::1 > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor solicitation, who has fe80::1894:1fff:feb7:dd07, length 32
+1793475090.340111 IP6 fe80::1894:1fff:feb7:dd07 > ff02::1:ff00:1: ICMP6, neighbor solicitation, who has fe80::1, length 32
+1793475090.340130 IP6 fe80::1 > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor advertisement, tgt is fe80::1, length 32
+1793475090.340187 IP6 fe80::1894:1fff:feb7:dd07 > fe80::1: ICMP6, neighbor advertisement, tgt is fe80::1894:1fff:feb7:dd07, length 32
+1793475090.641977 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475090.642040 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475090.642193 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475091.142347 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475091.142406 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475091.142566 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475091.363785 IP6 fe80::1 > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor solicitation, who has fe80::1894:1fff:feb7:dd07, length 32
+1793475091.363921 IP6 fe80::1894:1fff:feb7:dd07 > fe80::1: ICMP6, neighbor advertisement, tgt is fe80::1894:1fff:feb7:dd07, length 32
+1793475089.951664 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475089.951817 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475089.951994 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475090.108121 IP6 fe80::1894:1fff:feb7:dd07 > ff02::1:ff98:97bd: ICMP6, neighbor solicitation, who has fe80::e090:2aff:fe98:97bd, length 32
+1793475090.108138 IP6 fe80::e090:2aff:fe98:97bd > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor advertisement, tgt is fe80::e090:2aff:fe98:97bd, length 32
+1793475090.452451 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475090.452592 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475090.452773 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475090.608547 IP6 fe80::1894:1fff:feb7:dd07 > ff02::1:ff98:97bd: ICMP6, neighbor solicitation, who has fe80::e090:2aff:fe98:97bd, length 32
+1793475090.608564 IP6 fe80::e090:2aff:fe98:97bd > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor advertisement, tgt is fe80::e090:2aff:fe98:97bd, length 32
+1793475090.696301 IP6 fe80::1 > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor solicitation, who has fe80::1894:1fff:feb7:dd07, length 32
+1793475090.696478 IP6 fe80::1894:1fff:feb7:dd07 > fe80::1: ICMP6, neighbor advertisement, tgt is fe80::1894:1fff:feb7:dd07, length 32
+1793475090.952832 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475090.952889 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475090.953033 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475091.108197 IP6 fe80::1894:1fff:feb7:dd07 > ff02::1:ff98:97bd: ICMP6, neighbor solicitation, who has fe80::e090:2aff:fe98:97bd, length 32
+1793475091.108218 IP6 fe80::e090:2aff:fe98:97bd > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor advertisement, tgt is fe80::e090:2aff:fe98:97bd, length 32
+1793475091.453179 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475091.453234 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475091.453354 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475091.954028 IP6 fe80::e090:2aff:fe98:97bd > ff02::1:ffb7:dd07: ICMP6, neighbor solicitation, who has fe80::1894:1fff:feb7:dd07, length 32
+1793475091.954090 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475091.954246 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475091.954288 IP6 fe80::1894:1fff:feb7:dd07 > ff02::1:ff98:97bd: ICMP6, neighbor solicitation, who has fe80::e090:2aff:fe98:97bd, length 32
+1793475091.954299 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475091.954308 IP6 fe80::e090:2aff:fe98:97bd > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor advertisement, tgt is fe80::e090:2aff:fe98:97bd, length 32
+1793475091.954375 IP6 fe80::1894:1fff:feb7:dd07 > fe80::e090:2aff:fe98:97bd: ICMP6, neighbor advertisement, tgt is fe80::1894:1fff:feb7:dd07, length 32
+1793475092.456550 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475092.456639 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475092.456802 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475092.957047 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475092.957104 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475092.957263 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475093.457865 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475093.457899 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475093.458015 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475093.958303 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475093.958387 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475093.958529 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475094.458916 IP6 fe80::e090:2aff:fe98:97bd.55745 > fe80::1894:1fff:feb7:dd07.9999: UDP, length 1
+1793475094.458975 IP 192.168.166.1.49229 > 192.168.166.2.9999: UDP, length 1
+1793475094.459129 IP 192.168.166.2 > 192.168.166.1: ICMP 192.168.166.2 udp port 9999 unreachable, length 36
+1793475095.108594 IP6 fe80::1894:1fff:feb7:dd07 > ff02::1:ff00:1: ICMP6, neighbor solicitation, who has fe80::1, length 32
+1793475095.108615 IP6 fe80::1 > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor advertisement, tgt is fe80::1, length 32
+1793475095.608214 IP6 fe80::1894:1fff:feb7:dd07 > ff02::1:ff00:1: ICMP6, neighbor solicitation, who has fe80::1, length 32
+1793475095.608234 IP6 fe80::1 > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor advertisement, tgt is fe80::1, length 32
+1793475096.108282 IP6 fe80::1894:1fff:feb7:dd07 > ff02::1:ff00:1: ICMP6, neighbor solicitation, who has fe80::1, length 32
+1793475096.108303 IP6 fe80::1 > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor advertisement, tgt is fe80::1, length 32
+1793475097.096361 IP6 fe80::1 > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor solicitation, who has fe80::1894:1fff:feb7:dd07, length 32
+1793475097.096563 IP6 fe80::1894:1fff:feb7:dd07 > ff02::1:ff00:1: ICMP6, neighbor solicitation, who has fe80::1, length 32
+1793475097.096578 IP6 fe80::1 > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor advertisement, tgt is fe80::1, length 32
+1793475097.096633 IP6 fe80::1894:1fff:feb7:dd07 > fe80::1: ICMP6, neighbor advertisement, tgt is fe80::1894:1fff:feb7:dd07, length 32
+1793475098.108711 IP6 fe80::1894:1fff:feb7:dd07 > ff02::1:ff98:97bd: ICMP6, neighbor solicitation, who has fe80::e090:2aff:fe98:97bd, length 32
+1793475098.108731 IP6 fe80::e090:2aff:fe98:97bd > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor advertisement, tgt is fe80::e090:2aff:fe98:97bd, length 32
+1793475098.119953 IP6 fe80::1 > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor solicitation, who has fe80::1894:1fff:feb7:dd07, length 32
+1793475098.120168 IP6 fe80::1894:1fff:feb7:dd07 > fe80::1: ICMP6, neighbor advertisement, tgt is fe80::1894:1fff:feb7:dd07, length 32
+1793475098.608506 IP6 fe80::1894:1fff:feb7:dd07 > ff02::1:ff98:97bd: ICMP6, neighbor solicitation, who has fe80::e090:2aff:fe98:97bd, length 32
+1793475098.608526 IP6 fe80::e090:2aff:fe98:97bd > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor advertisement, tgt is fe80::e090:2aff:fe98:97bd, length 32
+1793475099.108592 IP6 fe80::1894:1fff:feb7:dd07 > ff02::1:ff98:97bd: ICMP6, neighbor solicitation, who has fe80::e090:2aff:fe98:97bd, length 32
+1793475099.108609 IP6 fe80::e090:2aff:fe98:97bd > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor advertisement, tgt is fe80::e090:2aff:fe98:97bd, length 32
+1793475099.143946 IP6 fe80::1 > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor solicitation, who has fe80::1894:1fff:feb7:dd07, length 32
+1793475099.144166 IP6 fe80::1894:1fff:feb7:dd07 > fe80::1: ICMP6, neighbor advertisement, tgt is fe80::1894:1fff:feb7:dd07, length 32
+1793475103.108149 IP6 fe80::1894:1fff:feb7:dd07 > ff02::1:ff00:1: ICMP6, neighbor solicitation, who has fe80::1, length 32
+1793475103.108173 IP6 fe80::1 > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor advertisement, tgt is fe80::1, length 32
+1793475103.608242 IP6 fe80::1894:1fff:feb7:dd07 > ff02::1:ff00:1: ICMP6, neighbor solicitation, who has fe80::1, length 32
+1793475103.608263 IP6 fe80::1 > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor advertisement, tgt is fe80::1, length 32
+1793475104.108605 IP6 fe80::1894:1fff:feb7:dd07 > ff02::1:ff00:1: ICMP6, neighbor solicitation, who has fe80::1, length 32
+1793475104.108642 IP6 fe80::1 > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor advertisement, tgt is fe80::1, length 32
+1793475108.359946 IP6 fe80::1 > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor solicitation, who has fe80::1894:1fff:feb7:dd07, length 32
+1793475108.360117 IP6 fe80::1894:1fff:feb7:dd07 > ff02::1:ff00:1: ICMP6, neighbor solicitation, who has fe80::1, length 32
+1793475108.360131 IP6 fe80::1 > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor advertisement, tgt is fe80::1, length 32
+1793475108.360186 IP6 fe80::1894:1fff:feb7:dd07 > fe80::1: ICMP6, neighbor advertisement, tgt is fe80::1894:1fff:feb7:dd07, length 32
+1793475109.384371 IP6 fe80::1 > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor solicitation, who has fe80::1894:1fff:feb7:dd07, length 32
+1793475109.384554 IP6 fe80::1894:1fff:feb7:dd07 > fe80::1: ICMP6, neighbor advertisement, tgt is fe80::1894:1fff:feb7:dd07, length 32
+1793475110.408347 IP6 fe80::1 > fe80::1894:1fff:feb7:dd07: ICMP6, neighbor solicitation, who has fe80::1894:1fff:feb7:dd07, length 32
+1793475110.408690 IP6 fe80::1894:1fff:feb7:dd07 > fe80::1: ICMP6, neighbor advertisement, tgt is fe80::1894:1fff:feb7:dd07, length 32
