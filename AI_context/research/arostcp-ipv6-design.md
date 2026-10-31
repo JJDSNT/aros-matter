@@ -101,7 +101,7 @@ Bancada nova: o AROS é cliente do Linux do host pela tap, em IPv6; `tc` molda o
   - **G19d — o bit M (mais fragmentos) na ordem de bytes errada.** ✔ `IP6F_MORE_FRAG` já está na ordem da rede (0x0100 em little-endian); o código faz `offlg |= IP6F_MORE_FRAG` e depois `htons(offlg)`: no fio sai "offset 256, sem M" (`frag (…:256|1448)`). Em big-endian (m68k, PPC) não aparece.
 - **G19e — T/TCP ainda no SYN.** ✔ O SYN leva `ccnew` (RFC 1644, Histórico pela RFC 6247; permite transação com SYN falsificado). Retirar. **Em review como AROS #1996** (2026-10-31): desligado por padrão, código mantido.
 - **G19f — ECN não pedido no SYN** (flags só `S`). ? O Readme diz que há suporte; ver se está desligado por padrão.
-- **G19g — portas efêmeras sequenciais** (1024, 1025, …): ✔ confirma R1 no fio. ISNs aleatórios ✔.
+- **G19g — portas efêmeras sequenciais** (1024, 1025, …): ✔ confirma R1 no fio. ISNs aleatórios ✔. **Em review como AROS #1998** (2026-10-31): RFC 6056 alg. 1 em 49152–65535.
 - **G19h — fechar com dados não lidos manda FIN, não RST** (RFC 1122 §4.2.2.13, SHOULD). ✔ **Em review como AROS #1997** (2026-10-31): `tcp_disconnect()` faz `tcp_drop()` com dados em `so_rcv`; RFC 9293 §3.6.1 SHLD-2.
 - **G19i — RTO: primeira retransmissão em 1,4 s, a segunda só 9 s depois** (esperado ~2,8 s com backoff). ? A investigar (relógio de 500 ms, backoff).
   - **G19j — `TSval 0` no SYN.** Visto no bench (2026-10-31), com e sem o #1996: a opção de timestamp do SYN leva `TS val 0`. RFC 7323 §4.3/§5.4: TSval vem de um relógio monotônico (o RFC recomenda um deslocamento aleatório por conexão). A conferir: `tcp_now` começa em 0? Não reproduzido além do SYN.
