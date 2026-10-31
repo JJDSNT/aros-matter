@@ -1,7 +1,7 @@
 ---
 id: ISSUE-0003
 title: "Backend crypto: SDK × mbedTLS 3.6.7 do AROS"
-status: in-progress
+status: paused
 priority: high
 type: research
 owner: jaime
@@ -46,4 +46,5 @@ Decidir entre: (a) `CHIPCryptoPALmbedTLS` contra o mbedTLS 3.6.7 do AROS; (b) `C
 # Log
 
 - 2026-10-28: criada.
+- 2026-10-31: resultado: **ao mbedTLS do AROS não falta código**; só 4 opções de config, que ficam no aros-matter. Passo 4 (rodar no AROS com o build próprio) fica para quando a trilha Matter for retomada; a prioridade volta a ser IPv6/TCP.
 - 2026-10-31: passos 1–3 no host Linux. Duas habilidades do backend mbedTLS do SDK pulam (`ECDSA_sign_msg_det`, `InitializeFromBitsOrReject`: só OpenSSL/PSA implementam); fora dos testes só a Network Identity usa, não PASE/CASE.
