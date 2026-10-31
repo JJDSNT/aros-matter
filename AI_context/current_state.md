@@ -54,7 +54,7 @@ Atualizado 2026-10-30. **IPv6 no AROSTCP (ISSUE-0008):**
 | [#1975](https://github.com/aros-development-team/AROS/pull/1975) | Resto da S7: `IPV6_MULTICAST_IF` escolhe a origem do datagrama multicast UDP6 | mesclado |
 | [#1976](https://github.com/aros-development-team/AROS/pull/1976) | S8: RFC 4191 (preferência do roteador default, RIO, `::/0`) + limpeza dos roteadores da interface | mesclado (`1fef6c415e`) |
 | [#1977](https://github.com/aros-development-team/AROS/pull/1977) | ISSUE-0009: `in6_purgeaddr()` apaga as rotas que usam o endereço (`rt_purgeifa`, como o IPv4); o reload travava com `rt_ifa` liberado | mesclado |
-| [#1979](https://github.com/aros-development-team/AROS/pull/1979) | S8b: o reload devolve o link-local e os endereços SLAAC (`in6_if_up()` no `addifent()`, `nd6_purge_prefixes()`) | aberto 2026-10-30; slaac6 master falha, branch passa |
+| [#1979](https://github.com/aros-development-team/AROS/pull/1979) | S8b: o reload devolve o link-local e os endereços SLAAC (`in6_if_up()` no `addifent()`, `nd6_purge_prefixes()`) | mesclado (`1a565164eb`) |
 | [#1983](https://github.com/aros-development-team/AROS/pull/1983) | G19c+d: fragmentação IPv6 (todos os fragmentos, bit M na ordem certa, `rt` NULL em multicast) | **merged** (b35c81ec1a); revalidado com build limpo pós-merge |
 | [#1991](https://github.com/aros-development-team/AROS/pull/1991) | follow-up do #1980 (Codex): `header` com escopo reduzido em `mdnsd.c` (Codacy variableScope) | **merged** 2026-10-31 |
 | [#1992](https://github.com/aros-development-team/AROS/pull/1992) | follow-up do #1986 (Codex): AROSTCP 5.15 / kernel v0.54 em `bsdsocket/version.h`, pedido do Kal | **merged** 2026-10-31 (7a6f655644) |
@@ -66,7 +66,9 @@ Atualizado 2026-10-30. **IPv6 no AROSTCP (ISSUE-0008):**
 
 **Bench (2026-10-31):** o caso `mss advmss=0` vazio era do bench: um tap recém-criado não tem link-local até ter carrier, e o script mandava `None` como host (errno 49). `tools/tap-up.sh` agora dá `fe80::1` (nodad) a um tap sem link-local, e `run_tcp.py` aborta sem link-local. `mld.ifdetach` (janela de MLD no host) falhou 1 vez em 4 com master e com o fix: timing, não regressão.
 
-Próximos: aguardar o #1995 (MSS do TCP em IPv6; commits prontos em `review/arostcp-ipv6-tcp-mss`) → #1980 (mdnsd IPv6, do Codex) só se o Codex parar de mexer nele → G19e (T/TCP no SYN) → G19h, R1 → G19i. Depois: S1 (`localhost`), R4, R7, G18a–i.
+Próximos: aguardar o #1995 → G19e (T/TCP no SYN) → G19h (RST) → R1 (portas RFC 6056) → G19i. Depois: S1 (`localhost`), R4, R7, G18a–i. #1980 foi mesclado (Codex); o follow-up do Codacy foi o #1991.
+
+**Backlog 2 (2026-10-31):** matriz de reconciliação em [research/2026-10-31-backlog2-reconciliation.md](research/2026-10-31-backlog2-reconciliation.md). B2 ainda não é ativado como frente própria: G19e/G19h/R1 cobrem B2-A e G19i cobre B2-C. G19f explicado (`tcp_do_ecn = 0`, desligado por padrão). Achado: as opções `TCP_KEEP*` estão só no header, sem `tcp_ctloutput()`. Primeiro candidato B2 depois disso: auditoria de PMTUD (B2-B, só pesquisa).
 
 Lição (2026-10-30): todo programa CUnit do AROS roda a suíte duas vezes (básica e automática). Validar **os dois** resumos; o Kal achou no #1950 uma falha que só aparecia na segunda.
 
