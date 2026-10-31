@@ -52,12 +52,16 @@ def listener(port, log):
 def inject_ptb(mtu, port, done, proto=6):
     """Wait on aros0 for a large IPv6 TCP segment to port; answer it with a
     Packet Too Big quoting it. done gets the time and the quoted header."""
-    p = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.htons(0x86dd))
+    # ETH_P_ALL: a socket for one ethertype only sees a packet after tc
+    # ingress, which --router uses to drop the oversized ones
+    p = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.htons(0x0003))
     p.bind((IFACE, 0))
     p.settimeout(180)
     try:
         while True:
-            f = p.recv(2048)
+            f, where = p.recvfrom(2048)
+            if len(f) < 14 or f[12:14] != b"\x86\xdd" or where[2] == socket.PACKET_OUTGOING:
+                continue
             ip = f[14:]
             if len(ip) < 48 or ip[6] != proto:
                 continue
@@ -140,6 +144,8 @@ def main():
         os.path.expanduser("~/aros-build-ipv6-hosted-claude/bin/linux-x86_64/AROS")))
     ap.add_argument("--arostcp")
     ap.add_argument("--mtu", type=int, default=1280)
+    ap.add_argument("--router", action="store_true",
+                    help="drop AROS's packets larger than --mtu at the host, as the router on a narrower path would")
     ap.add_argument("--udp", action="store_true",
                     help="with --offlink: 1452-byte UDP datagrams to OFF_DST[0], [1], [0]; Packet Too Big (--mtu, say 1400) about the first")
     ap.add_argument("--offlink", action="store_true",
@@ -178,6 +184,11 @@ def main():
         subprocess.run(["sudo", "-n", "ip", "-6", "route", "add", OFF_PREFIX + "/64", "dev", IFACE])
         host_ll, other_ll = OFF_DST
 
+    if a.router:
+        run_tcp.tc_clear()
+        run_tcp.tc("qdisc", "add", "dev", IFACE, "ingress")
+        run_tcp.tc("filter", "add", "dev", IFACE, "parent", "ffff:", "protocol", "ipv6", "basic",
+                   "match", "cmp(u16 at 4 layer network gt %d)" % (a.mtu - 40), "action", "drop")
     got = []
     threading.Thread(target=listener, args=(7002, got), daemon=True).start()
     ptb = {}
@@ -216,6 +227,8 @@ def main():
         ptb = json.loads(out.strip() or "{}")
     except Exception:
         injp.kill()
+    if a.router:
+        run_tcp.tc_clear()
     if a.offlink:
         rap.wait(timeout=30)
         subprocess.run(["sudo", "-n", "ip", "-6", "route", "del", OFF_PREFIX + "/64", "dev", IFACE])
