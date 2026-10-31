@@ -1,8 +1,8 @@
 # Backlog 2 — Modernização incremental do AROSTCP
 
-**Status:** planejado, não ativado. **Data:** 2026-10-31.
+**Status:** planejado, com ativação incremental delegada ao agente. **Data:** 2026-10-31.
 
-> Documento de continuidade. Não é uma fila de execução nem autorização para alterar o backlog atual. O agente deve seguir `AI_context/current_state.md` e as issues ativas até que o mantenedor decida ativar uma frente.
+> Documento de continuidade. Não é uma fila de execução nem autorização para alterar o backlog atual. O agente deve seguir `AI_context/current_state.md` e as issues ativas até que o agente identifique e documente uma oportunidade técnica de ativação.
 
 ## 1. Propósito e referências
 
@@ -19,7 +19,7 @@ Referências canônicas:
 
 ## 2. Convivência com o backlog atual
 
-1. O backlog atual prevalece: não mudar status, prioridades, marcos, responsáveis ou ordem das issues ativas por causa deste documento.
+1. O backlog atual permanece como referência operacional. O agente pode intercalar itens B2 e repriorizar trabalho com justificativa técnica documentada, sem prejudicar entregas ativas ou alterar os marcos Matter.
 2. Continuar as entregas já planejadas, conforme a decisão do mantenedor e evidências: G19b (MSS IPv6), G19e (T/TCP), G19h (close com dados não lidos), R1/G19g (portas efêmeras), G19i (anomalia de RTO), S1 (localhost), R4 (RDNSS/DNSSL), R7 (SNTP) e G18a–i. Esta lista **não impõe uma ordem**.
 3. Não duplicar trabalho: R1 concluído no backlog atual satisfaz B2-A. G19b corrige MSS sem redesenhar PMTUD; G19i pode corrigir defeito reproduzido sem reformular os temporizadores globais.
 4. G18a–i não são bloqueadores universais: itens não reproduzidos, decisões de API e pendências não críticas podem permanecer na trilha IPv6.
@@ -83,9 +83,9 @@ Referências canônicas:
 
 ## 6. Autonomia do agente e limites
 
-O agente pode **decidir e executar** antecipação, adiamento, divisão, descarte ou nova ordem com base na realidade do desenvolvimento. Para cada proposta registrar: revisão upstream e arquivos analisados; estado implementado/habilitado/testado/ausente/inconclusivo; evidência reproduzível; riscos em IPv4/IPv6/LP64/68k; dependências; custo relativo; e motivo da prioridade.
+O agente pode **decidir e executar** ativação, antecipação, adiamento, divisão, descarte ou nova ordem com base na realidade do desenvolvimento. Para cada proposta registrar: revisão upstream e arquivos analisados; estado implementado/habilitado/testado/ausente/inconclusivo; evidência reproduzível; riscos em IPv4/IPv6/LP64/68k; dependências; custo relativo; e motivo da prioridade.
 
-Pode ativar frentes e ajustar a sequência de pequenas entregas, documentando a decisão. **Pode repriorizar issues quando houver evidência e não prejudicar entregas ativas**, mas não pode, sem aprovação do mantenedor,, iniciar refatoração transversal, alterar ABI pública, ativar globalmente PRR/ECN ou alterar os marcos Matter.
+Pode ativar frentes e ajustar a sequência de pequenas entregas, documentando a decisão. **Pode repriorizar issues e ativar frentes B2 quando houver evidência e não prejudicar entregas ativas**, mas não pode, sem aprovação do mantenedor,, iniciar refatoração transversal, alterar ABI pública, ativar globalmente PRR/ECN ou alterar os marcos Matter.
 
 ## 7. Qualidade, upstream e encerramento
 
@@ -97,4 +97,4 @@ Pode ativar frentes e ajustar a sequência de pequenas entregas, documentando a 
 - Seguir diretriz existente: commits e PRs upstream sem assinatura de agentes.
 - “Concluído” requer evidência e testes, não apenas build ou PR aberto.
 
-**Primeira ação após ativação:** produzir matriz de reconciliação com o backlog vigente e o upstream, não começar imediatamente uma implementação. Evidências recentes prevalecem sobre a ordem sugerida neste documento.
+**Primeira ação ao considerar uma ativação autônoma:** produzir matriz de reconciliação com o backlog vigente e o upstream, não começar imediatamente uma implementação. Evidências recentes prevalecem sobre a ordem sugerida neste documento.
