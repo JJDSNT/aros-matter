@@ -1,0 +1,11 @@
+1793476943.075143 IP6 :: > ff02::1:ff97:aaa6: ICMP6, neighbor solicitation, who has fe80::ec88:5eff:fe97:aaa6, length 24
+1793476943.075179 IP6 :: > ff02::1:ff97:aaa6: ICMP6, neighbor solicitation, who has fe80::ec88:5eff:fe97:aaa6, length 24
+1793476944.075574 IP6 fe80::ec88:5eff:fe97:aaa6 > ff02::2: ICMP6, router solicitation, length 16
+1793476944.075611 IP6 fe80::ec88:5eff:fe97:aaa6 > ff02::2: ICMP6, router solicitation, length 16
+1793476947.236990 IP6 fe80::ec88:5eff:fe97:aaa6 > ff02::1:ff98:97bd: ICMP6, neighbor solicitation, who has fe80::e090:2aff:fe98:97bd, length 32
+1793476947.237012 IP6 fe80::e090:2aff:fe98:97bd > fe80::ec88:5eff:fe97:aaa6: ICMP6, neighbor advertisement, tgt is fe80::e090:2aff:fe98:97bd, length 32
+1793476947.237110 IP6 fe80::ec88:5eff:fe97:aaa6.1024 > fe80::e090:2aff:fe98:97bd.9: UDP, length 1
+1793476947.237129 IP6 fe80::e090:2aff:fe98:97bd > fe80::ec88:5eff:fe97:aaa6: ICMP6, destination unreachable, unreachable port, fe80::e090:2aff:fe98:97bd udp port 9, length 57
+1793476952.282888 IP6 fe80::1 > fe80::ec88:5eff:fe97:aaa6: ICMP6, neighbor solicitation, who has fe80::ec88:5eff:fe97:aaa6, length 32
+1793476953.307163 IP6 fe80::1 > fe80::ec88:5eff:fe97:aaa6: ICMP6, neighbor solicitation, who has fe80::ec88:5eff:fe97:aaa6, length 32
+1793476954.331088 IP6 fe80::1 > fe80::ec88:5eff:fe97:aaa6: ICMP6, neighbor solicitation, who has fe80::ec88:5eff:fe97:aaa6, length 32

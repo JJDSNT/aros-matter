@@ -11,7 +11,7 @@ States:
 | Item | B2 front | State | Evidence / note |
 | --- | --- | --- | --- |
 | G19b — MSS IPv6 | B2-B | done (#1995) | fixes the MSS only; PMTUD audit not done |
-| R1/G19g — RFC 6056 ports | B2-A | in review (#1998) | sequential ports from 1024 measured on the wire (tcp-wire 2026-10-30); done here satisfies B2-A R1 |
+| R1/G19g — RFC 6056 ports | B2-A | done (#1998) | sequential ports from 1024 measured on the wire (tcp-wire 2026-10-30); done here satisfies B2-A R1 |
 | G19e — T/TCP `ccnew` in the SYN | B2-A (compatibility) | done (#1996) | `tcp_do_rfc1644 = 1` (`tcp_subr.c:314`); RFC 6247 moved T/TCP to Historic |
 | G19h — close with unread data sends FIN | B2-A | done (#1997) | = stackprobe S4; RFC 1122 §4.2.2.13 / RFC 2525 §2.17 |
 | G19i — RTO 1.4 s then 9 s gap | B2-C | explained, no defect (backoff 1.5/3/6 s; the gap was ND dropping a held packet in the bench) | measure timer granularity before touching anything (RFC 6298) |

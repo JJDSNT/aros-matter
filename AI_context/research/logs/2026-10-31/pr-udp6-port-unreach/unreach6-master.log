@@ -1,0 +1,31 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: UNREACH6_Suite
+  Test: a closed port on ::1 is unreachable, from ::1 ...FAILED
+    1. testUNREACH6_LOOPBACK:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-unreach6.c:135  - IN6_ARE_ADDR_EQUAL(&from, &lo)
+  Test: a connected socket to a closed port gets ECONNREFUSED ...FAILED
+    1. testUNREACH6_REFUSED:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-unreach6.c:162  - CU_ASSERT_EQUAL(err,ECONNREFUSED)
+  Test: a closed port on our link-local is unreachable, from it ...FAILED
+    1. testUNREACH6_LINKLOCAL:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-unreach6.c:174  - IN6_ARE_ADDR_EQUAL(&from, &linklocal)
+  Test: a closed port on a group gets no error ...passed
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       13         5       n/a       n/a
+     Tests        :        4         3         0         0
+
+Elapsed Time: 7.080(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       13         5       n/a       n/a
+     Tests        :        4         3         0         0
+
+Elapsed Time: 7.020(s)
+

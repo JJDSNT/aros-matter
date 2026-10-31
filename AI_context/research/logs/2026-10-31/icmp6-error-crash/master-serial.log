@@ -1,0 +1,24 @@
+[Bootstrap] RAM memory block allocated: 0x40c9e000 - 0x50c9e000 (268435456 bytes)
+[Bootstrap] Entering kernel at 0x50c9e000...
+[KRN] Protecting host process stack (0x00007ffd52461060 - 0x00007ffd5246b060)
+Xlib:  extension "XFree86-VidModeExtension" missing on display ":99".
+[tap] unit 0 attached to aros0
+[tap] [0] MTU 1500 (frame buffer 1514 bytes)
+[tap] [0] hardware address: ee:88:5e:97:aa:a6
+[AROSTCP] eth0 is now online.
+[AROSTCP] in6_addmulti: S2_ADDMULTICASTADDRESS failed for eth0
+
+[AROSTCP] in6_addmulti: S2_ADDMULTICASTADDRESS failed for eth0
+
+[AROSTCP] in_addmulti: S2_ADDMULTICASTADDRESS failed for eth0
+
+[AROSTCP] in_addmulti: S2_ADDMULTICASTADDRESS failed for eth0
+
+[AROSTCP] in6_addmulti: S2_ADDMULTICASTADDRESS failed for eth0
+
+[KRN] Trap signal 11, SysBase 0000000041ca0900, KernelBase 0000000041ca1fb8
+    RSP=00000000427d6050  RBP=00000000427d6090  RIP=00000000426e311f
+    RAX=00000000426e3100  RBX=00000000427335c0  RCX=0000000000000000  RDX=0000000000000000
+    RDI=000000004274e8a0  RSI=0000000000000000  RFLAGS=0000000000010287
+    R8 =0000000000000000  R9 =0000000000000008  R10=0000000000000039  R11=0000000000000000
+    R12=00000000426f1f50  R13=0000000000000000  R14=0000000000000008  R15=0000000000000028
