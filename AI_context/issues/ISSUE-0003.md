@@ -30,7 +30,7 @@ Decidir entre: (a) `CHIPCryptoPALmbedTLS` contra o mbedTLS 3.6.7 do AROS; (b) `C
 - [x] Verificar se o SDK compila o PAL mbedTLS contra a 3.6 → sim, **sem patch**: o PAL usa `MBEDTLS_PRIVATE` e tem guardas para 3.0/3.1/3.3/4.0; compila contra a 3.6.7 com a config do AROS.
 - [x] Compilar e rodar no host Linux os testes de crypto do SDK contra a 3.6.7 → `TestChipCryptoPAL` (71 testes, inclui SPAKE2+ RFC, P-256, ECDH, HKDF, PBKDF2, AES-CCM, X.509/CSR): config do AROS como está **não linka** (PKCS5); +PKCS5 = 70/71 (CSR); +PKCS5+CSR = **71/71**. Harness em `tests/crypto-host/`, logs em `research/logs/2026-10-31/issue-0003-crypto-host/`.
 - [ ] Repetir no AROS (alvo de ISSUE-0002) → log
-- [ ] Avaliar a configuração: usar a biblioteca do sistema exige mudar `mbedtls_aros_config.h` upstream? Isso é aceitável upstream?
+- [x] Avaliar a configuração: a biblioteca do sistema exigiria mudar `mbedtls_aros_config.h` upstream → **não** (decisão do mantenedor); build próprio no aros-matter.
 
 # Critério de sucesso / falha
 
@@ -40,7 +40,8 @@ Decidir entre: (a) `CHIPCryptoPALmbedTLS` contra o mbedTLS 3.6.7 do AROS; (b) `C
 # Decisões tomadas
 
 - 2026-10-31: pin do SDK = **última stable, v1.6.1.0** (`3bcdd56ba5`), decisão do mantenedor.
-- 2026-10-31 (provisória, até o passo no AROS): **opção (a)**, `CHIPCryptoPALmbedTLS` contra o mbedTLS 3.6.7 do AROS, com 4 opções a mais na config do AROS (PR upstream, genérico: PBKDF2 e CSR servem a qualquer cliente X.509). Custo ~16 KB. (b) PSA não é preciso; (c) mbedTLS 2.28 do SDK fica descartada.
+- 2026-10-31 (provisória, até o passo no AROS): `CHIPCryptoPALmbedTLS` sobre o **mbedTLS 3.6.7**, com a config do AROS + 4 opções (`MBEDTLS_PKCS5_C`, `MBEDTLS_X509_CREATE_C`, `MBEDTLS_X509_CSR_PARSE_C`, `MBEDTLS_X509_CSR_WRITE_C`). Custo ~16 KB. (b) PSA não é preciso; o mbedTLS 2.28 do SDK fica descartado.
+- 2026-10-31: **a config do mbedTLS do AROS não muda upstream** (decisão do mantenedor). O aros-matter compila o seu próprio mbedTLS 3.6.7 (fonte do cache de ports do AROS, `mbedtls_aros_config.h` + as 4 opções, cola do AROS para entropia/tempo) e linka estático; a `workbench/libs/mbedtls` do AROS fica intocada.
 
 # Log
 

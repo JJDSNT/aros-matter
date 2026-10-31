@@ -35,3 +35,5 @@ In all three, two tests skip because the SDK's mbedTLS backend does not implemen
 The PAL needs no patch for 3.6: its `MBEDTLS_VERSION_NUMBER` guards already cover 3.x. The four options add about 16 KB to the library (host, -O1).
 
 Logs: `AI_context/research/logs/2026-10-31/issue-0003-crypto-host/`.
+
+Decision (2026-10-31): these options do **not** go into AROS's `mbedtls_aros_config.h` upstream. aros-matter builds its own static mbedTLS 3.6.7 with them (ISSUE-0003).
