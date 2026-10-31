@@ -75,3 +75,8 @@ Lição (2026-10-30): todo programa CUnit do AROS roda a suíte duas vezes (bás
 - ~~IPv6 D1–D4~~ → decididas (2026-10-28): modelo do Readme §6.6, coordenação com Kal, testes em `tests/`.
 - Upstream AROS: commits/PRs **sem assinatura do Claude Code**.
 - Fixar uma tag de release do connectedhomeip (ex.: `v1.4.x`) em vez de `master`?
+
+
+## Coordenação com aros-midihub
+
+Para mudanças compartilhadas em AROSTCP, IPv6/multicast, mdnsd/Bonami e DNS-SD, consultar [contrato de coordenação](../docs/upstream-coordination.md) e [índice de trabalho em andamento](../docs/upstream-work-in-progress.md). Antes de abrir PR upstream, verificar master/PRs atuais e inventariar branches, commits e worktrees locais ainda não publicados. A coordenação não impõe precedência global entre os backlogs ou marcos Matter; dependências devem ser concretas e específicas à tarefa.
