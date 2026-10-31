@@ -1,0 +1,34 @@
+{
+ "host_addresses": [
+  "fe80::e090:2aff:fe98:97bd",
+  "fe80::1"
+ ],
+ "ptb": {
+  "time": 1793484453.7946372,
+  "aros": "2001:db8:4d55:0:cd16:bee1:427b:3e17",
+  "host": "2001:db8:4d54::1",
+  "quoted_len": 1352
+ },
+ "host_bytes": [],
+ "boot": "ok",
+ "before_ptb": {
+  "packets": 1,
+  "largest": 1500,
+  "fragments": 0,
+  "over_mtu": 1
+ },
+ "after_ptb": {
+  "packets": 2,
+  "largest": 1500,
+  "fragments": 1,
+  "over_mtu": 1
+ },
+ "syn_mss": [],
+ "udp_after_ptb": [
+  {
+   "dst": "2001:db8:4d54::2",
+   "fragmented": false,
+   "length": 1500
+  }
+ ]
+}
