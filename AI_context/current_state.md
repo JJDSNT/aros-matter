@@ -65,9 +65,9 @@ Lição (2026-10-30): todo programa CUnit do AROS roda a suíte duas vezes (bás
 
 Depois do IPv6: ISSUE-0003 (crypto) → fechar ISSUE-0001 → ISSUE-0006 (spike M1) → ISSUE-0004.
 
-## Planejamento futuro — não ativado
+## Planejamento futuro — ativação incremental pelo agente
 
-- [Backlog 2 — modernização incremental do AROSTCP](backlog2.md): segurança, PMTUD, recuperação, temporizadores e TCP avançado. **Documento de continuidade, sem alterar a ordem das issues atuais ou M0–M6.** Ativar somente após decisão do mantenedor e reconciliação com upstream e trabalho em andamento.
+- [Backlog 2 — modernização incremental do AROSTCP](backlog2.md): segurança, PMTUD, recuperação, temporizadores e TCP avançado. **O agente pode ativar e repriorizar autonomamente itens B2**, com evidência e reconciliação com upstream e trabalho em andamento, sem prejudicar entregas ativas ou alterar M0–M6. Decisões excepcionais de alto risco permanecem sujeitas à aprovação do mantenedor.
 
 ## Decisões em aberto para o mantenedor
 
