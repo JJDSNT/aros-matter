@@ -19,7 +19,7 @@ States:
 | R2 — RFC 5961 | B2-A | pending, research | RST in `tcp_input.c:1411` acts on any in-window RST: no exact-sequence check, no challenge ACK. Needs a blind-RST/SYN test first |
 | R3 — keepalive options | B2-A | pending | `TCP_KEEPIDLE/INTVL/CNT/KEEPINIT` are **defined** in `netinet/tcp.h:235-238` but `tcp_ctloutput()` (`tcp_usrreq.c:584-644`) handles only NODELAY/MAXSEG/NOOPT/NOPUSH. B2 calls them "existing"; they are header-only. `TCP_USER_TIMEOUT` absent. Public API: check the Roadshow contract first |
 | S3 `MSG_DONTWAIT`, S5 `getnetbyaddr`, S6/S7 Roadshow calls | B2-A | research | ABI/contract questions; stackprobe is a probe, not an oracle |
-| PMTUD (ICMP frag-needed / ICMPv6 Packet Too Big) | B2-B | research | after #1995: next audit candidate, since it decides the MSS once a path MTU is known |
+| PMTUD (ICMP frag-needed / ICMPv6 Packet Too Big) | B2-B | **audited** ([2026-10-31-pmtud-audit.md](2026-10-31-pmtud-audit.md)) | IPv4 PMTUD absent; IPv6 route MTU ok, but a running TCP is not told (fragments), the off-link PMTU lands on the default route, no aging, no check; ND hold queue of one |
 | SACK / PRR | B2-B | research | `tcp_do_sack = 1`, `tcp_do_prr = 0`; check behaviour under loss before any default change |
 | CUBIC / NewReno, HyStart++ | B2-C | research | both exist; HyStart++ only after G19i is understood |
 | RACK-TLP, F-RTO, TFO, fuzzing | B2-D | deferred | depend on timers and SACK scoreboard |

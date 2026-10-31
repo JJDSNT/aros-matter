@@ -1,0 +1,89 @@
+1793480362.341995 IP6 (hlim 1, next-header Options (0) payload length: 32) fe80::d8ae:2dff:fef8:344f > ff02::1:fff8:344f: HBH (rtalert: 0x0000) (padn) [icmp6 sum ok] ICMP6, multicast listener reportmax resp delay: 0 addr: ff02::1:fff8:344f
+1793480362.351387 IP6 (hlim 1, next-header Options (0) payload length: 96) fe80::1 > ff02::16: HBH (rtalert: 0x0000) (padn) ICMP6, multicast listener report v2, 4 group record(s) [gaddr ff02::1:ff00:2 to_ex, 0 source(s)] [gaddr ff02::fb to_ex, 0 source(s)] [|icmp6]
+1793480362.939837 IP6 (hlim 1, next-header Options (0) payload length: 32) :: > ff02::fb: HBH (rtalert: 0x0000) (padn) [icmp6 sum ok] ICMP6, multicast listener reportmax resp delay: 0 addr: ff02::fb
+1793480363.279841 IP6 (hlim 1, next-header Options (0) payload length: 96) fe80::1 > ff02::16: HBH (rtalert: 0x0000) (padn) ICMP6, multicast listener report v2, 4 group record(s) [gaddr ff02::1:ff00:2 to_ex, 0 source(s)] [gaddr ff02::fb to_ex, 0 source(s)] [|icmp6]
+1793480363.451687 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 24) :: > ff02::1:fff8:344f: [icmp6 sum ok] ICMP6, neighbor solicitation, length 24, who has fe80::d8ae:2dff:fef8:344f
+1793480363.451820 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 24) :: > ff02::1:fff8:344f: [icmp6 sum ok] ICMP6, neighbor solicitation, length 24, who has fe80::d8ae:2dff:fef8:344f
+1793480363.951520 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 16) fe80::d8ae:2dff:fef8:344f > ff02::2: [icmp6 sum ok] ICMP6, router solicitation, length 16
+	  source link-address option (1), length 8 (1): da:ae:2d:f8:34:4f
+1793480363.951667 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 16) fe80::d8ae:2dff:fef8:344f > ff02::2: [icmp6 sum ok] ICMP6, router solicitation, length 16
+	  source link-address option (1), length 8 (1): da:ae:2d:f8:34:4f
+1793480363.951961 IP6 (hlim 255, next-header UDP (17) payload length: 109) fe80::d8ae:2dff:fef8:344f.5353 > ff02::fb.5353: 0 [2n] ANY (QU)? arosbox.local. (101)
+1793480364.211759 IP6 (hlim 255, next-header UDP (17) payload length: 109) fe80::d8ae:2dff:fef8:344f.5353 > ff02::fb.5353: 0 [2n] ANY (QM)? arosbox.local. (101)
+1793480364.471789 IP6 (hlim 255, next-header UDP (17) payload length: 109) fe80::d8ae:2dff:fef8:344f.5353 > ff02::fb.5353: 0 [2n] ANY (QM)? arosbox.local. (101)
+1793480364.731908 IP6 (hlim 255, next-header UDP (17) payload length: 90) fe80::d8ae:2dff:fef8:344f.5353 > ff02::fb.5353: 0*- [0q] 2/0/0 arosbox.local. (Cache flush) A 192.168.166.2, arosbox.local. (Cache flush) AAAA [|domain]
+1793480365.731596 IP6 (hlim 255, next-header UDP (17) payload length: 90) fe80::d8ae:2dff:fef8:344f.5353 > ff02::fb.5353: 0*- [0q] 2/0/0 arosbox.local. (Cache flush) A 192.168.166.2, arosbox.local. (Cache flush) AAAA [|domain]
+1793480367.779254 IP6 (flowlabel 0x75974, hlim 255, next-header ICMPv6 (58) payload length: 48) fe80::e090:2aff:fe98:97bd > ff02::1: [icmp6 sum ok] ICMP6, router advertisement, length 48
+	hop limit 64, Flags [none], pref medium, router lifetime 1800s, reachable time 0ms, retrans timer 0ms
+	  prefix info option (3), length 32 (4): 2001:db8:4d55::/64, Flags [auto], valid time 3600s, pref. time 3600s
+1793480367.779726 IP6 (hlim 1, next-header Options (0) payload length: 32) fe80::d8ae:2dff:fef8:344f > ff02::1:ff09:c7b8: HBH (rtalert: 0x0000) (padn) [icmp6 sum ok] ICMP6, multicast listener reportmax resp delay: 0 addr: ff02::1:ff09:c7b8
+1793480367.951731 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 24) :: > ff02::1:ff09:c7b8: [icmp6 sum ok] ICMP6, neighbor solicitation, length 24, who has 2001:db8:4d55:0:451a:8936:5909:c7b8
+1793480367.951885 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 24) :: > ff02::1:fff8:344f: [icmp6 sum ok] ICMP6, neighbor solicitation, length 24, who has 2001:db8:4d55:0:d8ae:2dff:fef8:344f
+1793480368.785191 IP6 (flowlabel 0x75974, hlim 255, next-header ICMPv6 (58) payload length: 48) fe80::e090:2aff:fe98:97bd > ff02::1: [icmp6 sum ok] ICMP6, router advertisement, length 48
+	hop limit 64, Flags [none], pref medium, router lifetime 1800s, reachable time 0ms, retrans timer 0ms
+	  prefix info option (3), length 32 (4): 2001:db8:4d55::/64, Flags [auto], valid time 3600s, pref. time 3600s
+1793480369.788254 IP6 (flowlabel 0x75974, hlim 255, next-header ICMPv6 (58) payload length: 48) fe80::e090:2aff:fe98:97bd > ff02::1: [icmp6 sum ok] ICMP6, router advertisement, length 48
+	hop limit 64, Flags [none], pref medium, router lifetime 1800s, reachable time 0ms, retrans timer 0ms
+	  prefix info option (3), length 32 (4): 2001:db8:4d55::/64, Flags [auto], valid time 3600s, pref. time 3600s
+1793480373.733201 IP6 (hlim 1, next-header Options (0) payload length: 32) fe80::d8ae:2dff:fef8:344f > ff02::fb: HBH (rtalert: 0x0000) (padn) [icmp6 sum ok] ICMP6, multicast listener reportmax resp delay: 0 addr: ff02::fb
+1793480373.733360 IP6 (hlim 1, next-header Options (0) payload length: 32) fe80::d8ae:2dff:fef8:344f > ff02::1:fff8:344f: HBH (rtalert: 0x0000) (padn) [icmp6 sum ok] ICMP6, multicast listener reportmax resp delay: 0 addr: ff02::1:fff8:344f
+1793480374.214555 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::d8ae:2dff:fef8:344f > ff02::1:ff98:97bd: [icmp6 sum ok] ICMP6, neighbor solicitation, length 32, who has fe80::e090:2aff:fe98:97bd
+	  source link-address option (1), length 8 (1): da:ae:2d:f8:34:4f
+1793480374.214579 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::e090:2aff:fe98:97bd > fe80::d8ae:2dff:fef8:344f: [icmp6 sum ok] ICMP6, neighbor advertisement, length 32, tgt is fe80::e090:2aff:fe98:97bd, Flags [solicited, override]
+	  destination link-address option (2), length 8 (1): e2:90:2a:98:97:bd
+1793480374.214797 IP6 (hlim 64, next-header UDP (17) payload length: 1460) 2001:db8:4d55:0:451a:8936:5909:c7b8.60560 > 2001:db8:4d54::1.9999: UDP, length 1452
+1793480374.214823 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) 2001:db8:4d54::1 > ff02::1:ff09:c7b8: [icmp6 sum ok] ICMP6, neighbor solicitation, length 32, who has 2001:db8:4d55:0:451a:8936:5909:c7b8
+	  source link-address option (1), length 8 (1): e2:90:2a:98:97:bd
+1793480374.214992 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::d8ae:2dff:fef8:344f > 2001:db8:4d54::1: [icmp6 sum ok] ICMP6, neighbor advertisement, length 32, tgt is 2001:db8:4d55:0:451a:8936:5909:c7b8, Flags [none]
+	  destination link-address option (2), length 8 (1): da:ae:2d:f8:34:4f
+1793480374.214997 IP6 (flowlabel 0x857e6, hlim 64, next-header ICMPv6 (58) payload length: 1240) 2001:db8:4d54::1 > 2001:db8:4d55:0:451a:8936:5909:c7b8: ICMP6, destination unreachable, unreachable port, 2001:db8:4d54::1 udp port 9999
+1793480374.215152 IP6 (flowlabel 0x41828, hlim 64, next-header ICMPv6 (58) payload length: 1360) 2001:db8:4d54::1 > 2001:db8:4d55:0:451a:8936:5909:c7b8: ICMP6, packet too big, mtu 1400
+1793480378.533258 IP6 (hlim 1, next-header Options (0) payload length: 32) fe80::d8ae:2dff:fef8:344f > ff02::1:ff09:c7b8: HBH (rtalert: 0x0000) (padn) [icmp6 sum ok] ICMP6, multicast listener reportmax resp delay: 0 addr: ff02::1:ff09:c7b8
+1793480379.223564 IP6 (hlim 64, next-header Fragment (44) payload length: 1360) 2001:db8:4d55:0:451a:8936:5909:c7b8 > 2001:db8:4d54::2: frag (0x00000001:0|1352) 51152 > 9999: UDP, length 1452
+1793480379.223696 IP6 (hlim 64, next-header Fragment (44) payload length: 116) 2001:db8:4d55:0:451a:8936:5909:c7b8 > 2001:db8:4d54::2: frag (0x00000001:1352|108)
+1793480379.223751 IP6 (flowlabel 0x1ce81, hlim 64, next-header ICMPv6 (58) payload length: 1240) 2001:db8:4d54::2 > 2001:db8:4d55:0:451a:8936:5909:c7b8: ICMP6, destination unreachable, unreachable port, 2001:db8:4d54::2 udp port 9999
+1793480379.232952 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::1 > 2001:db8:4d55:0:451a:8936:5909:c7b8: [icmp6 sum ok] ICMP6, neighbor solicitation, length 32, who has 2001:db8:4d55:0:451a:8936:5909:c7b8
+	  source link-address option (1), length 8 (1): e2:90:2a:98:97:bd
+1793480379.232986 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::1 > fe80::d8ae:2dff:fef8:344f: [icmp6 sum ok] ICMP6, neighbor solicitation, length 32, who has fe80::d8ae:2dff:fef8:344f
+	  source link-address option (1), length 8 (1): e2:90:2a:98:97:bd
+1793480379.233169 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::d8ae:2dff:fef8:344f > fe80::1: [icmp6 sum ok] ICMP6, neighbor advertisement, length 32, tgt is 2001:db8:4d55:0:451a:8936:5909:c7b8, Flags [none]
+	  destination link-address option (2), length 8 (1): da:ae:2d:f8:34:4f
+1793480379.233274 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::d8ae:2dff:fef8:344f > fe80::1: [icmp6 sum ok] ICMP6, neighbor advertisement, length 32, tgt is fe80::d8ae:2dff:fef8:344f, Flags [none]
+	  destination link-address option (2), length 8 (1): da:ae:2d:f8:34:4f
+1793480380.253115 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::d8ae:2dff:fef8:344f > ff02::1:ff98:97bd: [icmp6 sum ok] ICMP6, neighbor solicitation, length 32, who has fe80::e090:2aff:fe98:97bd
+	  source link-address option (1), length 8 (1): da:ae:2d:f8:34:4f
+1793480380.253136 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::e090:2aff:fe98:97bd > fe80::d8ae:2dff:fef8:344f: [icmp6 sum ok] ICMP6, neighbor advertisement, length 32, tgt is fe80::e090:2aff:fe98:97bd, Flags [solicited, override]
+	  destination link-address option (2), length 8 (1): e2:90:2a:98:97:bd
+1793480380.257293 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::1 > fe80::d8ae:2dff:fef8:344f: [icmp6 sum ok] ICMP6, neighbor solicitation, length 32, who has fe80::d8ae:2dff:fef8:344f
+	  source link-address option (1), length 8 (1): e2:90:2a:98:97:bd
+1793480380.257302 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::1 > 2001:db8:4d55:0:451a:8936:5909:c7b8: [icmp6 sum ok] ICMP6, neighbor solicitation, length 32, who has 2001:db8:4d55:0:451a:8936:5909:c7b8
+	  source link-address option (1), length 8 (1): e2:90:2a:98:97:bd
+1793480380.257448 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::d8ae:2dff:fef8:344f > fe80::1: [icmp6 sum ok] ICMP6, neighbor advertisement, length 32, tgt is fe80::d8ae:2dff:fef8:344f, Flags [none]
+	  destination link-address option (2), length 8 (1): da:ae:2d:f8:34:4f
+1793480380.257546 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::d8ae:2dff:fef8:344f > fe80::1: [icmp6 sum ok] ICMP6, neighbor advertisement, length 32, tgt is 2001:db8:4d55:0:451a:8936:5909:c7b8, Flags [none]
+	  destination link-address option (2), length 8 (1): da:ae:2d:f8:34:4f
+1793480380.753257 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::d8ae:2dff:fef8:344f > ff02::1:ff98:97bd: [icmp6 sum ok] ICMP6, neighbor solicitation, length 32, who has fe80::e090:2aff:fe98:97bd
+	  source link-address option (1), length 8 (1): da:ae:2d:f8:34:4f
+1793480380.753279 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::e090:2aff:fe98:97bd > fe80::d8ae:2dff:fef8:344f: [icmp6 sum ok] ICMP6, neighbor advertisement, length 32, tgt is fe80::e090:2aff:fe98:97bd, Flags [solicited, override]
+	  destination link-address option (2), length 8 (1): e2:90:2a:98:97:bd
+1793480381.253165 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::d8ae:2dff:fef8:344f > ff02::1:ff98:97bd: [icmp6 sum ok] ICMP6, neighbor solicitation, length 32, who has fe80::e090:2aff:fe98:97bd
+	  source link-address option (1), length 8 (1): da:ae:2d:f8:34:4f
+1793480381.253202 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::e090:2aff:fe98:97bd > fe80::d8ae:2dff:fef8:344f: [icmp6 sum ok] ICMP6, neighbor advertisement, length 32, tgt is fe80::e090:2aff:fe98:97bd, Flags [solicited, override]
+	  destination link-address option (2), length 8 (1): e2:90:2a:98:97:bd
+1793480381.281057 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::1 > 2001:db8:4d55:0:451a:8936:5909:c7b8: [icmp6 sum ok] ICMP6, neighbor solicitation, length 32, who has 2001:db8:4d55:0:451a:8936:5909:c7b8
+	  source link-address option (1), length 8 (1): e2:90:2a:98:97:bd
+1793480381.281068 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::1 > fe80::d8ae:2dff:fef8:344f: [icmp6 sum ok] ICMP6, neighbor solicitation, length 32, who has fe80::d8ae:2dff:fef8:344f
+	  source link-address option (1), length 8 (1): e2:90:2a:98:97:bd
+1793480381.281222 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::d8ae:2dff:fef8:344f > fe80::1: [icmp6 sum ok] ICMP6, neighbor advertisement, length 32, tgt is 2001:db8:4d55:0:451a:8936:5909:c7b8, Flags [none]
+	  destination link-address option (2), length 8 (1): da:ae:2d:f8:34:4f
+1793480381.281290 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::d8ae:2dff:fef8:344f > fe80::1: [icmp6 sum ok] ICMP6, neighbor advertisement, length 32, tgt is fe80::d8ae:2dff:fef8:344f, Flags [none]
+	  destination link-address option (2), length 8 (1): da:ae:2d:f8:34:4f
+1793480382.234571 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::d8ae:2dff:fef8:344f > ff02::1:ff98:97bd: [icmp6 sum ok] ICMP6, neighbor solicitation, length 32, who has fe80::e090:2aff:fe98:97bd
+	  source link-address option (1), length 8 (1): da:ae:2d:f8:34:4f
+1793480382.234591 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::e090:2aff:fe98:97bd > fe80::d8ae:2dff:fef8:344f: [icmp6 sum ok] ICMP6, neighbor advertisement, length 32, tgt is fe80::e090:2aff:fe98:97bd, Flags [solicited, override]
+	  destination link-address option (2), length 8 (1): e2:90:2a:98:97:bd
+1793480382.234736 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::d8ae:2dff:fef8:344f > ff02::1:ff98:97bd: [icmp6 sum ok] ICMP6, neighbor solicitation, length 32, who has fe80::e090:2aff:fe98:97bd
+	  source link-address option (1), length 8 (1): da:ae:2d:f8:34:4f
+1793480382.234741 IP6 (hlim 255, next-header ICMPv6 (58) payload length: 32) fe80::e090:2aff:fe98:97bd > fe80::d8ae:2dff:fef8:344f: [icmp6 sum ok] ICMP6, neighbor advertisement, length 32, tgt is fe80::e090:2aff:fe98:97bd, Flags [solicited, override]
+	  destination link-address option (2), length 8 (1): e2:90:2a:98:97:bd
+1793480382.234826 IP6 (hlim 64, next-header Fragment (44) payload length: 116) 2001:db8:4d55:0:451a:8936:5909:c7b8 > 2001:db8:4d54::1: frag (0x00000002:1352|108)
