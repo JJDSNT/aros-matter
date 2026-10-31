@@ -1,0 +1,27 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: TCPSYN6_Suite
+  Test: the SYN asks for MSS, window scale, SACK and timestamps ...passed
+  Test: the SYN carries no T/TCP CC option ...FAILED
+    1. testTCPSYN6_NO_TTCP:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-tcpsyn6.c:265  - !has_option(opt, len, OPT_CC, OPT_CCECHO)
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :        7         1       n/a       n/a
+     Tests        :        2         1         0         0
+
+Elapsed Time: 0.000(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :        7         1       n/a       n/a
+     Tests        :        2         1         0         0
+
+Elapsed Time: 0.000(s)
+

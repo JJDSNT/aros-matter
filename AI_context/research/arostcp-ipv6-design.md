@@ -99,11 +99,12 @@ Bancada nova: o AROS é cliente do Linux do host pela tap, em IPv6; `tc` molda o
   - **G19b — `tcp_mss()`/`tcp_mssopt()` não conhecem IPv6.** ✔ `tcp_mss()` procura a rota pelo `inp_faddr` (IPv4, zero numa conexão IPv6): sem rota, fixa `t_maxseg = tcp_mssdflt` (1460) e retorna **antes de aplicar o MSS do par** (o Linux anunciou 1440; RFC 9293 §3.7.1). `tcp_mssopt()` anuncia MTU − `sizeof(struct tcpiphdr)` (40, IPv4): em IPv6 os cabeçalhos são 60 (RFC 6691), o certo é 1440. Segmento de 1460 + 32 (TCP com timestamps) + 40 = 1532 > 1500. **Em review como AROS #1995** (2026-10-31).
   - **G19c — a fragmentação IPv6 manda só o primeiro fragmento.** → AROS #1983 (com G19d e o `rt` NULL ao fragmentar multicast, que derrubava a pilha). ✔ Em `ip6_output()` o laço recalcula `flen`/`more` com `m->m_pkthdr.len`, que não diminui; só `off2` avança. A segunda volta pede `m_copy()` além do fim, recebe NULL e descarta o pacote com `ENOBUFS`. Afeta também UDP maior que o MTU.
   - **G19d — o bit M (mais fragmentos) na ordem de bytes errada.** ✔ `IP6F_MORE_FRAG` já está na ordem da rede (0x0100 em little-endian); o código faz `offlg |= IP6F_MORE_FRAG` e depois `htons(offlg)`: no fio sai "offset 256, sem M" (`frag (…:256|1448)`). Em big-endian (m68k, PPC) não aparece.
-- **G19e — T/TCP ainda no SYN.** ✔ O SYN leva `ccnew` (RFC 1644, Histórico pela RFC 6247; permite transação com SYN falsificado). Retirar.
+- **G19e — T/TCP ainda no SYN.** ✔ O SYN leva `ccnew` (RFC 1644, Histórico pela RFC 6247; permite transação com SYN falsificado). Retirar. **Em review como AROS #1996** (2026-10-31): desligado por padrão, código mantido.
 - **G19f — ECN não pedido no SYN** (flags só `S`). ? O Readme diz que há suporte; ver se está desligado por padrão.
 - **G19g — portas efêmeras sequenciais** (1024, 1025, …): ✔ confirma R1 no fio. ISNs aleatórios ✔.
 - **G19h — fechar com dados não lidos manda FIN, não RST** (RFC 1122 §4.2.2.13, SHOULD). ✔
 - **G19i — RTO: primeira retransmissão em 1,4 s, a segunda só 9 s depois** (esperado ~2,8 s com backoff). ? A investigar (relógio de 500 ms, backoff).
+  - **G19j — `TSval 0` no SYN.** Visto no bench (2026-10-31), com e sem o #1996: a opção de timestamp do SYN leva `TS val 0`. RFC 7323 §4.3/§5.4: TSval vem de um relógio monotônico (o RFC recomenda um deslocamento aleatório por conexão). A conferir: `tcp_now` começa em 0? Não reproduzido além do SYN.
 - Ordem proposta: G19c+d (fragmentação, simples e grave) → G19b (MSS IPv6) → G19e (T/TCP) → G19h, G19g/R1 → G19i.
 
 ### G18 — Pendências registradas nas notas dos PRs (reunidas em 2026-10-30)
