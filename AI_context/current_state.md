@@ -63,7 +63,7 @@ Próximos: build limpo → revalidar #1983 → abrir o PR do **G19b** (MSS do TC
 
 Lição (2026-10-30): todo programa CUnit do AROS roda a suíte duas vezes (básica e automática). Validar **os dois** resumos; o Kal achou no #1950 uma falha que só aparecia na segunda.
 
-Depois do IPv6: ISSUE-0003 (crypto) → fechar ISSUE-0001 → ISSUE-0006 (spike M1) → ISSUE-0004.
+**Sequência sugerida para a trilha Matter (não é bloqueada pelo Backlog 2):** após estabilização suficiente do IPv6, ISSUE-0003 (crypto) → fechar ISSUE-0001 → ISSUE-0006 (spike M1) → ISSUE-0004. O agente pode intercalar ou antecipar essas atividades e as frentes B2 conforme dependências, evidências e riscos; não existe exigência de concluir a modernização TCP antes do Matter.
 
 ## Planejamento futuro — ativação incremental pelo agente
 
