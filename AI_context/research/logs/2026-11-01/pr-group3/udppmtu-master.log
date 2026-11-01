@@ -1,0 +1,36 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: UDPPMTU_Suite
+  Test: the IPv6 path MTU options and their defaults ...FAILED
+    1. testUDPPMTU_V6_OPTIONS:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-udppmtu.c:314  - CU_ASSERT_EQUAL(Errno(),ENOTCONN)
+  Test: IPV6_PATHMTU gives the peer's path MTU ...FAILED
+    1. testUDPPMTU_V6_PATHMTU:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-udppmtu.c:342  - mi.ip6m_mtu != 1400 && mi.ip6m_mtu >= IPV6_MMTU
+  Test: IPV6_RECVPATHMTU tells the sender of a Packet Too Big ...FAILED
+    1. testUDPPMTU_V6_RECVPATHMTU:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-udppmtu.c:365  - IN6_ARE_ADDR_EQUAL(&mi.ip6m_addr.sin6_addr, &a)
+  Test: IPV6_DONTFRAG refuses a datagram above the link MTU ...FAILED
+    1. testUDPPMTU_V6_DONTFRAG:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-udppmtu.c:418  - CU_ASSERT_EQUAL(Errno(),EMSGSIZE)
+  Test: IPV6_USE_MIN_MTU and IPV6_DONTFRAG for multicast ...FAILED
+    1. testUDPPMTU_V6_MINMTU:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-udppmtu.c:482  - CU_ASSERT_EQUAL(seti(s, IPPROTO_IPV6, IPV6_DONTFRAG, 1),0)
+  Test: IP_DONTFRAG sets DF and refuses above the path MTU ...FAILED
+    1. testUDPPMTU_V4_DONTFRAG:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-udppmtu.c:543  - df
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       65        41       n/a       n/a
+     Tests        :        6         6         0         0
+
+Elapsed Time: 7.300(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       65        41       n/a       n/a
+     Tests        :        6         6         0         0
+
+Elapsed Time: 7.220(s)
+

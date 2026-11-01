@@ -1,0 +1,28 @@
+{
+ "host_addresses": [
+  "fe80::1"
+ ],
+ "ptb": {
+  "aros": "fe80::70f4:95ff:feb1:a612",
+  "time": 0.0
+ },
+ "host_bytes": [
+  0
+ ],
+ "boot": "did not finish",
+ "before_ptb": {
+  "packets": 0,
+  "largest": 0,
+  "fragments": 0,
+  "over_mtu": 0
+ },
+ "after_ptb": {
+  "packets": 258,
+  "largest": 1500,
+  "fragments": 0,
+  "over_mtu": 53
+ },
+ "syn_mss": [
+  1440
+ ]
+}

@@ -12,8 +12,8 @@ Rules (Kal, 2026-10-31):
 | Group | PR | Theme | State |
 |---|---|---|---|
 | 1 | #2005 | IPv6/TCP conformance series | merged (5.20) |
-| 2 | #2006 | IPv4 ARP queue, IPv4 path MTU discovery | in review (5.21) |
-| 3 | (to open) | Path MTU and ECN, TCP and UDP | ready (5.22), branch `review/arostcp-series3` |
+| 2 | #2006 | IPv4 ARP queue, IPv4 path MTU discovery | merged (5.21) |
+| 3 | #2011 | Path MTU and ECN, TCP and UDP | in review (5.22) |
 | 4 | — | Socket API and compatibility | |
 | 5 | — | IPv6 on real networks | |
 | 6 | — | TCP recovery and hardening | |

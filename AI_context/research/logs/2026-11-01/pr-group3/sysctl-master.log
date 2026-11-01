@@ -1,0 +1,31 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: SYSCTL_Suite
+  Test: net.inet.tcp.pmtud ...FAILED
+    1. knob:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-sysctl.c:46  - CU_ASSERT_EQUAL(v,dflt)
+  Test: net.inet.tcp.pmtud_blackhole ...FAILED
+    1. knob:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-sysctl.c:46  - CU_ASSERT_EQUAL(v,dflt)
+  Test: net.inet.tcp.ecn ...FAILED
+    1. testSYSCTL_ECN:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-sysctl.c:79  - CU_ASSERT_EQUAL(v,2)
+  Test: an unknown leaf is refused ...passed
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       31        30       n/a       n/a
+     Tests        :        4         3         0         0
+
+Elapsed Time: 0.000(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       31        30       n/a       n/a
+     Tests        :        4         3         0         0
+
+Elapsed Time: 0.000(s)
+

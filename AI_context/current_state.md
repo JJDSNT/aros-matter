@@ -107,3 +107,5 @@ Lição (2026-10-30): todo programa CUnit do AROS roda a suíte duas vezes (bás
 ## Coordenação com aros-midihub
 
 Para mudanças compartilhadas em AROSTCP, IPv6/multicast, mdnsd/Bonami e DNS-SD, consultar [contrato de coordenação](../docs/upstream-coordination.md) e [índice de trabalho em andamento](../docs/upstream-work-in-progress.md). Antes de abrir PR upstream, verificar master/PRs atuais e inventariar branches, commits e worktrees locais ainda não publicados. A coordenação não impõe precedência global entre os backlogs ou marcos Matter; dependências devem ser concretas e específicas à tarefa.
+
+**Terceiro grupo (2026-11-01):** #2006 mesclado (0b819a59f1, 5.21). [#2011](https://github.com/aros-development-team/AROS/pull/2011) aberto: black hole do PMTU no TCP; RFC 3542 §11 + `IP_DONTFRAG`; ECN aceito por padrão (v4/v6), com correções achadas pelo bench (CE não ecoado, ECE em ACK puro ignorado, CWR a cada ECE); campo ECN para UDP (`IPV6_TCLASS` era ignorado), ancillary data em multicast IPv4; 4 commits, 5.22 / v0.61; 27 suítes. Evidência em `research/logs/2026-11-01/pr-group3/`. Próximo grupo (4) só depois do merge.
