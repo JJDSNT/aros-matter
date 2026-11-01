@@ -8,6 +8,10 @@ Atualizado: 2026-10-30
 
 Bancada: AROS hosted linux-x86_64 (`tools/hosted-run.sh`) + tap isolada `aros0` (`tools/tap-up.sh`).
 
+## Prioridade atual (mantenedor, 2026-10-31)
+
+**Completar a pilha AROSTCP vem antes do Matter.** A trilha Matter (ISSUE-0003 passo 4, M1–M5) fica em espera; o trabalho segue em grupos de PR do AROSTCP (um aberto por vez), tirados do Backlog 2 e das pendências IPv6/TCP.
+
 ## Resumo
 
 Fase de pesquisa (M0). Toolchain validada (ISSUE-0002 concluída). Testes IPv6 no hosted mostraram lacunas na pilha (ISSUE-0008). A primeira auditoria por leitura de código ([research/2026-10-28-initial-desk-audit.md](research/2026-10-28-initial-desk-audit.md)) leva a quatro conclusões:
