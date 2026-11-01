@@ -49,7 +49,7 @@ def listener(port, log):
         pass
 
 
-def inject_ptb(mtu, port, done, proto=6):
+def inject_ptb(mtu, port, done, proto=6, record=None):
     """Wait on aros0 for a large IPv6 TCP segment to port; answer it with a
     Packet Too Big quoting it. done gets the time and the quoted header."""
     # ETH_P_ALL: a socket for one ethertype only sees a packet after tc
@@ -77,10 +77,88 @@ def inject_ptb(mtu, port, done, proto=6):
             quoted = ip[:mtu - 40 - 8]          # as much as fits the minimum MTU
             msg = struct.pack("!BBHI", 2, 0, 0, mtu) + quoted
             r.sendto(msg, (src, 0, 0, idx if src.startswith("fe80") else 0))
-            done.update(time=time.time(), aros=src, host=dst, quoted_len=len(quoted))
-            return
+            r.close()
+            if not done:        # a router answers every packet it drops
+                done.update(time=time.time(), aros=src, host=dst, quoted_len=len(quoted))
+                if record:
+                    with open(record, "w") as f:
+                        json.dump(done, f)
     except socket.timeout:
         return
+
+
+def _cksum(b):
+    if len(b) % 2:
+        b += b"\0"
+    t = sum(struct.unpack("!%dH" % (len(b) // 2), b))
+    while t >> 16:
+        t = (t & 0xffff) + (t >> 16)
+    return ~t & 0xffff
+
+
+def inject_needfrag4(mtu, port, done, record=None):
+    """IPv4: wait on aros0 for a TCP segment to port, larger than mtu, with
+    DF; answer it with an ICMP "fragmentation needed" (RFC 1191) quoting it."""
+    p = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.htons(0x0003))
+    p.bind((IFACE, 0))
+    p.settimeout(180)
+    try:
+        while True:
+            f, where = p.recvfrom(2048)
+            if len(f) < 14 + 40 or f[12:14] != b"\x08\x00" or where[2] == socket.PACKET_OUTGOING:
+                continue
+            ip = f[14:]
+            hl = (ip[0] & 0x0f) * 4
+            total = struct.unpack("!H", ip[2:4])[0]
+            if ip[9] != 6 or struct.unpack("!H", ip[hl + 2:hl + 4])[0] != port or \
+                    total <= mtu or not (ip[6] & 0x40):
+                continue
+            src = socket.inet_ntoa(ip[12:16])
+            dst = socket.inet_ntoa(ip[16:20])
+            body = struct.pack("!BBHHH", 3, 4, 0, 0, mtu) + ip[:hl + 8]
+            body = body[:2] + struct.pack("!H", _cksum(body)) + body[4:]
+            r = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
+            r.bind((dst, 0))
+            r.sendto(body, (src, 0))
+            r.close()
+            if not done:        # a router answers every packet it drops
+                done.update(time=time.time(), aros=src, host=dst, quoted_len=hl + 8)
+                if record:
+                    with open(record, "w") as f:
+                        json.dump(done, f)
+    except socket.timeout:
+        return
+
+
+def analyse4(text, res, mtu):
+    """IPv4: AROS's packets before and after the "fragmentation needed"."""
+    text = re.sub(r"\n\s+(?=\d+\.\d+\.\d+\.\d+)", " ", text)    # -v puts the addresses on a line of their own
+    ptb = res.get("ptb") or {}
+    aros = ptb.get("aros")
+    if not aros:
+        return res
+    t0 = ptb["time"]
+    pkts = []
+    for line in text.splitlines():
+        m = re.match(r"^(\d+\.\d+) IP \((.*?length \d+)\)\s+(\S+) > ", line)
+        if not m or m.group(3).rsplit(".", 1)[0] != aros and m.group(3) != aros:
+            continue
+        hdr = m.group(2)
+        length = int(re.search(r"length (\d+)", hdr).group(1))
+        flags = re.search(r"flags \[([^\]]*)\]", hdr)
+        off = re.search(r"offset (\d+)", hdr)
+        frag = (flags and "+" in flags.group(1)) or (off and off.group(1) != "0")
+        df = flags is not None and "DF" in flags.group(1)
+        pkts.append(dict(t=float(m.group(1)), len=length, frag=bool(frag), df=df))
+
+    def summary(ps):
+        return {"packets": len(ps), "largest": max([p["len"] for p in ps] or [0]),
+                "fragments": sum(1 for p in ps if p["frag"]),
+                "over_mtu": sum(1 for p in ps if p["len"] > mtu),
+                "with_df": sum(1 for p in ps if p["df"])}
+    res["before_ptb"] = summary([p for p in pkts if p["t"] < t0])
+    res["after_ptb"] = summary([p for p in pkts if p["t"] >= t0])
+    return res
 
 
 OFF_PREFIX = "2001:db8:4d55::"        # AROS's SLAAC prefix (autonomous, not on-link)
@@ -144,6 +222,8 @@ def main():
         os.path.expanduser("~/aros-build-ipv6-hosted-claude/bin/linux-x86_64/AROS")))
     ap.add_argument("--arostcp")
     ap.add_argument("--mtu", type=int, default=1280)
+    ap.add_argument("--ipv4", action="store_true",
+                    help="TCP over IPv4 (tcp4send) to the host's IPv4 address; --router drops DF packets over --mtu")
     ap.add_argument("--router", action="store_true",
                     help="drop AROS's packets larger than --mtu at the host, as the router on a narrower path would")
     ap.add_argument("--udp", action="store_true",
@@ -158,7 +238,7 @@ def main():
         old = json.load(open(os.path.join(a.out, "result.json")))
         print(json.dumps(analyse(open(os.path.join(a.out, "pmtud.txt")).read(), old, a), indent=1))
         return
-    prog = "udp6once" if a.udp else "tcpbench"
+    prog = "udp6once" if a.udp else "tcp4send" if a.ipv4 else "tcpbench"
     exe = os.path.join(a.out, prog)
     subprocess.run([run_tcp.CROSS, "-std=gnu99", "-O2", "-Wall", "-Wno-pointer-sign", "-o", exe,
                     os.path.join(HERE, prog + ".c")], check=True)
@@ -187,19 +267,27 @@ def main():
     if a.router:
         run_tcp.tc_clear()
         run_tcp.tc("qdisc", "add", "dev", IFACE, "ingress")
-        run_tcp.tc("filter", "add", "dev", IFACE, "parent", "ffff:", "protocol", "ipv6", "basic",
-                   "match", "cmp(u16 at 4 layer network gt %d)" % (a.mtu - 40), "action", "drop")
+        if a.ipv4:      # a router would fragment the others
+            run_tcp.tc("filter", "add", "dev", IFACE, "parent", "ffff:", "protocol", "ip", "basic",
+                       "match", "cmp(u16 at 2 layer network gt %d) and cmp(u16 at 6 layer network mask 0x4000 eq 0x4000)" % a.mtu,
+                       "action", "drop")
+        else:
+            run_tcp.tc("filter", "add", "dev", IFACE, "parent", "ffff:", "protocol", "ipv6", "basic",
+                       "match", "cmp(u16 at 4 layer network gt %d)" % (a.mtu - 40), "action", "drop")
     got = []
     threading.Thread(target=listener, args=(7002, got), daemon=True).start()
     ptb = {}
     pcap = os.path.join(a.out, "pmtud.pcap")
-    dump = subprocess.Popen(["sudo", "-n", "tcpdump", "-U", "-i", IFACE, "-n", "-s", "128", "-w", pcap, "ip6"],
+    dump = subprocess.Popen(["sudo", "-n", "tcpdump", "-U", "-i", IFACE, "-n", "-s", "128", "-w", pcap, "ip" if a.ipv4 else "ip6"],
                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     time.sleep(1)
     script = os.path.join(a.out, "pmtud.script")
     with open(script, "w") as f:
         f.write("Execute SYS:System/Network/AROSTCP/S/startnet\nWait %d\n" % (12 if a.offlink else 4))
-        if a.udp:
+        if a.ipv4:
+            for i in (1, 2):
+                f.write("C:tcp4send %s 7002 %d >SYS:out/send%d.log\n" % ("192.168.166.1", SEND_BYTES, i))
+        elif a.udp:
             f.write("C:udp6once eth0 %s 9999 1452 >SYS:out/u1.log\nWait 2\n" % host_ll)
             f.write("C:udp6once eth0 %s 9999 1452 >SYS:out/u2.log\n" % other_ll)
             f.write("C:udp6once eth0 %s 9999 1452 >SYS:out/u3.log\n" % host_ll)
@@ -212,10 +300,14 @@ def main():
     env = dict(os.environ, AROS_HOSTED_IMAGE=a.image, AROS_TAP_IP=run_tcp.AROS_IP, AROS_RUN_TIMEOUT="300")
     if a.arostcp:
         env["AROS_AROSTCP"] = a.arostcp
+    rec = os.path.join(a.out, "injected.json")     # the injector's first answer
+    if os.path.exists(rec):
+        os.remove(rec)
     # the injector needs root for AF_PACKET and raw ICMPv6: run it via sudo python
     inj_cmd = ["sudo", "-n", sys.executable, "-I", "-c",
-               "import sys,json; sys.path.insert(0,%r); import pmtud_probe as p; d={}; p.inject_ptb(%d,%d,d,%d); print(json.dumps(d))" % (HERE, a.mtu, 9999 if a.udp else 7002, 17 if a.udp else 6)]
-    injp = subprocess.Popen(inj_cmd, stdout=subprocess.PIPE, text=True)
+               ("import sys; sys.path.insert(0,%r); import pmtud_probe as p; d={}; p.inject_needfrag4(%d,7002,d,record=%r)" % (HERE, a.mtu, rec)) if a.ipv4 else
+               "import sys; sys.path.insert(0,%r); import pmtud_probe as p; d={}; p.inject_ptb(%d,%d,d,%d,record=%r)" % (HERE, a.mtu, 9999 if a.udp else 7002, 17 if a.udp else 6, rec)]
+    injp = subprocess.Popen(inj_cmd)
     if a.offlink:
         # once AROS is up (startnet + DAD), advertise the router
         ra_cmd = ["sudo", "-n", sys.executable, "-I", "-c",
@@ -223,11 +315,17 @@ def main():
         rap = subprocess.Popen(ra_cmd)
     r = subprocess.run([os.path.join(ROOT, "tools", "hosted-run.sh"), os.path.join(a.out, "aros"), script, exe],
                        env=env, capture_output=True, text=True)
+    for pid in subprocess.run(["pgrep", "-f", "pmtud_probe as p; d={}"], capture_output=True,
+                              text=True).stdout.split():
+        subprocess.run(["sudo", "-n", "kill", pid])
     try:
-        out, _ = injp.communicate(timeout=10)
-        ptb = json.loads(out.strip() or "{}")
+        injp.wait(timeout=10)
     except Exception:
         injp.kill()
+    try:
+        ptb = json.load(open(rec))
+    except Exception:
+        ptb = {}
     if a.router:
         run_tcp.tc_clear()
     if a.offlink:
@@ -245,8 +343,9 @@ def main():
                           capture_output=True, text=True).stdout
     open(os.path.join(a.out, "pmtud.txt"), "w").write(text)
 
-    res = analyse(text, {"host_addresses": lls, "ptb": ptb, "host_bytes": got,
-                         "boot": "ok" if "finished" in r.stdout else "did not finish"}, a)
+    base = {"host_addresses": lls, "ptb": ptb, "host_bytes": got,
+            "boot": "ok" if "finished" in r.stdout else "did not finish"}
+    res = analyse4(text, base, a.mtu) if a.ipv4 else analyse(text, base, a)
     json.dump(res, open(os.path.join(a.out, "result.json"), "w"), indent=1)
     print(json.dumps(res, indent=1))
 

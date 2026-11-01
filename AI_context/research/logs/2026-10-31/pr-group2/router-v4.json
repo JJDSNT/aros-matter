@@ -1,0 +1,31 @@
+{
+ "host_addresses": [
+  "fe80::e090:2aff:fe98:97bd",
+  "fe80::1"
+ ],
+ "ptb": {
+  "time": 1793495034.3191004,
+  "aros": "192.168.166.2",
+  "host": "192.168.166.1",
+  "quoted_len": 28
+ },
+ "host_bytes": [
+  2000000,
+  2000000
+ ],
+ "boot": "ok",
+ "before_ptb": {
+  "packets": 5,
+  "largest": 1500,
+  "fragments": 0,
+  "over_mtu": 2,
+  "with_df": 5
+ },
+ "after_ptb": {
+  "packets": 3666,
+  "largest": 1500,
+  "fragments": 0,
+  "over_mtu": 2,
+  "with_df": 3666
+ }
+}

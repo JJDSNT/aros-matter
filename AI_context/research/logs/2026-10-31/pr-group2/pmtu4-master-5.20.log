@@ -1,0 +1,32 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: PMTU4_Suite
+  Test: the path MTU goes on a route of the destination's own ...FAILED
+    1. testPMTU4_OWN_ROUTE:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-pmtu4.c:216  - a.rmx_expire >= t + EXPIRE - 10 && a.rmx_expire <= t + EXPIRE + 10
+  Test: without an MTU, the next plateau is taken ...FAILED
+    1. testPMTU4_PLATEAU:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-pmtu4.c:230  - CU_ASSERT_EQUAL(c.rmx_mtu,1492)
+  Test: the path MTU is never below 552 ...FAILED
+    1. testPMTU4_MINIMUM:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-pmtu4.c:241  - CU_ASSERT_EQUAL(d.rmx_mtu,552)
+  Test: TCP segments are sent with DF ...FAILED
+    1. testPMTU4_TCP_DF:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-pmtu4.c:286  - df
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       16         6       n/a       n/a
+     Tests        :        4         4         0         0
+
+Elapsed Time: 0.840(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       16         6       n/a       n/a
+     Tests        :        4         4         0         0
+
+Elapsed Time: 0.720(s)
+

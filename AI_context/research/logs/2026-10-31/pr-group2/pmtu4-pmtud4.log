@@ -1,0 +1,28 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: PMTU4_Suite
+  Test: the path MTU goes on a route of the destination's own ...passed
+  Test: without an MTU, the next plateau is taken ...passed
+  Test: the path MTU is never below 552 ...passed
+  Test: TCP segments are sent with DF ...passed
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       16         0       n/a       n/a
+     Tests        :        4         0         0         0
+
+Elapsed Time: 0.820(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       16         0       n/a       n/a
+     Tests        :        4         0         0         0
+
+Elapsed Time: 0.720(s)
+
