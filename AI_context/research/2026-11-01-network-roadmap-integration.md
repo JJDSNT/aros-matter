@@ -29,8 +29,8 @@ Revisions read: AROS upstream `bf196e7dc1` (5.20) + #2006 (5.21, in review); ARO
    - **TLS 1.3 and QUIC use contrib's OpenSSL.** Matter's crypto doesn't use TLS. The SDK also has an OpenSSL PAL, so consolidating on OpenSSL later is possible but not needed now: it would mean validating the SDK against OpenSSL 4.0, and OpenSSL is much larger.
    - **Common rules:** entropy comes from the CRT (`arc4random_buf()`, as AROSTCP since #2005; B3-10 checks OpenSSL's seed source on AROS), and no crypto primitive is written by us. Open Screen's SPAKE2 is not Matter's SPAKE2+ (B3-11).
 3. **DNS-SD: one system service, Bonami/mdnsd, for everyone.**
-   - **Shared prerequisite:** IPv6 in mdnsd (ISSUE-0005, the maintainer's) is a common prerequisite of Matter M2 and Open Screen B3-B.
-   - **Interim:** until it lands, Matter may use the SDK's `minimal_mdns` (ISSUE-0004) and Open Screen a test responder.
+   - **Shared prerequisite:** IPv6 in mdnsd (ISSUE-0005, the maintainer's), needed by Matter M2 and Open Screen B3-B. Its core is merged upstream (#1980, 2026-10-31: `ff02::fb` per interface, AAAA records); what is left is checking it against Matter's and Open Screen's needs.
+   - **Interim:** before that check, Matter may use the SDK's `minimal_mdns` (ISSUE-0004) and Open Screen a test responder.
    - **Coordination:** neither ships its own mDNS. Coordination goes through `docs/upstream-coordination.md`.
 4. **Time.** Monotonic time for timers is the CRT's (`clock_gettime(CLOCK_MONOTONIC)`, already used by the mbedTLS glue). B3-05 is a runtime test, not a stack change. The stack's own timer resolution (500 ms TCP slow tick) is group 7.
 
@@ -49,7 +49,7 @@ Revisions read: AROS upstream `bf196e7dc1` (5.20) + #2006 (5.21, in review); ARO
 | DNS servers from RAs (RDNSS) | ✔ (IPv6-only networks) | ✔ | absent | 5 |
 | Keepalive options, `TCP_USER_TIMEOUT` | optional | — | header-only | 4 |
 
-aros-midihub was also checked (plan, §aros-midihub): it needs nothing beyond these rows.
+aros-midihub was also checked (plan, §aros-midihub; written up for midihub in its `docs/arostcp-stack-findings-2026-11-01.md`): it needs nothing beyond these rows.
 
 Nothing in the table is Matter-only or Open-Screen-only code in the stack: every row is a generic socket capability with an RFC behind it.
 
@@ -63,7 +63,7 @@ Updated in [2026-10-31-arostcp-pr-groups-plan.md](2026-10-31-arostcp-pr-groups-p
 
 ## 5. Outside the stack, in order
 
-1. **Bonami/mdnsd IPv6** (ISSUE-0005): the maintainer's; the shared prerequisite for discovery in both Matter and Open Screen.
+1. **Bonami/mdnsd IPv6** (ISSUE-0005): the maintainer's; core merged as #1980. Next: validate it for Matter and Open Screen discovery.
 2. **OpenSSL QUIC on AROS** (B3-A/B3-C), once group 3 is merged:
    - an echo test over QUIC between AROS and a Linux peer, both directions, on the existing hosted/tap bench;
    - including `pmtud_probe.py --router` for a narrower path.
