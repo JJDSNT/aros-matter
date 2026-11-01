@@ -67,8 +67,8 @@ This closes the risk #2006 opened (DF on IPv4 TCP) and the only hard QUIC prereq
 6. **G18e** RFC 6724 rules 1, 5, 6, 8 (and the policy table, if small).
 7. **G18f** `IPV6_PKTINFO` takes precedence over the bound address (RFC 3542 §6.1).
 8. **G18g/h** `connect()` to a group and the first-interface fallback (from #1975).
-10. **Two interfaces** (B3-02/08): multicast join, send and receive on each with a second tap; source and zone per interface; an interface going down and up, and sockets reconnecting.
 9. **G18i** `SO_BINDTODEVICE` for IPv6; link-scope `connect()` without a zone.
+10. **Two interfaces** (B3-02/08): multicast join, send and receive on each with a second tap; source and zone per interface; an interface going down and up, and sockets reconnecting.
 
 Each G18 item is first reproduced; the ones that don't reproduce are closed with the evidence. If the group grows too large it is split into 5a (RDNSS + routing) and 5b (source selection + zones).
 
