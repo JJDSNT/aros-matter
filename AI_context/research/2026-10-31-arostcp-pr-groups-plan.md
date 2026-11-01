@@ -70,7 +70,11 @@ This closes the risk #2006 opened (DF on IPv4 TCP) and the only hard QUIC prereq
 7. **G18f** `IPV6_PKTINFO` takes precedence over the bound address (RFC 3542 §6.1).
 8. **G18g/h** `connect()` to a group and the first-interface fallback (from #1975).
 9. **G18i** `SO_BINDTODEVICE` for IPv6; link-scope `connect()` without a zone.
-10. **Two interfaces** (B3-02/08): multicast join, send and receive on each with a second tap; source and zone per interface; an interface going down and up, and sockets reconnecting.
+10. **IPv6 address state for applications** (RFC 4862 §5.4: a tentative address must not be used; mdnsd picks one link-local per interface and can't tell, Bonami README §Limits):
+    - `SIOCGIFAFLAG_IN6` (KAME, `netinet6/in6_var.h`): an address's `IN6_IFF_*` flags (tentative, duplicated, deprecated, autoconf).
+    - The `SBTC_SIG_ADDRESS_CHANGE_MASK` signal (and `RTM_NEWADDR`) also when DAD ends, passed or duplicated (`nd6_nbr.c` clears `IN6_IFF_TENTATIVE` silently today), so a woken consumer sees the address once usable.
+    - Test: CUnit, an address added on loopback/tap: tentative, then the signal, then not tentative; a duplicate (a NA to ourselves) reported as `IN6_IFF_DUPLICATED`.
+11. **Two interfaces** (B3-02/08): multicast join, send and receive on each with a second tap; source and zone per interface; an interface going down and up, and sockets reconnecting.
     - Also a test that `SBTC_SIG_ADDRESS_CHANGE_MASK` fires for IPv4 and IPv6 adds and deletes, SLAAC included (aros-midihub MD13 wants to stop polling; the signal already exists, `api_sendaddrchange()`).
 
 Each G18 item is first reproduced; the ones that don't reproduce are closed with the evidence. If the group grows too large it is split into 5a (RDNSS + routing) and 5b (source selection + zones).

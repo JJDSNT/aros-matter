@@ -8,7 +8,7 @@ owner: jaime
 milestone: M2
 area: dnssd
 created_at: 2026-10-28
-updated_at: 2026-10-28
+updated_at: 2026-11-01
 tags: [external, upstream, mdns, ipv6]
 blockers: []
 depends_on: [ISSUE-0008]
@@ -46,3 +46,4 @@ Pré-requisito descoberto: o mdnsd IPv6 vai precisar dos fixes de multicast IPv6
 # Log
 
 - 2026-10-28: criada; o mantenedor confirmou que o IPv6 no mdnsd será trabalho futuro dele.
+- 2026-11-01: núcleo IPv6 mesclado upstream (#1980, bonami 41.6): `ff02::fb`, AAAA publicado e consultado, índice de interface em `MDNSRecordEvent`. Falta para o Matter: browse/resolve de serviço só-IPv6 (o `MDNSDiscoveryEvent` ainda é IPv4; hoje só via `QueryRecordA()`), várias addresses no resultado, subtipos (não há suporte). Lado da pilha: flags de endereço IPv6 e sinal no fim do DAD (grupo 5 item 10). Sugestões registradas no midihub, `docs/arostcp-stack-findings-2026-11-01.md`.
