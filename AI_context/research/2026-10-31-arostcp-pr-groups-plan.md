@@ -13,8 +13,8 @@ Rules (Kal, 2026-10-31):
 |---|---|---|---|
 | 1 | #2005 | IPv6/TCP conformance series | merged (5.20) |
 | 2 | #2006 | IPv4 ARP queue, IPv4 path MTU discovery | merged (5.21) |
-| 3 | #2011 | Path MTU and ECN, TCP and UDP | in review (5.22) |
-| 4 | — | Socket API and compatibility | |
+| 3 | #2011 | Path MTU and ECN, TCP and UDP | merged (5.22) |
+| 4 | (to open) | Socket API and compatibility | ready (5.24), branch `review/arostcp-series4` |
 | 5 | — | IPv6 on real networks | |
 | 6 | — | TCP recovery and hardening | |
 | 7 | — | Timers and congestion | research first |
@@ -53,6 +53,14 @@ This closes the risk #2006 opened (DF on IPv4 TCP) and the only hard QUIC prereq
 
 ## Group 4 — Socket API and compatibility
 
+**As built (2026-11-01), eleven commits, 5.24 / kernel v0.63** (Kal's 8b16329595, RFC 6724 source selection = 5.23, came in between):
+1. keepalive per connection (FreeBSD's options); 2. `TCP_USER_TIMEOUT` (Linux semantics, checked from `tcp_slowtimo()`); 3. **found by the keepalive test:** `tcp_slowtimo()` took `tcp_usrreq()`'s 0 (success) for "gone", so timers and idle/RTT clocks stood still on every tick a timer fired (keepalive at half speed);
+4. localhost names (RFC 6761 6.3) in `gethostnamadr.c`, all lookups; 5. S5: networks table `n_net` in host order (`__inet_network()`); 6. **found by the netdb test:** `inet_network()` stack overflow on five parts (4.4BSD bug); 7. S7: `in_canforward()` lost the `IN_LOOPBACKNET` shift (127/8 forwardable), + link-local; `In_*` macros were missing from `defines/bsdsocket.h`;
+8. `SO_TIMESTAMP`/`SO_TS_CLOCK`: realtime from stdc `timespec_get(TIME_UTC)` (= posixc `gettimeofday()`, zone per call, no cache needed - the open question resolved), monotonic from `GetUpTime()`; options at `splnet`; 9. S3: `MSG_DONTWAIT`; 10. S6: `ObtainInterfaceList()` + `QueryInterfaceTagList()` address tags; `GetRouteInfo()` version 3 is the probe's Roadshow-m68k assumption, not a defect; 11. `cunit-net-udpio` (all pass on master; regression only).
+Benches: `tcpopt_probe.py` (keepalive/UTO/zero window), `udpbig_probe.py` (1200-9000 B on the wire). Not tested: a time-zone change (needs locale's internal `LocalePrefsUpdate()`); equivalence is by construction.
+
+**Plan as written:**
+
 1. **R3 keepalive options:** `TCP_KEEPIDLE`/`TCP_KEEPINTVL`/`TCP_KEEPCNT`/`TCP_KEEPINIT` (defined in `tcp.h`, not handled by `tcp_ctloutput()`) per socket, and `TCP_USER_TIMEOUT` (RFC 5482). Check the Roadshow/AmiTCP API first (values, units).
    - Test: CUnit set/get, and a dead peer detected within the set time.
 2. **S1 `localhost`** (RFC 6761 §6.3): `getaddrinfo("localhost", …)` returns `::1` and `127.0.0.1` (AF_UNSPEC), without the resolver.
@@ -88,7 +96,7 @@ This closes the risk #2006 opened (DF on IPv4 TCP) and the only hard QUIC prereq
 3. **G18b** redirect validation (RFC 4861 §8).
 4. **G18c** `nd6_prefix_lookup()` per interface.
 5. **G18d** SLAAC address deleted by hand comes back with the next RA.
-6. **G18e** RFC 6724 rules 1, 5, 6, 8 (and the policy table, if small).
+6. ~~**G18e** RFC 6724 rules~~ - done by Kal (8b16329595: rules 1, 6, 8 and the default policy table).
 7. **G18f** `IPV6_PKTINFO` takes precedence over the bound address (RFC 3542 §6.1).
 8. **G18g/h** `connect()` to a group and the first-interface fallback (from #1975).
 9. **G18i** `SO_BINDTODEVICE` for IPv6; link-scope `connect()` without a zone.
