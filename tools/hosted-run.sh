@@ -12,6 +12,8 @@
 #                      (default: ~/aros-midihub/build-aros-linux/bin/linux-x86_64/AROS)
 #   AROS_RUN_TIMEOUT   seconds before the boot is killed (default: 60)
 #   AROS_AROSTCP       if set, this AROSTCP binary replaces the image's
+#   AROS_TAP_MTU       if set, tap.device unit 0's MTU (576-9000; ENVARC:SYS/Net/tap/unit0/MTU);
+#                      the host tap 'aros0' needs the same (ip link set aros0 mtu N)
 #   AROS_TAP_IP        if set, adds AROSTCP interface eth0 on tap.device unit 0
 #                      (host side: tap 'aros0', see tools/tap-up.sh) with this IPv4
 set -eu
@@ -26,6 +28,10 @@ cp -a --reflink=auto "$img" "$sys"
 for f in "$@"; do cp "$f" "$sys/C/"; done
 mkdir -p "$sys/out"
 [ -n "${AROS_AROSTCP:-}" ] && cp "$AROS_AROSTCP" "$sys/System/Network/AROSTCP/C/AROSTCP"
+if [ -n "${AROS_TAP_MTU:-}" ]; then
+    mkdir -p "$sys/Prefs/Env-Archive/SYS/Net/tap/unit0"
+    printf '%s' "$AROS_TAP_MTU" > "$sys/Prefs/Env-Archive/SYS/Net/tap/unit0/MTU"
+fi
 if [ -n "${AROS_TAP_IP:-}" ]; then
     echo "eth0 DEV=DEVS:Networks/tap.device UNIT=0 IP=$AROS_TAP_IP NETMASK=255.255.255.0 UP" \
         >> "$sys/System/Network/AROSTCP/db/interfaces"

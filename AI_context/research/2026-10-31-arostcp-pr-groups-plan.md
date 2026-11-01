@@ -112,6 +112,8 @@ Benches: `tcpopt_probe.py` (keepalive/UTO/zero window), `udpbig_probe.py` (1200-
 11. **Two interfaces** (B3-02/08): multicast join, send and receive on each with a second tap; source and zone per interface; an interface going down and up, and sockets reconnecting.
     - Also a test that `SBTC_SIG_ADDRESS_CHANGE_MASK` fires for IPv4 and IPv6 adds and deletes, SLAAC included (aros-midihub MD13 wants to stop polling; the signal already exists, `api_sendaddrchange()`).
 
+12. **Jumbo end to end** (run 2026-11-01 on 5.24, `jumbo_probe.py`, `AROS_TAP_MTU`): conforms - UDP fragments only above 8972 (IPv4) / 8952 (IPv6) bytes, every echo whole; SYN MSS 8960 / 8940; with a 1500-byte router in the path the PMTU falls to 1500 (IPv6: all packets <= 1500 after the PTB, the next SYN offers 1440; IPv4: only the 3 segments in flight above). **Finding, for 5b:** `tcp_mss()` rounds the MSS down to a multiple of the mbuf cluster (2048, 4.4BSD-Lite, "to utilize large mbufs"): 8948 -> 8192 on a 9000 path, 3948 -> 2048 on a 4000 one; Linux never did, FreeBSD dropped it; `tcp_setmtu()` (PMTU) does not round, so the two disagree. Fix with an A/B throughput measurement at 9000. Logs: `logs/2026-11-01/jumbo/`.
+
 Each G18 item is first reproduced; the ones that don't reproduce are closed with the evidence. If the group grows too large it is split into 5a (RDNSS + routing) and 5b (source selection + zones).
 
 ## Group 6 — TCP recovery and hardening

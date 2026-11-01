@@ -1,0 +1,64 @@
+{
+ "boot": "ok",
+ "tap_mtu": "9000",
+ "udp4": {
+  "1500": "ok",
+  "4000": "ok",
+  "8192": "ok",
+  "8952": "ok",
+  "8972": "ok",
+  "9000": "ok"
+ },
+ "udp6": {
+  "1500": "ok",
+  "4000": "ok",
+  "8192": "ok",
+  "8952": "ok",
+  "8972": "ok",
+  "9000": "ok"
+ },
+ "tcp_host": [
+  {
+   "family": 6,
+   "bytes": 2000000
+  },
+  {
+   "family": 4,
+   "bytes": 2000000
+  }
+ ],
+ "udp_fragments": {
+  "v4": 4,
+  "v6": 8
+ },
+ "tcp": {
+  "v4": {
+   "syn_mss": [
+    8960
+   ],
+   "largest": 8192
+  },
+  "v6": {
+   "syn_mss": [
+    8940
+   ],
+   "largest": 8192
+  }
+ },
+ "expected": {
+  "udp_fragments": {
+   "v4": 4,
+   "v6": 8
+  },
+  "syn_mss": {
+   "v4": 8960,
+   "v6": 8940
+  }
+ },
+ "sanity": {
+  "tap_took_mtu": true,
+  "all_sizes_reported": true,
+  "tcp_both": true,
+  "ok": true
+ }
+}
