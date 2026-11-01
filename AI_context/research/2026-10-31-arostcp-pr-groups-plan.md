@@ -1,6 +1,6 @@
 # AROSTCP — plan of the next PR groups (2026-10-31)
 
-Current priority: completing the stack (Matter on hold, `current_state.md`). The maintainer left the choices to the agent, ECN and PRR defaults included.
+Current priority: completing the stack (Matter on hold, `current_state.md`). The maintainer left the choices to the agent, ECN and PRR defaults included. Revised 2026-11-01 so that the groups also cover the network prerequisites of Matter and of Open Screen ([backlog3.md](../backlog3.md)); see [2026-11-01-network-roadmap-integration.md](2026-11-01-network-roadmap-integration.md).
 
 Rules (Kal, 2026-10-31):
 - One grouped PR open at a time; the next is prepared locally (`review/arostcp-series<N>`) and opened only after the open one is merged.
@@ -13,28 +13,33 @@ Rules (Kal, 2026-10-31):
 |---|---|---|---|
 | 1 | #2005 | IPv6/TCP conformance series | merged (5.20) |
 | 2 | #2006 | IPv4 ARP queue, IPv4 path MTU discovery | in review (5.21) |
-| 3 | — | TCP robustness and defaults | next |
+| 3 | — | Path MTU and ECN, TCP and UDP | next |
 | 4 | — | Socket API and compatibility | |
 | 5 | — | IPv6 on real networks | |
-| 6 | — | TCP hardening | |
+| 6 | — | TCP recovery and hardening | |
 | 7 | — | Timers and congestion | research first |
 
 The order follows risk and dependencies. Group 3 covers what #2006 introduced (DF on IPv4 can black-hole). Groups 4 and 5 are what applications and IPv6-only networks miss. Group 6 is defensive hardening. Group 7 needs measurement before any code.
 
-## Group 3 — TCP robustness and defaults
+## Group 3 — Path MTU and ECN, TCP and UDP
 
-1. **PMTU black-hole detection** (RFC 2923, a simplified RFC 4821/8899, as FreeBSD's `pmtud_blackhole_detection`). With DF on (#2006), a path that filters ICMP leaves a connection retransmitting full segments forever. After two retransmission timeouts of a full-sized segment, retry with a smaller MSS (1220 for IPv6, 1200/536 for IPv4); when that gets acknowledged, keep it; give it back like a learned path MTU.
-   - Test: `pmtud_probe.py --router` with the injector off (a filtered path). Master stalls; the branch completes.
-   - Test: CUnit only if a lossy path can be made locally; otherwise the bench.
-2. **PRR on by default** (RFC 6937; Linux since 3.2, FreeBSD 14).
-   - Test: loss bench with PRR off and on (recovery time, retransmissions, no stall, sanity ok).
-   - Test: router probe; the partial-ACK path fixed in #2005 under PRR.
-3. **ECN modes; accept-only by default** (RFC 3168; Linux `tcp_ecn=2`, FreeBSD `ecn.enable=2`). `tcp_do_ecn`: 0 off, 1 initiate and accept, 2 accept only. Default 2: answer ECN when the peer proposes it, don't propose it in our SYNs (old middleboxes).
-   - Test: wire. Linux initiating (`net.ipv4.tcp_ecn=1`) gets ECN negotiated; AROS initiating doesn't propose it by default.
-   - Test: CE marks (host tc with ECN marking) reduce cwnd once per window.
-   - Test: CUnit for the default on loopback (AROS↔AROS: no ECE/CWR in the SYN; BPF can't see the loopback, so this is checked on eth0 against the neighbour, as `tcpsyn6`).
-4. **sysctl knobs** for `ecn`, `prr`, `pmtud`, `pmtud_blackhole` in `tcp_sysctl` (new `TCPCTL_*` names in `netinet/tcp_var.h`, appended; backwards-compatible).
-   - Test: CUnit `MiamiSysCtl()` read/write round trip.
+This closes the risk #2006 opened (DF on IPv4 TCP) and the only hard QUIC prerequisite in the stack (B3-06).
+
+1. **TCP PMTU black-hole detection** (RFC 2923, a simplified RFC 4821/8899, as FreeBSD's `pmtud_blackhole_detection`). After two retransmission timeouts of a full-sized segment, retry with a smaller MSS (1220 for IPv6, 1200/536 for IPv4); keep it once acknowledged; give it back like a learned path MTU.
+   - Test: `pmtud_probe.py --router` with no ICMP (a filtered path). Master stalls; the branch completes.
+2. **UDP with DF and the path MTU for applications** (RFC 3542 §11; B3-06; RFC 9000 §14).
+   - `IPV6_DONTFRAG` and `IP_DONTFRAG` (BSD names; OpenSSL's datagram BIO looks for them): DF on, and EMSGSIZE instead of fragmenting.
+   - `IPV6_USE_MIN_MTU`.
+   - `IPV6_PATHMTU` (getsockopt) and `IPV6_RECVPATHMTU` (ancillary data when a Packet Too Big arrives).
+   - `udp6_ctlinput`/`udp_ctlinput` stop ignoring `PRC_MSGSIZE` for sockets that set DF: they report the new MTU, and EMSGSIZE on a connected socket.
+   - Test: CUnit, via a Packet Too Big / "fragmentation needed" to ourselves, as `pmtu4`/`pmtu6`.
+3. **ECN.**
+   - TCP: modes 0 off, 1 initiate and accept, 2 accept only; **default 2** (Linux `tcp_ecn=2`, FreeBSD `ecn.enable=2`).
+   - UDP ancillary data: `IP_RECVTOS`/`IPV6_RECVTCLASS` on receive, `IP_TOS`/`IPV6_TCLASS` on send (RFC 9000 §13.4).
+   - Test: wire. Linux initiating ECN gets it negotiated; AROS doesn't propose it by default; CE marks (host tc) reduce cwnd once per window.
+   - Test: CUnit for the UDP TOS/TCLASS round trip on loopback.
+4. **sysctl knobs** `ecn`, `pmtud`, `pmtud_blackhole` (new `TCPCTL_*` names in `netinet/tcp_var.h`, appended).
+   - Test: CUnit `MiamiSysCtl()` round trip.
 
 ## Group 4 — Socket API and compatibility
 
@@ -42,7 +47,13 @@ The order follows risk and dependencies. Group 3 covers what #2006 introduced (D
    - Test: CUnit set/get, and a dead peer detected within the set time.
 2. **S1 `localhost`** (RFC 6761 §6.3): `getaddrinfo("localhost", …)` returns `::1` and `127.0.0.1` (AF_UNSPEC), without the resolver.
    - Test: CUnit.
-3. **Stackprobe S3, S5, S6, S7:** `MSG_DONTWAIT`, `getnetbyaddr(127)`, Roadshow `ObtainInterfaceList`/`QueryInterfaceTagList`/`GetRouteInfo`, `In_CanForward()`. Each is checked against its documented contract first; only the confirmed defects are fixed. Stackprobe is a probe, not an oracle.
+3. **UDP correctness** (B3-01/04/07). Tests first, fixes only for what fails:
+   - datagrams of 1200–9000 bytes over IPv4/IPv6 without truncation;
+   - `MSG_TRUNC` in `msg_flags` when the buffer is short;
+   - `SO_RCVBUF`/`SO_SNDBUF` and bursts;
+   - EWOULDBLOCK on non-blocking sockets;
+   - `IP_RECVDSTADDR`/`IPV6_RECVPKTINFO` on every datagram.
+4. **Stackprobe S3, S5, S6, S7:** `MSG_DONTWAIT`, `getnetbyaddr(127)`, Roadshow `ObtainInterfaceList`/`QueryInterfaceTagList`/`GetRouteInfo`, `In_CanForward()`. Each is checked against its documented contract first; only the confirmed defects are fixed. Stackprobe is a probe, not an oracle.
    - Test: CUnit per defect.
 
 ## Group 5 — IPv6 on real networks
@@ -56,15 +67,19 @@ The order follows risk and dependencies. Group 3 covers what #2006 introduced (D
 6. **G18e** RFC 6724 rules 1, 5, 6, 8 (and the policy table, if small).
 7. **G18f** `IPV6_PKTINFO` takes precedence over the bound address (RFC 3542 §6.1).
 8. **G18g/h** `connect()` to a group and the first-interface fallback (from #1975).
+10. **Two interfaces** (B3-02/08): multicast join, send and receive on each with a second tap; source and zone per interface; an interface going down and up, and sockets reconnecting.
 9. **G18i** `SO_BINDTODEVICE` for IPv6; link-scope `connect()` without a zone.
 
 Each G18 item is first reproduced; the ones that don't reproduce are closed with the evidence. If the group grows too large it is split into 5a (RDNSS + routing) and 5b (source selection + zones).
 
-## Group 6 — TCP hardening
+## Group 6 — TCP recovery and hardening
 
-1. **R2, RFC 5961:** in-window RST, SYN and ACK validation, challenge ACKs rate-limited per connection.
-2. **Timestamps with a random per-connection offset** (RFC 7323 §5.4; FreeBSD/Linux), so TSval does not reveal uptime.
-3. **SYN cookies:** review against RFC 4987 with the new key source (#2005).
+1. **PRR on by default** (RFC 6937; Linux since 3.2, FreeBSD 14).
+   - Test: loss bench with PRR off and on (recovery time, retransmissions, no stall, sanity ok).
+   - Test: the router probe, under PRR.
+2. **R2, RFC 5961:** in-window RST, SYN and ACK validation, challenge ACKs rate-limited per connection.
+3. **Timestamps with a random per-connection offset** (RFC 7323 §5.4; FreeBSD/Linux), so TSval does not reveal uptime.
+4. **SYN cookies:** review against RFC 4987 with the new key source (#2005).
 
 ## Group 7 — Timers and congestion (research first)
 
