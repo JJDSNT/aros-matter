@@ -1,0 +1,4 @@
+1793495657.309959 IP6 (hlim 64, next-header TCP (6) payload length: 612) fe80::c8fe:abff:fe5e:c7e4.49891 > fe80::1.7002: Flags [P.], seq 139614062:139614642, ack 3545163144, win 32844, options [nop,nop,TS val 8 ecr 3747488435], length 580
+1793495657.309965 IP6 (flowlabel 0x0506e, hlim 64, next-header TCP (6) payload length: 32) fe80::1.7002 > fe80::c8fe:abff:fe5e:c7e4.49891: Flags [.], cksum 0x4300 (correct), ack 139614642, win 69, options [nop,nop,TS val 3747488435 ecr 8], length 0
+1793495657.310020 IP6 (flowlabel 0x76f01, hlim 64, next-header ICMPv6 (58) payload length: 1240) fe80::1 > fe80::c8fe:abff:fe5e:c7e4: ICMP6, packet too big, mtu 1280
+1793495657.310031 IP6 (flowlabel 0x76f01, hlim 64, next-header ICMPv6 (58) payload length: 1240) fe80::1 > fe80::c8fe:abff:fe5e:c7e4: ICMP6, packet too big, mtu 1280

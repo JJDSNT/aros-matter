@@ -56,10 +56,16 @@ def inject_ptb(mtu, port, done, proto=6, record=None):
     # ingress, which --router uses to drop the oversized ones
     p = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.htons(0x0003))
     p.bind((IFACE, 0))
-    p.settimeout(180)
+    p.settimeout(5)
+    deadline = time.time() + 400        # never outlive a run, even if not killed
     try:
         while True:
-            f, where = p.recvfrom(2048)
+            if time.time() > deadline:
+                return
+            try:
+                f, where = p.recvfrom(2048)
+            except socket.timeout:
+                continue
             if len(f) < 14 or f[12:14] != b"\x86\xdd" or where[2] == socket.PACKET_OUTGOING:
                 continue
             ip = f[14:]
@@ -101,10 +107,16 @@ def inject_needfrag4(mtu, port, done, record=None):
     DF; answer it with an ICMP "fragmentation needed" (RFC 1191) quoting it."""
     p = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.htons(0x0003))
     p.bind((IFACE, 0))
-    p.settimeout(180)
+    p.settimeout(5)
+    deadline = time.time() + 400        # never outlive a run, even if not killed
     try:
         while True:
-            f, where = p.recvfrom(2048)
+            if time.time() > deadline:
+                return
+            try:
+                f, where = p.recvfrom(2048)
+            except socket.timeout:
+                continue
             if len(f) < 14 + 40 or f[12:14] != b"\x08\x00" or where[2] == socket.PACKET_OUTGOING:
                 continue
             ip = f[14:]
@@ -264,6 +276,7 @@ def main():
         subprocess.run(["sudo", "-n", "ip", "-6", "route", "add", OFF_PREFIX + "/64", "dev", IFACE])
         host_ll, other_ll = OFF_DST
 
+    run_tcp.kill_strays()
     if a.router:
         run_tcp.tc_clear()
         run_tcp.tc("qdisc", "add", "dev", IFACE, "ingress")
@@ -315,13 +328,13 @@ def main():
         rap = subprocess.Popen(ra_cmd)
     r = subprocess.run([os.path.join(ROOT, "tools", "hosted-run.sh"), os.path.join(a.out, "aros"), script, exe],
                        env=env, capture_output=True, text=True)
-    for pid in subprocess.run(["pgrep", "-f", "pmtud_probe as p; d={}"], capture_output=True,
-                              text=True).stdout.split():
-        subprocess.run(["sudo", "-n", "kill", pid])
+    # stop the injector: sudo passes the signal on to it; then any other
+    subprocess.run(["sudo", "-n", "kill", str(injp.pid)])
     try:
         injp.wait(timeout=10)
     except Exception:
-        injp.kill()
+        pass
+    run_tcp.kill_strays()
     try:
         ptb = json.load(open(rec))
     except Exception:

@@ -38,6 +38,14 @@ def tc(*args):
     subprocess.run(["sudo", "-n", "tc"] + list(args), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
+def kill_strays():
+    """Stop injectors a PMTU probe (pmtud_probe.py) may have left running: they
+    answer AROS's large packets with Packet Too Big and would skew any run."""
+    for pid in subprocess.run(["pgrep", "-f", r"p\.inject_(ptb|needfrag4)\("], capture_output=True,
+                              text=True).stdout.split():
+        subprocess.run(["sudo", "-n", "kill", pid])
+
+
 def tc_clear():
     tc("qdisc", "del", "dev", IFACE, "ingress")
     tc("qdisc", "del", "dev", IFACE, "root")
@@ -216,7 +224,8 @@ def main():
         sys.exit("no IPv6 link-local address on %s" % IFACE)
     lst = Listeners()
     pcap = os.path.join(a.out, "tcp.pcap")
-    dump = subprocess.Popen(["sudo", "-n", "tcpdump", "-i", IFACE, "-n", "-s", "128", "-w", pcap, os.environ.get("TCP_BENCH_FILTER", "ip6 and tcp")],
+    kill_strays()
+    dump = subprocess.Popen(["sudo", "-n", "tcpdump", "-i", IFACE, "-n", "-s", "128", "-w", pcap, os.environ.get("TCP_BENCH_FILTER", "ip6 and (tcp or icmp6)")],
                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     time.sleep(1)
     script = os.path.join(a.out, "tcp.script")
@@ -251,6 +260,12 @@ def main():
     open(os.path.join(a.out, "tcp.txt"), "w").write(text)
     res = analyse(parse(text))
     res["host"] = lst.log
+    # a sound run: nothing told AROS to send smaller packets, and it did not
+    # fragment its segments (the link MTU is 1500, the MSS 1440)
+    ptbs = len(re.findall(r"ICMP6, packet too big", text))
+    frags = len(re.findall(r"next-header Fragment \(44\)", text))
+    res["sanity"] = {"packet_too_big_seen": ptbs, "fragments_seen": frags,
+                     "ok": ptbs == 0 and frags == 0}
     res["boot"] = "ok" if "finished" in r.stdout else "did not finish"
     json.dump(res, open(os.path.join(a.out, "result.json"), "w"), indent=1)
     print(json.dumps(res, indent=1))
