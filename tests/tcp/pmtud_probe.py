@@ -238,6 +238,8 @@ def main():
                     help="TCP over IPv4 (tcp4send) to the host's IPv4 address; --router drops DF packets over --mtu")
     ap.add_argument("--router", action="store_true",
                     help="drop AROS's packets larger than --mtu at the host, as the router on a narrower path would")
+    ap.add_argument("--blackhole", action="store_true",
+                    help="with --router: drop without any ICMP (a path that filters it, RFC 2923 section 2.1)")
     ap.add_argument("--udp", action="store_true",
                     help="with --offlink: 1452-byte UDP datagrams to OFF_DST[0], [1], [0]; Packet Too Big (--mtu, say 1400) about the first")
     ap.add_argument("--offlink", action="store_true",
@@ -320,7 +322,7 @@ def main():
     inj_cmd = ["sudo", "-n", sys.executable, "-I", "-c",
                ("import sys; sys.path.insert(0,%r); import pmtud_probe as p; d={}; p.inject_needfrag4(%d,7002,d,record=%r)" % (HERE, a.mtu, rec)) if a.ipv4 else
                "import sys; sys.path.insert(0,%r); import pmtud_probe as p; d={}; p.inject_ptb(%d,%d,d,%d,record=%r)" % (HERE, a.mtu, 9999 if a.udp else 7002, 17 if a.udp else 6, rec)]
-    injp = subprocess.Popen(inj_cmd)
+    injp = None if a.blackhole else subprocess.Popen(inj_cmd)
     if a.offlink:
         # once AROS is up (startnet + DAD), advertise the router
         ra_cmd = ["sudo", "-n", sys.executable, "-I", "-c",
@@ -329,11 +331,12 @@ def main():
     r = subprocess.run([os.path.join(ROOT, "tools", "hosted-run.sh"), os.path.join(a.out, "aros"), script, exe],
                        env=env, capture_output=True, text=True)
     # stop the injector: sudo passes the signal on to it; then any other
-    subprocess.run(["sudo", "-n", "kill", str(injp.pid)])
-    try:
-        injp.wait(timeout=10)
-    except Exception:
-        pass
+    if injp is not None:
+        subprocess.run(["sudo", "-n", "kill", str(injp.pid)])
+        try:
+            injp.wait(timeout=10)
+        except Exception:
+            pass
     run_tcp.kill_strays()
     try:
         ptb = json.load(open(rec))
@@ -356,6 +359,10 @@ def main():
                           capture_output=True, text=True).stdout
     open(os.path.join(a.out, "pmtud.txt"), "w").write(text)
 
+    if a.blackhole:
+        # no Packet Too Big: everything AROS sent counts as "after"
+        m = re.search(r"IP6? \(.*?\)\s+(\S+)\.\d+ > \S+\.7002: Flags \[S\]", re.sub(r"\n\s+(?=[0-9a-f:.]+\.\d+ >)", " ", text))
+        ptb = {"aros": m.group(1) if m else (run_tcp.AROS_IP if a.ipv4 else None), "time": 0.0}
     base = {"host_addresses": lls, "ptb": ptb, "host_bytes": got,
             "boot": "ok" if "finished" in r.stdout else "did not finish"}
     res = analyse4(text, base, a.mtu) if a.ipv4 else analyse(text, base, a)

@@ -13,7 +13,7 @@ Rules (Kal, 2026-10-31):
 |---|---|---|---|
 | 1 | #2005 | IPv6/TCP conformance series | merged (5.20) |
 | 2 | #2006 | IPv4 ARP queue, IPv4 path MTU discovery | in review (5.21) |
-| 3 | — | Path MTU and ECN, TCP and UDP | next |
+| 3 | (to open) | Path MTU and ECN, TCP and UDP | ready (5.22), branch `review/arostcp-series3` |
 | 4 | — | Socket API and compatibility | |
 | 5 | — | IPv6 on real networks | |
 | 6 | — | TCP recovery and hardening | |
@@ -22,6 +22,16 @@ Rules (Kal, 2026-10-31):
 The order follows risk and dependencies. Group 3 covers what #2006 introduced (DF on IPv4 can black-hole). Groups 4 and 5 are what applications and IPv6-only networks miss. Group 6 is defensive hardening. Group 7 needs measurement before any code.
 
 ## Group 3 — Path MTU and ECN, TCP and UDP
+
+**As built (2026-11-01), four commits, 5.22 / kernel v0.61:**
+1. TCP black-hole detection (FreeBSD's steps; on by default, as XNU) + sysctls `pmtud`, `pmtud_blackhole`; `defines/miami.h` `MiamiSysCtl()` fixed (it returned void and its macro did not compile). Test: `cunit-net-sysctl`; wire `pmtud_probe.py --blackhole` (master stalls, v4 and v6).
+2. RFC 3542 §11 (`IPV6_USE_MIN_MTU` default -1 as KAME, `IPV6_DONTFRAG` sends above the path MTU and refuses only above the link MTU, `IPV6_RECVPATHMTU`, `IPV6_PATHMTU`) and `IP_DONTFRAG`; ICMPv6 errors about link-scope destinations carry the zone. `cunit-net-frag6` asks for `IPV6_USE_MIN_MTU 0`. Test: `cunit-net-udppmtu` (6/6 fail on master).
+3. ECN modes, default 2; ECT over IPv6 (`tcp_v6output()` takes the traffic class); found by the wire test and fixed: CE on in-sequence data never echoed and ECE on pure ACKs never seen (handled after header prediction; moved before it, as FreeBSD), CWR on every ECE (now on the first new data after a reduction). Test: `cunit-net-sysctl` ecn; wire `ecn_probe.py` (new, with `tcpserve.c`).
+4. UDP ECN field: `IPV6_RECVTCLASS`, `IPV6_TCLASS` actually sent (it was accepted and ignored: traffic class always 0), `IP_RECVTOS`, `IP_TOS` ancillary data; IPv4 multicast/broadcast datagrams had no ancillary data at all (`udp_savecontrol()`). Test: `cunit-net-cmsg` (3 new, fail on master).
+
+Item 4 of the plan (sysctl knobs) went into commits 1 and 3, with the features.
+
+**Plan as written:**
 
 This closes the risk #2006 opened (DF on IPv4 TCP) and the only hard QUIC prerequisite in the stack (B3-06).
 
