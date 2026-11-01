@@ -118,6 +118,8 @@ Each G18 item is first reproduced; the ones that don't reproduce are closed with
 
 ## Group 6 — TCP recovery and hardening
 
+Added (2026-11-01, Kal on #2023): `MSG_DONTWAIT` and `SS_NBIO` can still block in `sblock()` while another task holds the socket buffer; FreeBSD uses `SBLOCKWAIT(flags)`. Predates group 4.
+
 Added (2026-11-01): `SO_REUSEADDR`/`SO_REUSEPORT` and the other generic `SOL_SOCKET` flags the daemon reads are set without `splnet` (found while doing `SO_TIMESTAMP`, group 4): reproduce/assess, then set them at `splnet`.
 
 1. **PRR on by default** (RFC 6937; Linux since 3.2, FreeBSD 14).
