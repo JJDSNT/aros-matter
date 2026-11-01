@@ -48,6 +48,7 @@ Revisions read: AROS upstream `bf196e7dc1` (5.20) + #2006 (5.21, in review); ARO
 | TCP: path MTU (both families), black holes, ECN, recovery | optional (Matter over TCP) | — | PMTUD done (#2005/#2006); black holes, ECN modes, PRR default open | 3, 6 |
 | DNS servers from RAs (RDNSS) | ✔ (IPv6-only networks) | ✔ | absent | 5 |
 | Keepalive options, `TCP_USER_TIMEOUT` | optional | — | header-only | 4 |
+| `SO_TIMESTAMP` (receive time of a datagram) | — | optional (RTT) | defined, rejected (`ENOPROTOOPT`) | 4 (MIDIHub clock sync) |
 
 aros-midihub was also checked (plan, §aros-midihub; written up for midihub in its `docs/arostcp-stack-findings-2026-11-01.md`): it needs nothing beyond these rows.
 

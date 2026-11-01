@@ -53,7 +53,9 @@ This closes the risk #2006 opened (DF on IPv4 TCP) and the only hard QUIC prereq
    - `SO_RCVBUF`/`SO_SNDBUF` and bursts;
    - EWOULDBLOCK on non-blocking sockets;
    - `IP_RECVDSTADDR`/`IPV6_RECVPKTINFO` on every datagram.
-4. **Stackprobe S3, S5, S6, S7:** `MSG_DONTWAIT`, `getnetbyaddr(127)`, Roadshow `ObtainInterfaceList`/`QueryInterfaceTagList`/`GetRouteInfo`, `In_CanForward()`. Each is checked against its documented contract first; only the confirmed defects are fixed. Stackprobe is a probe, not an oracle.
+4. **`SO_TIMESTAMP`** (4.4BSD; FreeBSD/Linux `SCM_TIMESTAMP`): the receive time of each datagram as ancillary data (`struct timeval`), taken when the packet reaches the socket. The header defines it, but `sosetopt()` rejects it with `ENOPROTOOPT`. Added next to `IP_RECVDSTADDR` (`udp_usrreq.c`) and `IPV6_RECVPKTINFO` (UDP6). Consumers: Network MIDI and AppleMIDI clock sync, where the stack's receive time is free of the delay before the application task runs; RTT and jitter measurement in general.
+   - Test: CUnit, datagram on loopback: `SCM_TIMESTAMP` present, between the times before the send and after the receive; absent without the option.
+5. **Stackprobe S3, S5, S6, S7:** `MSG_DONTWAIT`, `getnetbyaddr(127)`, Roadshow `ObtainInterfaceList`/`QueryInterfaceTagList`/`GetRouteInfo`, `In_CanForward()`. Each is checked against its documented contract first; only the confirmed defects are fixed. Stackprobe is a probe, not an oracle.
    - Test: CUnit per defect.
 
 ## Group 5 — IPv6 on real networks
@@ -94,11 +96,11 @@ Written up for midihub in its `docs/arostcp-stack-findings-2026-11-01.md` (commi
 
 Nothing new for the stack. Its needs are already covered or live elsewhere:
 - **MD13** (address changes found by polling every 3 s): the stack already signals them (`SBTC_SIG_ADDRESS_CHANGE_MASK`, `api/amiga_api.c`, from `rt_newaddrmsg()`). mdnsd should subscribe; that is an mdnsd change. Group 5 item 10 tests the signal.
-- **IPv6 `SO_BINDTODEVICE`** (mdnsd binds per interface on IPv4): group 5, G18i.
+- **IPv6 `SO_BINDTODEVICE`** (mdnsd binds per interface on IPv4; on IPv6 `sosetopt()` returns `ENOPROTOOPT`, and mdnsd uses one wildcard socket with `IPV6_PKTINFO`): group 5, G18i.
 - **MD08** (multicast filters): the stack asks SANA-II for IPv4 and IPv6 groups (`netinet/in.c`, `netinet6/in6.c`); whether each driver honours `S2_ADDMULTICASTADDRESS` is driver work.
 - **AM14/NM15/MD14** (IPv6 in AppleMIDI, Network MIDI 2.0, mdnsd): application work; mdnsd's dual-stack core is merged (#1980) and the stack side is in.
 - **MD18** (m68k AROSTCP build needs the `fd.library` headers): a build fix, not stack behaviour; it goes as its own small PR from aros-midihub.
-- **`SO_TIMESTAMP`** (defined, not implemented): no consumer. Network MIDI carries its timestamps in the payload; midihub L12 is about BLE. Added only if a consumer appears.
+- **`SO_TIMESTAMP`** (defined, rejected with `ENOPROTOOPT`): group 4 item 4. Network MIDI carries its timestamps in the payload, but its clock sync gains from the stack's receive time (midihub L12 is BLE, unrelated).
 - **D1** (a library base belongs to its task): AmiTCP's `ObtainSocket`/`ReleaseSocket` already cover handing sockets over.
 
 ## Not planned
