@@ -90,6 +90,11 @@ Benches: `tcpopt_probe.py` (keepalive/UTO/zero window), `udpbig_probe.py` (1200-
 
 ## Group 5 — IPv6 on real networks
 
+**Split (2026-11-01), two PRs, 5b after 5a merges:** 5a = configuration and routing (items 1-5); 5b = zones, interfaces and address state (items 7-11). Same procedure as group 4: reproduce first, fix only shown defects, document what already conforms.
+- **RDNSS to the resolver:** learned servers go into `DynDB.dyn_NameServers` tagged with the interface (`nsn_Owner`), as the `DNS=`/`DNS6=` interface tokens already do, with the RA lifetime; `NetDB` (manual) is never touched and keeps precedence; RA and DHCPv6 lists coexist (RFC 8106 5.3.1). Tests end at the resolver: a query goes to the learned server; it expires with its lifetime; manual servers stay first; the interface going away removes it. DNSSL into the search list the same way.
+- **IPv6 `SO_BINDTODEVICE` semantics, each tested:** an unzoned link-local peer takes the bound interface as its zone; an explicit zone other than the bound interface is an error, not a silent choice; an unknown interface gives `ENXIO` (as IPv4); the interface disappearing under a connection.
+- **DAD tests are state transitions:** on the address-change signal, `SIOCGIFAFLAG_IN6` must already show the address no longer tentative (or duplicated) - the signal comes after the state change.
+
 1. **R4 RDNSS/DNSSL** (RFC 8106): DNS servers and search list from Router Advertisements, into the resolver's configuration, with their lifetimes. Needed on IPv6-only networks.
    - Test: CUnit sending itself an RA with RDNSS (as `cunit-net-rio6`), then the resolver's server list.
 2. **G18a** router selection by reachability (RFC 4191 §3.2/3.5, RFC 4861 §6.3.6).
@@ -110,6 +115,8 @@ Benches: `tcpopt_probe.py` (keepalive/UTO/zero window), `udpbig_probe.py` (1200-
 Each G18 item is first reproduced; the ones that don't reproduce are closed with the evidence. If the group grows too large it is split into 5a (RDNSS + routing) and 5b (source selection + zones).
 
 ## Group 6 — TCP recovery and hardening
+
+Added (2026-11-01): `SO_REUSEADDR`/`SO_REUSEPORT` and the other generic `SOL_SOCKET` flags the daemon reads are set without `splnet` (found while doing `SO_TIMESTAMP`, group 4): reproduce/assess, then set them at `splnet`.
 
 1. **PRR on by default** (RFC 6937; Linux since 3.2, FreeBSD 14).
    - Test: loss bench with PRR off and on (recovery time, retransmissions, no stall, sanity ok).
