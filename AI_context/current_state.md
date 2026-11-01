@@ -10,7 +10,7 @@ Bancada: AROS hosted linux-x86_64 (`tools/hosted-run.sh`) + tap isolada `aros0` 
 
 ## Prioridade atual (mantenedor, 2026-10-31)
 
-**Completar a pilha AROSTCP vem antes do Matter.** A trilha Matter (ISSUE-0003 passo 4, M1–M5) fica em espera; o trabalho segue em grupos de PR do AROSTCP (um aberto por vez), tirados do Backlog 2 e das pendências IPv6/TCP.
+**Completar a pilha AROSTCP vem antes do Matter.** A trilha Matter (ISSUE-0003 passo 4, M1–M5) fica em espera; o trabalho segue em grupos de PR do AROSTCP (um aberto por vez), tirados do Backlog 2 e das pendências IPv6/TCP. **Plano dos grupos:** [research/2026-10-31-arostcp-pr-groups-plan.md](research/2026-10-31-arostcp-pr-groups-plan.md) — grupo 3 robustez e padrões do TCP (black-hole de PMTU, PRR ligado, ECN só-aceitar por padrão, sysctls), 4 API e compatibilidade (keepalive, `localhost`, stackprobe), 5 IPv6 em redes reais (RDNSS, G18a–i), 6 endurecimento do TCP (RFC 5961, offset de TSval, SYN cookies), 7 timers e congestionamento (pesquisa antes).
 
 ## Resumo
 
