@@ -49,6 +49,8 @@ Revisions read: AROS upstream `bf196e7dc1` (5.20) + #2006 (5.21, in review); ARO
 | DNS servers from RAs (RDNSS) | ✔ (IPv6-only networks) | ✔ | absent | 5 |
 | Keepalive options, `TCP_USER_TIMEOUT` | optional | — | header-only | 4 |
 
+aros-midihub was also checked (plan, §aros-midihub): it needs nothing beyond these rows.
+
 Nothing in the table is Matter-only or Open-Screen-only code in the stack: every row is a generic socket capability with an RFC behind it.
 
 ## 4. Effect on the PR groups

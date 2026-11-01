@@ -69,6 +69,7 @@ This closes the risk #2006 opened (DF on IPv4 TCP) and the only hard QUIC prereq
 8. **G18g/h** `connect()` to a group and the first-interface fallback (from #1975).
 9. **G18i** `SO_BINDTODEVICE` for IPv6; link-scope `connect()` without a zone.
 10. **Two interfaces** (B3-02/08): multicast join, send and receive on each with a second tap; source and zone per interface; an interface going down and up, and sockets reconnecting.
+    - Also a test that `SBTC_SIG_ADDRESS_CHANGE_MASK` fires for IPv4 and IPv6 adds and deletes, SLAAC included (aros-midihub MD13 wants to stop polling; the signal already exists, `api_sendaddrchange()`).
 
 Each G18 item is first reproduced; the ones that don't reproduce are closed with the evidence. If the group grows too large it is split into 5a (RDNSS + routing) and 5b (source selection + zones).
 
@@ -86,6 +87,17 @@ Each G18 item is first reproduced; the ones that don't reproduce are closed with
 1. **RTO granularity** (RFC 6298): the 500 ms slow tick limits RTO resolution; measure first, then consider an ms-resolution RTO from the 200 ms fast timer or `GetSysTime()`.
 2. **HyStart++** (RFC 9406) for CUBIC slow start; **RACK-TLP** (RFC 8985). Only with A/B measurements showing a benefit, and after the SACK scoreboard is reviewed under loss.
 3. **TCP Fast Open** (RFC 7413): optional, last.
+
+## aros-midihub (checked 2026-11-01)
+
+Nothing new for the stack. Its needs are already covered or live elsewhere:
+- **MD13** (address changes found by polling every 3 s): the stack already signals them (`SBTC_SIG_ADDRESS_CHANGE_MASK`, `api/amiga_api.c`, from `rt_newaddrmsg()`). mdnsd should subscribe; that is an mdnsd change. Group 5 item 10 tests the signal.
+- **IPv6 `SO_BINDTODEVICE`** (mdnsd binds per interface on IPv4): group 5, G18i.
+- **MD08** (multicast filters): the stack asks SANA-II for IPv4 and IPv6 groups (`netinet/in.c`, `netinet6/in6.c`); whether each driver honours `S2_ADDMULTICASTADDRESS` is driver work.
+- **AM14/NM15/MD14** (IPv6 in AppleMIDI, Network MIDI 2.0, mdnsd): application work; #1559 is closed and the stack side is in.
+- **MD18** (m68k AROSTCP build needs the `fd.library` headers): a build fix, not stack behaviour; it goes as its own small PR from aros-midihub.
+- **`SO_TIMESTAMP`** (defined, not implemented): no consumer. Network MIDI carries its timestamps in the payload; midihub L12 is about BLE. Added only if a consumer appears.
+- **D1** (a library base belongs to its task): AmiTCP's `ObtainSocket`/`ReleaseSocket` already cover handing sockets over.
 
 ## Not planned
 
