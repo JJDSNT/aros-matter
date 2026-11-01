@@ -1,0 +1,34 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: DONTWAIT_Suite
+  Test: UDP recv: EWOULDBLOCK at once, socket still blocking (IPv4) ...FAILED
+    1. udp_recv:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-dontwait.c:70  - t < TICKS_PER_SECOND / 2
+  Test: UDP recv: EWOULDBLOCK at once, socket still blocking (IPv6) ...FAILED
+    1. udp_recv:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-dontwait.c:70  - t < TICKS_PER_SECOND / 2
+  Test: TCP recv: EWOULDBLOCK at once (IPv4) ...FAILED
+    1. tcp_recv:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-dontwait.c:95  - t < TICKS_PER_SECOND / 2
+  Test: TCP recv: EWOULDBLOCK at once (IPv6) ...FAILED
+    1. tcp_recv:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-dontwait.c:95  - t < TICKS_PER_SECOND / 2
+  Test: TCP send to a full peer: EWOULDBLOCK at once ...FAILED
+    1. testDONTWAIT_TCP_SEND:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-dontwait.c:126  - t < TICKS_PER_SECOND / 2
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       33         7       n/a       n/a
+     Tests        :        5         5         0         0
+
+Elapsed Time: 14.060(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       33         7       n/a       n/a
+     Tests        :        5         5         0         0
+
+Elapsed Time: 14.040(s)
+

@@ -1,0 +1,68 @@
+{
+ "boot": "ok",
+ "cases": {
+  "keepalive": {
+   "aros": "keepalive set idle=2 intvl=1 cnt=3 uto=0\nkeepalive done ms=5880 wait=0 errno=60",
+   "ms": 5880,
+   "wait_ms": 0,
+   "errno": 60,
+   "host": {
+    "accepted": 0.0,
+    "silent": 1.02
+   },
+   "wire": {
+    "aros_packets_after_silence": 5,
+    "rst_after_s": 4.86,
+    "last_after_s": 4.86,
+    "probes": 4
+   }
+  },
+  "ka_uto": {
+   "aros": "keepalive set idle=2 intvl=1 cnt=9 uto=4000\nkeepalive done ms=4000 wait=0 errno=60",
+   "ms": 4000,
+   "wait_ms": 0,
+   "errno": 60,
+   "host": {
+    "accepted": 0.0,
+    "silent": 1.01
+   },
+   "wire": {
+    "aros_packets_after_silence": 3,
+    "rst_after_s": 2.98,
+    "last_after_s": 2.98,
+    "probes": 2
+   }
+  },
+  "uto": {
+   "aros": "uto done ms=5000 wait=0 errno=60",
+   "ms": 5000,
+   "wait_ms": 0,
+   "errno": 60,
+   "host": {
+    "accepted": 0.0,
+    "silent": 2.21
+   },
+   "wire": {
+    "aros_packets_after_silence": 6,
+    "rst_after_s": 2.79,
+    "last_after_s": 2.79,
+    "probes": 0
+   }
+  },
+  "zerowin": {
+   "aros": "zerowin done ms=3000 wait=2900 errno=60",
+   "ms": 3000,
+   "wait_ms": 2900,
+   "errno": 60,
+   "host": {
+    "accepted": 0.0
+   },
+   "wire": {
+    "aros_packets_after_silence": 3,
+    "rst_after_s": 3.0,
+    "last_after_s": 3.0,
+    "probes": 0
+   }
+  }
+ }
+}

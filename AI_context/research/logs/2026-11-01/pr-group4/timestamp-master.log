@@ -1,0 +1,40 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: TIMESTAMP_Suite
+  Test: timeval and timespec layout ...passed
+  Test: the options, their defaults and errors ...FAILED
+    1. testTIMESTAMP_OPTIONS:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-timestamp.c:166  - CU_ASSERT_EQUAL(geti(s, SO_TIMESTAMP),0)
+  Test: no stamp without SO_TIMESTAMP ...passed
+  Test: SCM_TIMESTAMP at reception (IPv4) ...FAILED
+    1. at_reception:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-timestamp.c:208  - us >= before && us <= readable
+  Test: SCM_TIMESTAMP at reception (IPv6) ...FAILED
+    1. at_reception:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-timestamp.c:208  - us >= before && us <= readable
+  Test: SCM_MONOTONIC at reception (IPv4) ...FAILED
+    1. at_reception:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-timestamp.c:208  - us >= before && us <= readable
+  Test: SCM_MONOTONIC at reception (IPv6) ...FAILED
+    1. at_reception:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-timestamp.c:208  - us >= before && us <= readable
+  Test: datagrams received apart, stamps apart ...FAILED
+    1. testTIMESTAMP_DISTINCT:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-timestamp.c:236  - b - a >= 250000 && b - a <= 500000
+  Test: each datagram keeps its kind of stamp ...FAILED
+    1. testTIMESTAMP_PER_DATAGRAM:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-timestamp.c:258  - CU_ASSERT_EQUAL(recv_stamp(r, &us),SCM_MONOTONIC)
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       76        37       n/a       n/a
+     Tests        :        9         7         0         0
+
+Elapsed Time: 2.540(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       76        37       n/a       n/a
+     Tests        :        9         7         0         0
+
+Elapsed Time: 2.520(s)
+

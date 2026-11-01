@@ -1,0 +1,29 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: UTO_Suite
+  Test: the option: 0, what was set, no negative ...passed
+  Test: an accepted connection has the listener's ...passed
+  Test: a shut window drops the connection at the timeout (IPv4) ...passed
+  Test: a shut window drops the connection at the timeout (IPv6) ...passed
+  Test: without one, a shut window does not ...passed
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       22         0       n/a       n/a
+     Tests        :        5         0         0         0
+
+Elapsed Time: 8.840(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       22         0       n/a       n/a
+     Tests        :        5         0         0         0
+
+Elapsed Time: 8.920(s)
+

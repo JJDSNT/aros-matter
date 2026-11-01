@@ -1,0 +1,50 @@
+{
+ "connect": {
+  "syns": 0,
+  "syn_options": null,
+  "syn_flags": null,
+  "source_ports": [],
+  "isn_deltas": []
+ },
+ "send": {
+  "data_segments": 1435,
+  "distinct": 1408,
+  "retransmissions": 27,
+  "expected_losses": 28,
+  "retransmissions_after_quiet_200ms_or_more": 11,
+  "longest_quiet_before_a_retransmission": 1.457,
+  "host_acks_with_sack": 218,
+  "seconds": 18.609,
+  "mss_seen": 1428
+ },
+ "unread": {
+  "aros_close_flags": []
+ },
+ "stall": {
+  "transmissions": 4,
+  "intervals": [
+   1.18,
+   3.36,
+   5.64
+  ]
+ },
+ "host": {
+  "7002": [
+   {
+    "bytes": 2000000,
+    "seconds": 18.627
+   }
+  ],
+  "7004": [
+   {
+    "bytes": 100
+   }
+  ]
+ },
+ "sanity": {
+  "packet_too_big_seen": 0,
+  "fragments_seen": 0,
+  "ok": true
+ },
+ "boot": "ok"
+}

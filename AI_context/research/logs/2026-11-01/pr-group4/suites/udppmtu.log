@@ -1,0 +1,30 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: UDPPMTU_Suite
+  Test: the IPv6 path MTU options and their defaults ...passed
+  Test: IPV6_PATHMTU gives the peer's path MTU ...passed
+  Test: IPV6_RECVPATHMTU tells the sender of a Packet Too Big ...passed
+  Test: IPV6_DONTFRAG refuses a datagram above the link MTU ...passed
+  Test: IPV6_USE_MIN_MTU and IPV6_DONTFRAG for multicast ...passed
+  Test: IP_DONTFRAG sets DF and refuses above the path MTU ...passed
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       65         0       n/a       n/a
+     Tests        :        6         0         0         0
+
+Elapsed Time: 3.240(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       65         0       n/a       n/a
+     Tests        :        6         0         0         0
+
+Elapsed Time: 3.220(s)
+

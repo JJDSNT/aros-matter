@@ -1,0 +1,35 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: LOCALHOST_Suite
+  Test: AF_UNSPEC gives 127.0.0.1 and ::1 ...FAILED
+    1. testLOCALHOST_UNSPEC:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-localhost.c:67  - CU_ASSERT_EQUAL(n6,1)
+  Test: one family gives its loopback address ...FAILED
+    1. testLOCALHOST_FAMILY:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-localhost.c:78  - CU_ASSERT_EQUAL(n6,1)
+  Test: any case, the final dot, names within .localhost ...FAILED
+    1. testLOCALHOST_NAMES:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-localhost.c:91  - CU_ASSERT_EQUAL(n6,1)
+  Test: gethostbyname() gives 127.0.0.1 ...FAILED
+    1. testLOCALHOST_GETHOSTBYNAME:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-localhost.c:100  - CU_ASSERT_PTR_NOT_NULL_FATAL(h)
+  Test: gethostbyname_r() gives 127.0.0.1 ...FAILED
+    1. testLOCALHOST_GETHOSTBYNAME_R:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-localhost.c:116  - CU_ASSERT_PTR_EQUAL_FATAL(r,&h)
+  Test: address literals are taken as they are ...passed
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       28        21       n/a       n/a
+     Tests        :        6         5         0         0
+
+Elapsed Time: 0.020(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       28        21       n/a       n/a
+     Tests        :        6         5         0         0
+
+Elapsed Time: 0.000(s)
+

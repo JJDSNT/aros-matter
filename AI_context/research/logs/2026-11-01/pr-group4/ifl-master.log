@@ -1,0 +1,31 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: IFLIST_Suite
+  Test: ObtainInterfaceList() lists the interfaces ...FAILED
+    1. testIFLIST_LIST:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-iflist.c:85  - CU_ASSERT_PTR_NOT_NULL_FATAL(l)
+  Test: QueryInterfaceTagList(lo0): MTU, address, netmask ...FAILED
+    1. testIFLIST_LOOPBACK:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-iflist.c:103  - CU_ASSERT_EQUAL(m.sin_addr.s_addr,htonl(0xff000000))
+  Test: QueryInterfaceTagList(): what the ioctls say ...FAILED
+    1. testIFLIST_INTERFACE:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-iflist.c:120  - CU_ASSERT_EQUAL(b.sin_addr.s_addr,ifioctl(SIOCGIFBRDADDR))
+  Test: an unknown name: ENXIO ...passed
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       14         8       n/a       n/a
+     Tests        :        4         3         0         0
+
+Elapsed Time: 0.020(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       14         8       n/a       n/a
+     Tests        :        4         3         0         0
+
+Elapsed Time: 0.000(s)
+

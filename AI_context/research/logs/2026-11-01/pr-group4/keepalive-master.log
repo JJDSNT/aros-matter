@@ -1,0 +1,36 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: KEEPALIVE_Suite
+  Test: the system values until set ...FAILED
+    1. testKEEPALIVE_DEFAULTS:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-keepalive.c:59  - CU_ASSERT_EQUAL(geti(s, TCP_KEEPINIT),SYS_INIT)
+  Test: set, read back, 0 for the system value (IPv4) ...FAILED
+    1. roundtrip:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-keepalive.c:80  - CU_ASSERT_EQUAL(geti(s, TCP_KEEPCNT),SYS_CNT)
+  Test: set, read back, 0 for the system value (IPv6) ...FAILED
+    1. roundtrip:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-keepalive.c:80  - CU_ASSERT_EQUAL(geti(s, TCP_KEEPCNT),SYS_CNT)
+  Test: negative and too large are refused ...FAILED
+    1. testKEEPALIVE_BOUNDS:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-keepalive.c:100  - CU_ASSERT_EQUAL(geti(s, TCP_KEEPIDLE),16383)
+  Test: an accepted connection has the listener's values (IPv4) ...FAILED
+    1. inherited:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-keepalive.c:128  - CU_ASSERT_EQUAL(geti(c, TCP_KEEPIDLE),SYS_IDLE)
+  Test: an accepted connection has the listener's values (IPv6) ...FAILED
+    1. inherited:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-keepalive.c:128  - CU_ASSERT_EQUAL(geti(c, TCP_KEEPIDLE),SYS_IDLE)
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       65        45       n/a       n/a
+     Tests        :        6         6         0         0
+
+Elapsed Time: 0.020(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       65        45       n/a       n/a
+     Tests        :        6         6         0         0
+
+Elapsed Time: 0.000(s)
+

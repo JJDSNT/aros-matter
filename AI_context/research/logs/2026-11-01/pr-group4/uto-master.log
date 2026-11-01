@@ -1,0 +1,33 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: UTO_Suite
+  Test: the option: 0, what was set, no negative ...FAILED
+    1. testUTO_OPTION:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-uto.c:78  - CU_ASSERT_EQUAL(geti(s, TCP_USER_TIMEOUT),0)
+  Test: an accepted connection has the listener's ...FAILED
+    1. testUTO_INHERITED:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-uto.c:102  - CU_ASSERT_EQUAL(geti(c, TCP_USER_TIMEOUT),0)
+  Test: a shut window drops the connection at the timeout (IPv4) ...FAILED
+    1. zero_window_drops:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-uto.c:147  - waited >= 1 * TICKS_PER_SECOND && waited <= 5 * TICKS_PER_SECOND
+  Test: a shut window drops the connection at the timeout (IPv6) ...FAILED
+    1. zero_window_drops:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-uto.c:147  - waited >= 1 * TICKS_PER_SECOND && waited <= 5 * TICKS_PER_SECOND
+  Test: without one, a shut window does not ...passed
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       22        13       n/a       n/a
+     Tests        :        5         4         0         0
+
+Elapsed Time: 21.380(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       22        13       n/a       n/a
+     Tests        :        5         4         0         0
+
+Elapsed Time: 21.320(s)
+

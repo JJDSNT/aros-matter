@@ -1,0 +1,80 @@
+{
+ "boot": "ok",
+ "ce_marking": true,
+ "host": {
+  "aros_ll": "fe80::6805:c8ff:fea1:69df",
+  "send6": 1000000,
+  "send4": 1000000,
+  "recv6": 1015808,
+  "recv4": 1015808
+ },
+ "connections": {
+  "send6": {
+   "host_syn_ece_cwr": true,
+   "synack_ece": true,
+   "synack_cwr": false,
+   "aros_data": 706,
+   "aros_data_ect0": 706,
+   "aros_data_ce": 0,
+   "host_data": 0,
+   "host_data_ce": 0,
+   "aros_ece": 0,
+   "aros_cwr": 7,
+   "host_ece": 537,
+   "host_cwr": 0
+  },
+  "send4": {
+   "host_syn_ece_cwr": true,
+   "synack_ece": true,
+   "synack_cwr": false,
+   "aros_data": 692,
+   "aros_data_ect0": 692,
+   "aros_data_ce": 0,
+   "host_data": 0,
+   "host_data_ce": 0,
+   "aros_ece": 0,
+   "aros_cwr": 8,
+   "host_ece": 530,
+   "host_cwr": 0
+  },
+  "recv6": {
+   "host_syn_ece_cwr": true,
+   "synack_ece": true,
+   "synack_cwr": false,
+   "aros_data": 0,
+   "aros_data_ect0": 0,
+   "aros_data_ce": 0,
+   "host_data": 712,
+   "host_data_ce": 391,
+   "aros_ece": 317,
+   "aros_cwr": 0,
+   "host_ece": 0,
+   "host_cwr": 303
+  },
+  "recv4": {
+   "host_syn_ece_cwr": true,
+   "synack_ece": true,
+   "synack_cwr": false,
+   "aros_data": 0,
+   "aros_data_ect0": 0,
+   "aros_data_ce": 0,
+   "host_data": 702,
+   "host_data_ce": 381,
+   "aros_ece": 314,
+   "aros_cwr": 0,
+   "host_ece": 0,
+   "host_cwr": 301
+  },
+  "client": {
+   "syn_ece": false,
+   "syn_cwr": false,
+   "syn_seen": true
+  }
+ },
+ "sanity": {
+  "aros_found": true,
+  "transfers_whole": true,
+  "captured": true,
+  "ok": true
+ }
+}
