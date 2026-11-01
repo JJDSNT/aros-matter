@@ -8,7 +8,7 @@ owner: jaime
 milestone: M2
 area: dnssd
 created_at: 2026-10-28
-updated_at: 2026-10-28
+updated_at: 2026-11-01
 tags: [dnssd, mdns, bonami]
 blockers: []
 depends_on: [ISSUE-0001, ISSUE-0008]
@@ -45,3 +45,4 @@ Recomendação inicial: **A no M2**, B como meta quando o mdnsd tiver IPv6, mant
 # Log
 
 - 2026-10-28: criada.
+- 2026-11-01: inclinação para a opção B (Bonami), registrada em research/2026-11-01-network-roadmap-integration.md §2.3: o núcleo IPv6 do mdnsd entrou (#1980), `QueryRecordA()` já resolve SRV/AAAA/TXT; faltam o evento estendido e subtipos (ISSUE-0005). A opção A fica só como ferramenta de teste, para não haver dois respondedores na 5353. Decisão final quando a trilha Matter voltar.

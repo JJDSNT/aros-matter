@@ -30,7 +30,7 @@ Revisions read: AROS upstream `bf196e7dc1` (5.20) + #2006 (5.21, in review); ARO
    - **Common rules:** entropy comes from the CRT (`arc4random_buf()`, as AROSTCP since #2005; B3-10 checks OpenSSL's seed source on AROS), and no crypto primitive is written by us. Open Screen's SPAKE2 is not Matter's SPAKE2+ (B3-11).
 3. **DNS-SD: one system service, Bonami/mdnsd, for everyone.**
    - **Shared prerequisite:** IPv6 in mdnsd (ISSUE-0005, the maintainer's), needed by Matter M2 and Open Screen B3-B. Its core is merged upstream (#1980, 2026-10-31: `ff02::fb` per interface, AAAA records); what is left is checking it against Matter's and Open Screen's needs.
-   - **Interim:** before that check, Matter may use the SDK's `minimal_mdns` (ISSUE-0004) and Open Screen a test responder.
+   - **Matter uses Bonami** (ISSUE-0004 option B). With #1980 in, IPv6-only services can already be followed through `QueryRecordA()` (SRV, AAAA, TXT) while the extended discovery event and subtypes are added. The SDK's `minimal_mdns` (option A) stays a test tool: a second responder on UDP 5353 next to mdnsd would duplicate the service and compete for the port. Open Screen uses a test responder only on the bench.
    - **Coordination:** neither ships its own mDNS. Coordination goes through `docs/upstream-coordination.md`.
 4. **Time.** Monotonic time for timers is the CRT's (`clock_gettime(CLOCK_MONOTONIC)`, already used by the mbedTLS glue). B3-05 is a runtime test, not a stack change. The stack's own timer resolution (500 ms TCP slow tick) is group 7.
 
