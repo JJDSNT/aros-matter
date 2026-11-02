@@ -131,11 +131,12 @@ Each G18 item is first reproduced; the ones that don't reproduce are closed with
 
 ## Group 6 — TCP recovery and hardening
 
-Added (2026-11-01, Kal on #2023): `MSG_DONTWAIT` and `SS_NBIO` can still block in `sblock()` while another task holds the socket buffer; FreeBSD uses `SBLOCKWAIT(flags)`. Predates group 4.
+Added (2026-11-01, Kal on #2023): `MSG_DONTWAIT` and `SS_NBIO` can still block in `sblock()` while another task holds the socket buffer; FreeBSD uses `SBLOCKWAIT(flags)`. Predates group 4. Criteria (2026-11-02): no busy waiting; a non-blocking call gets `EWOULDBLOCK` while the buffer is held; a blocking socket still sleeps as it does today - both in the test.
 
 Added (2026-11-01): `SO_REUSEADDR`/`SO_REUSEPORT` and the other generic `SOL_SOCKET` flags the daemon reads are set without `splnet` (found while doing `SO_TIMESTAMP`, group 4): reproduce/assess, then set them at `splnet`.
 
-1. **PRR on by default** (RFC 6937; Linux since 3.2, FreeBSD 14).
+0. **SACK scoreboard under controlled loss, before PRR** (2026-11-02): PRR sizes what it sends from `pipe` and the data delivered, both from the scoreboard, so an accounting defect would show up as a PRR effect in the A/B. Check the segments marked lost, `pipe` during recovery and the retransmissions that follow.
+1. **PRR on by default** (RFC 6937; Linux since 3.2, FreeBSD 14), decided by the measurements, not by Linux/FreeBSD having it.
    - Test: loss bench with PRR off and on (recovery time, retransmissions, no stall, sanity ok).
    - Test: the router probe, under PRR.
 2. **R2, RFC 5961:** in-window RST, SYN and ACK validation, challenge ACKs rate-limited per connection.
@@ -145,6 +146,8 @@ Added (2026-11-01): `SO_REUSEADDR`/`SO_REUSEPORT` and the other generic `SOL_SOC
 ## Group 7 — Timers and congestion (research first)
 
 - **nd6 on the monotonic clock** (Kal on #2031): prefixes, routers, neighbours and the RA DNS lifetimes follow `GetSysTime()`, so a clock step moves them; move them together to `GetUpTime()`, with a test that steps the clock.
+
+Order (2026-11-02, may change with the results): monotonic clock (a correctness fix, no gain required), RTO measurement, SACK review under PRR, HyStart++/RACK-TLP, TCP Fast Open.
 
 1. **RTO granularity** (RFC 6298): the 500 ms slow tick limits RTO resolution; measure first, then consider an ms-resolution RTO from the 200 ms fast timer or `GetSysTime()`.
 2. **HyStart++** (RFC 9406) for CUBIC slow start; **RACK-TLP** (RFC 8985). Only with A/B measurements showing a benefit, and after the SACK scoreboard is reviewed under loss.
