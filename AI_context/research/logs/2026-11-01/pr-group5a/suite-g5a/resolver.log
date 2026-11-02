@@ -1,0 +1,28 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: RESOLVER_Suite
+  Test: a name without a dot is tried in each domain ...passed
+  Test: a name with a dot is tried as it is first ...passed
+  Test: then in each domain ...passed
+  Test: a name with a trailing dot only as it is ...passed
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :        5         0       n/a       n/a
+     Tests        :        4         0         0         0
+
+Elapsed Time: 0.000(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :        5         0       n/a       n/a
+     Tests        :        4         0         0         0
+
+Elapsed Time: 0.000(s)
+

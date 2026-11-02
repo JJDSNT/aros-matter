@@ -1,0 +1,36 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: RDNSS_Suite
+  Test: a server from an RDNSS option answers ...FAILED
+    1. testRDNSS_LEARNED:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-rdnss.c:173  - CU_ASSERT_EQUAL(dns_lookup("one.rdnss.test"),77)
+  Test: a lifetime of 0 ends it ...FAILED
+    1. testRDNSS_ZERO:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-rdnss.c:184  - CU_ASSERT_EQUAL(dns_lookup("one.rdnss.test"),77)
+  Test: it ends with its lifetime ...FAILED
+    1. testRDNSS_EXPIRES:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-rdnss.c:198  - CU_ASSERT_EQUAL(dns_lookup("one.rdnss.test"),77)
+  Test: a domain from a DNSSL option is searched ...FAILED
+    1. testRDNSS_DNSSL:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-rdnss.c:217  - CU_ASSERT_EQUAL(dns_lookup("two.rdnss.test"),78)
+  Test: options that do not parse are ignored ...FAILED
+    1. testRDNSS_MALFORMED:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-rdnss.c:236  - CU_ASSERT_EQUAL(dns_lookup("one.rdnss.test"),77)
+  Test: a DHCP update leaves them ...FAILED
+    1. testRDNSS_DHCP:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-rdnss.c:258  - CU_ASSERT_EQUAL(dns_lookup("two"),78)
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       23         8       n/a       n/a
+     Tests        :        6         6         0         0
+
+Elapsed Time: 7.900(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       23         8       n/a       n/a
+     Tests        :        6         6         0         0
+
+Elapsed Time: 7.800(s)
+

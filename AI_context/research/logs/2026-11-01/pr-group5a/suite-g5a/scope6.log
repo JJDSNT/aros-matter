@@ -1,0 +1,32 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: SCOPE6_Suite
+  Test: bind() refuses an address that is not ours ...passed
+  Test: a link-local address binds in its zone ...passed
+  Test: a link-local address does not bind in another zone ...passed
+  Test: connect() takes the peer's zone ...passed
+  Test: connect() refuses an unknown zone ...passed
+  Test: recvfrom() reports the source's zone ...passed
+  Test: IPV6_PKTINFO gives the link-local's own link ...passed
+  Test: TCP over a link-local address reports the zone ...passed
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       46         0       n/a       n/a
+     Tests        :        8         0         0         0
+
+Elapsed Time: 0.020(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       46         0       n/a       n/a
+     Tests        :        8         0         0         0
+
+Elapsed Time: 0.000(s)
+

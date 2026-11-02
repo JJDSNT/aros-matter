@@ -1,0 +1,30 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: MCAST6_Suite
+  Test: a group nobody joined is not delivered ...passed
+  Test: a member receives a group datagram ...passed
+  Test: a socket on the port without a membership receives ...passed
+  Test: every socket on the port gets a copy ...passed
+  Test: IPV6_MULTICAST_HOPS applies to UDP ...passed
+  Test: IPV6_MULTICAST_LOOP 0 keeps it off the host ...passed
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       27         0       n/a       n/a
+     Tests        :        6         0         0         0
+
+Elapsed Time: 2.040(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       27         0       n/a       n/a
+     Tests        :        6         0         0         0
+
+Elapsed Time: 2.020(s)
+

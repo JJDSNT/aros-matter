@@ -1,0 +1,28 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: NAFLAGS6_Suite
+  Test: an answer we send has Solicited and Override ...FAILED
+    1. testNAFLAGS6_SENT:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-naflags6.c:185  - CU_ASSERT_EQUAL(r[5] | r[6] | r[7],0)
+  Test: a Solicited answer we receive makes it REACHABLE ...FAILED
+    1. testNAFLAGS6_RECEIVED:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-naflags6.c:225  - CU_ASSERT_EQUAL(ns_while_sending(NEIGHBOUR, 8),0)
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :        8         3       n/a       n/a
+     Tests        :        2         2         0         0
+
+Elapsed Time: 8.420(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :        8         3       n/a       n/a
+     Tests        :        2         2         0         0
+
+Elapsed Time: 8.400(s)
+

@@ -1,6 +1,6 @@
 # Estado atual — aros-matter
 
-Atualizado: 2026-10-30
+Atualizado: 2026-11-01
 
 ## Foco atual (desde 2026-10-28)
 
@@ -113,3 +113,5 @@ Para mudanças compartilhadas em AROSTCP, IPv6/multicast, mdnsd/Bonami e DNS-SD,
 **Quarto grupo (2026-11-01):** #2011 mesclado (f6513c6801, 5.22); o Kal fez o 8b16329595 (RFC 6724, 5.23). [#2023](https://github.com/aros-development-team/AROS/pull/2023) aberto: keepalive por conexão, `TCP_USER_TIMEOUT`, timer lento (ticks perdidos), localhost (RFC 6761), `SO_TIMESTAMP`/`SO_TS_CLOCK`, `MSG_DONTWAIT`, base networks em ordem de host, estouro do `inet_network()`, `in_canforward()` (rede 127), `ObtainInterfaceList()`/tags do `QueryInterfaceTagList()`, teste de regressão UDP; 11 commits, 5.24 / v0.63; 36 suítes; Codacy ok. Evidência em `research/logs/2026-11-01/pr-group4/`. Grupo 5 só depois do merge.
 
 **Revisão do Kal no #2023 (2026-11-01):** quatro pontos, todos corrigidos e juntados aos commits de origem (force-push): o relógio do `TCP_USER_TIMEOUT` não parava quando o SYN era confirmado (conexão cliente ociosa caía; teste novo: par ocioso, opção antes e depois do `connect()`); `TP_UTO_TICKS()` estourava em 32 bits; `TP_MAXIDLE()` acima de 32767 (limitado a 32766, não 32767, por causa do `t_idle` saturado); `IFQ_DestinationAddress`/`IFQ_BroadcastAddress` pelas flags. Achado ao refazer o bench: keepalive com user timeout caía uma sonda tarde (`t_idle` incrementado depois dos timers). `MSG_DONTWAIT` no `sblock()` fica para depois (grupo 6). Respondido no PR; Codacy ok.
+
+**Grupo 5a (2026-11-01):** #2023 mesclado (8d0c904eae, 5.24). [#2031](https://github.com/aros-development-team/AROS/pull/2031) aberto, 7 commits, 5.25 / v0.64: G18d (SLAAC pelos tempos de vida do prefixo), busca do resolver em todos os domínios (`RES_DNSRCH`, achado no DNSSL), RDNSS/DNSSL (RFC 8106) na DynDB por interface, G18b (Redirect só do primeiro salto), flags do NA em ordem de rede (achado pelo bench do G18a: em little-endian todo NA perdia S/O/R), G18a (roteador por alcançabilidade, round robin, sonda RFC 4191 §3.5), G18c (prefixo por interface, rota na interface certa). 42 suítes nas duas execuções; benches `tests/ipv6/defrouter.py` (novo), `rfc4191.py` (expectativa da fase 4 corrigida: o /48 de A cobre 12::), S0, UDP grande, jumbo. Bancada com segunda tap (`tools/tap-up.sh 1`, `AROS_TAP2_IP`). Evidência em `research/logs/2026-11-01/pr-group5a/`. Achados para o 5b no plano. 5b só depois do merge.

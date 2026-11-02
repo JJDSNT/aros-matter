@@ -1,0 +1,34 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: REDIRECT6_Suite
+  Test: from the first hop, it is taken ...passed
+  Test: from another router, it is not ...FAILED
+    1. testREDIRECT6_OTHER_ROUTER:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-redirect6.c:268  - via(dests[1], &r1)
+  Test: nor from the router redirected from ...FAILED
+    1. testREDIRECT6_REDIRECTED:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-redirect6.c:279  - via_str(dests[2], T1)
+  Test: nor with a code other than 0 ...FAILED
+    1. testREDIRECT6_CODE:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-redirect6.c:287  - via(dests[3], &r1)
+  Test: nor with an option of length 0 ...FAILED
+    1. testREDIRECT6_BAD_OPTION:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-redirect6.c:297  - via(dests[4], &r1)
+  Test: nor with a global target not the destination ...passed
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       15         4       n/a       n/a
+     Tests        :        6         4         0         0
+
+Elapsed Time: 5.520(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       15         4       n/a       n/a
+     Tests        :        6         4         0         0
+
+Elapsed Time: 5.500(s)
+

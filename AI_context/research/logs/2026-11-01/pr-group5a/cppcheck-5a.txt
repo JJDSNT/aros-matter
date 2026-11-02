@@ -1,0 +1,30 @@
+workbench/network/stacks/AROSTCP/bsdsocket/api/amiga_ndbent.c:unknownMacro:There is an unknown macro here somewhere. Configuration is required. If AROS_LIBFUNC_INIT is a macro then please configure it.
+workbench/network/stacks/AROSTCP/bsdsocket/api/amiga_ndbent.c:unknownMacro:There is an unknown macro here somewhere. Configuration is required. If AROS_LIBFUNC_INIT is a macro then please configure it.
+workbench/network/stacks/AROSTCP/bsdsocket/api/amiga_roadshow.c:unknownMacro:There is an unknown macro here somewhere. Configuration is required. If AROS_LIBFUNC_INIT is a macro then please configure it.
+workbench/network/stacks/AROSTCP/bsdsocket/api/res_query.c:constVariablePointer:Variable 'file' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/kern/amiga_netdb.c:unknownMacro:There is an unknown macro here somewhere. Configuration is required. If DNETDB is a macro then please configure it.
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/in6.c:constParameterPointer:Parameter 'ifp' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/in6.c:constParameterPointer:Parameter 'ifp' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/in6.c:constParameterPointer:Parameter 'ifp' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/in6.c:constParameterPointer:Parameter 'ifp' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/in6.c:constParameterPointer:Parameter 'sin6' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/in6.c:constVariablePointer:Variable 'ia' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/in6.c:constVariablePointer:Variable 'ifp' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/in6.c:constVariablePointer:Variable 'mbytes' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/nd6.c:constParameterPointer:Parameter 'ifp' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/nd6.c:constParameterPointer:Parameter 'ifp' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/nd6.c:constVariablePointer:Variable 'end' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/nd6.c:constVariablePointer:Variable 'ifp' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/nd6.c:constVariablePointer:Variable 'ndi' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/nd6_nbr.c:constParameterPointer:Parameter 'dst' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/nd6_nbr.c:constParameterPointer:Parameter 'ia' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/nd6_nbr.c:constParameterPointer:Parameter 'ia' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/nd6_nbr.c:constParameterPointer:Parameter 'src' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/nd6_nbr.c:constParameterPointer:Parameter 'tgt' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/nd6_nbr.c:variableScope:The scope of the variable 'nd_opt' can be reduced.
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/nd6_rtr.c:constParameterPointer:Parameter 'ifp' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/nd6_rtr.c:constParameterPointer:Parameter 'ifp' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/nd6_rtr.c:constParameterPointer:Parameter 'ifp' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/nd6_rtr.c:constVariablePointer:Variable 'end' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/nd6_rtr.c:constVariablePointer:Variable 'ip6' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/nd6_rtr.c:constVariablePointer:Variable 'ip6' can be declared as pointer to const

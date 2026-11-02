@@ -1,0 +1,29 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: PREFIX6IF_Suite
+  Test: a prefix of the second link is on-link there ...passed
+  Test: the lifetime on one link does not end it on the other ...FAILED
+    1. testPREFIX6IF_LIFETIMES_APART:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-prefix6if.c:211  - CU_ASSERT_EQUAL(route_ifindex(P1 "1"),ifindex[0])
+  Test: the route goes to the link where it is still on-link ...FAILED
+    1. testPREFIX6IF_HANDOVER:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-prefix6if.c:224  - CU_ASSERT_EQUAL(route_ifindex(P2 "1"),ifindex[1])
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       10         2       n/a       n/a
+     Tests        :        3         2         0         0
+
+Elapsed Time: 15.520(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       10         3       n/a       n/a
+     Tests        :        3         3         0         0
+
+Elapsed Time: 15.500(s)
+

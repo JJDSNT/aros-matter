@@ -1,0 +1,28 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: PMTU6_Suite
+  Test: the path MTU goes on a route of the destination's own ...passed
+  Test: the path MTU is kept for a while, then given back ...passed
+  Test: a larger MTU does not raise the path MTU ...passed
+  Test: the path MTU is never below 1280 ...passed
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       17         0       n/a       n/a
+     Tests        :        4         0         0         0
+
+Elapsed Time: 1.020(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       17         0       n/a       n/a
+     Tests        :        4         0         0         0
+
+Elapsed Time: 1.020(s)
+

@@ -26,7 +26,7 @@ EXPECT = {
     1: {D10: "none"},
     2: {D12: B},
     3: {D12: A},
-    4: {D12: "none", D13: B, D99: A},
+    4: {D12: A, D13: B, D99: A},       # 12::/64 withdrawn, A's ::/48 still covers it
     5: {D14: "none", D15: "none", D13: "none", D99: "none"},
     6: {DEF: B},
     7: {DEF: A},

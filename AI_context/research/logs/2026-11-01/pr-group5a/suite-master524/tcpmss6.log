@@ -1,0 +1,26 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: TCPMSS6_Suite
+  Test: TCP MSS over the link-local address fits the MTU ...passed
+  Test: TCP MSS over a unique local address fits the MTU ...passed
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :        6         0       n/a       n/a
+     Tests        :        2         0         0         0
+
+Elapsed Time: 0.020(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :        6         0       n/a       n/a
+     Tests        :        2         0         0         0
+
+Elapsed Time: 0.000(s)
+

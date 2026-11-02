@@ -44,8 +44,7 @@ def main():
                     os.path.join(HERE, "rtwatch.c")], check=True)
     subprocess.run([os.path.join(ROOT, "tools", "tap-up.sh")], check=True, stdout=subprocess.DEVNULL)
     subprocess.run(["sudo", "-n", "ip", "-6", "addr", "del", DEAD + "/64", "dev", IFACE], stderr=subprocess.DEVNULL)
-    live = re.findall(r"inet6 (fe80::[0-9a-f:]+)/", subprocess.run(
-        ["ip", "-6", "addr", "show", "dev", IFACE], capture_output=True, text=True).stdout)[0]
+    live = "fe80::1"            # the host's link-local, which tools/tap-up.sh gives the tap
 
     idx = socket.if_nametoindex(IFACE)
     lst = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM)

@@ -1,0 +1,9 @@
+PASS  bench: AROS reported every second, the routers ran
+PASS  at first the route is through the preferred router
+PASS  it moves to the other once the preferred one does not answer
+PASS  and stays there while the preferred one is gone
+PASS  the preferred router, back, is found by the probe and used again
+arostcp=/home/jaime/aros-build-ipv6-hosted-claude/ab/AROSTCP.g5a live=fe80::4d54:b failover_at=8 back_at=69 (dead back at 40)
+dead advertised
+dead back at 40.5
+defrouter_ra done

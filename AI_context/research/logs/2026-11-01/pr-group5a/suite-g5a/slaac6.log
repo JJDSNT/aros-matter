@@ -1,0 +1,26 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: SLAAC6_Suite
+  Test: an autonomous prefix gives an address ...passed
+  Test: after a reload the prefix gives the address again ...passed
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :        6         0       n/a       n/a
+     Tests        :        2         0         0         0
+
+Elapsed Time: 3.440(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :        6         0       n/a       n/a
+     Tests        :        2         0         0         0
+
+Elapsed Time: 3.220(s)
+

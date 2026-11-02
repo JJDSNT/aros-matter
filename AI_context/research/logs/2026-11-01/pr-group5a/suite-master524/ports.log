@@ -1,0 +1,34 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: PORTS_Suite
+  Test: TCP bind to port 0 ...passed
+  Test: UDP bind to port 0 ...passed
+  Test: TCP6 bind to port 0 ...passed
+  Test: UDP6 bind to port 0 ...passed
+  Test: bind to an address and port 0 ...passed
+  Test: bind to an IPv6 address and port 0 ...passed
+  Test: connect() without bind ...passed
+  Test: connect() without bind (IPv6) ...passed
+  Test: sendto() without bind ...passed
+  Test: sendto() without bind (IPv6) ...passed
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       32         0       n/a       n/a
+     Tests        :       10         0         0         0
+
+Elapsed Time: 0.020(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       32         0       n/a       n/a
+     Tests        :       10         0         0         0
+
+Elapsed Time: 0.000(s)
+

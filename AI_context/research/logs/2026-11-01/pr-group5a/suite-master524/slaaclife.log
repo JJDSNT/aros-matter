@@ -1,0 +1,30 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: SLAACLIFE_Suite
+  Test: an address deleted by hand comes back ...FAILED
+    1. testSLAACLIFE_DELETED_RETURNS:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-slaaclife.c:173  - wait_for(&a, 1, 5)
+  Test: an address ends with its valid lifetime ...FAILED
+    1. testSLAACLIFE_EXPIRES:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-slaaclife.c:185  - wait_for(&a, 0, 8)
+  Test: an advertisement before the end renews it ...passed
+  Test: one below two hours does not end it ...passed
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       17         2       n/a       n/a
+     Tests        :        4         2         0         0
+
+Elapsed Time: 27.440(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       11         3       n/a       n/a
+     Tests        :        4         3         0         0
+
+Elapsed Time: 25.000(s)
+
