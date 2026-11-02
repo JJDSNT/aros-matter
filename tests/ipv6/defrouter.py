@@ -44,6 +44,12 @@ def main():
                     os.path.join(HERE, "rtwatch.c")], check=True)
     subprocess.run([os.path.join(ROOT, "tools", "tap-up.sh")], check=True, stdout=subprocess.DEVNULL)
     subprocess.run(["sudo", "-n", "ip", "-6", "addr", "del", DEAD + "/64", "dev", IFACE], stderr=subprocess.DEVNULL)
+    # the host plays routers: forwarding on the tap makes its Neighbor
+    # Advertisements carry the Router flag, as a router's do (a clear one
+    # takes a router off AROS's list, RFC 4861 section 7.2.5)
+    fwd_key = "net.ipv6.conf.%s.forwarding" % IFACE
+    fwd_was = subprocess.run(["sysctl", "-n", fwd_key], capture_output=True, text=True).stdout.strip() or "0"
+    subprocess.run(["sudo", "-n", "sysctl", "-qw", fwd_key + "=1"], check=True)
     live = "fe80::1"            # the host's link-local, which tools/tap-up.sh gives the tap
 
     idx = socket.if_nametoindex(IFACE)
@@ -79,6 +85,7 @@ def main():
     boot.wait()
     sent = sender.communicate()[0] if sender else ""
     subprocess.run(["sudo", "-n", "ip", "-6", "addr", "del", DEAD + "/64", "dev", IFACE], stderr=subprocess.DEVNULL)
+    subprocess.run(["sudo", "-n", "sysctl", "-qw", "%s=%s" % (fwd_key, fwd_was)])
 
     log = os.path.join(a.out, "boot", "out", "rtwatch.log")
     gw = {}
