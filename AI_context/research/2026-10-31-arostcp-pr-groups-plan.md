@@ -135,7 +135,8 @@ Added (2026-11-01, Kal on #2023): `MSG_DONTWAIT` and `SS_NBIO` can still block i
 
 Added (2026-11-01): `SO_REUSEADDR`/`SO_REUSEPORT` and the other generic `SOL_SOCKET` flags the daemon reads are set without `splnet` (found while doing `SO_TIMESTAMP`, group 4): reproduce/assess, then set them at `splnet`.
 
-0. **SACK scoreboard under controlled loss, before PRR** (2026-11-02): PRR sizes what it sends from `pipe` and the data delivered, both from the scoreboard, so an accounting defect would show up as a PRR effect in the A/B. Check the segments marked lost, `pipe` during recovery and the retransmissions that follow.
+0. **SACK scoreboard under controlled loss, before PRR** (2026-11-02): PRR sizes what it sends from `pipe` and the data delivered, both from the scoreboard, so an accounting defect would show up as a PRR effect in the A/B. Check the segments marked lost, `pipe` during recovery and the retransmissions that follow. This review is the accounting PRR relies on; what RACK-TLP needs besides is group 7's.
+   - Scenarios beyond random loss: partial SACK (deterministic drops inside a window, expected blocks checked in the capture), reordering (`netem reorder`), a lost retransmission. The last needs a programmable dropper on the host (NFQUEUE + a script that drops a sequence number seen for the second time): bench work, self-checked before it is trusted.
 1. **PRR on by default** (RFC 6937; Linux since 3.2, FreeBSD 14), decided by the measurements, not by Linux/FreeBSD having it.
    - Test: loss bench with PRR off and on (recovery time, retransmissions, no stall, sanity ok).
    - Test: the router probe, under PRR.
@@ -150,7 +151,7 @@ Added (2026-11-01): `SO_REUSEADDR`/`SO_REUSEPORT` and the other generic `SOL_SOC
 Order (2026-11-02, may change with the results): monotonic clock (a correctness fix, no gain required), RTO measurement, SACK review under PRR, HyStart++/RACK-TLP, TCP Fast Open.
 
 1. **RTO granularity** (RFC 6298): the 500 ms slow tick limits RTO resolution; measure first, then consider an ms-resolution RTO from the 200 ms fast timer or `GetSysTime()`.
-2. **HyStart++** (RFC 9406) for CUBIC slow start; **RACK-TLP** (RFC 8985). Only with A/B measurements showing a benefit, and after the SACK scoreboard is reviewed under loss.
+2. **HyStart++** (RFC 9406) for CUBIC slow start; **RACK-TLP** (RFC 8985). Only with A/B measurements showing a benefit. Before RACK-TLP, a second SACK review, for what RACK needs and the scoreboard may lack (group 6's checked the accounting): per-segment send times, a reordering window, D-SACK detection, the tail loss probe - with the group 6 scenarios (partial SACK, reordering, lost retransmission) as the base.
 3. **TCP Fast Open** (RFC 7413): optional, last.
 
 ## aros-midihub (checked 2026-11-01)
