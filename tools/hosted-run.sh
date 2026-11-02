@@ -16,6 +16,8 @@
 #                      the host tap 'aros0' needs the same (ip link set aros0 mtu N)
 #   AROS_TAP_IP        if set, adds AROSTCP interface eth0 on tap.device unit 0
 #                      (host side: tap 'aros0', see tools/tap-up.sh) with this IPv4
+#   AROS_TAP2_IP       if set, adds eth1 on tap.device unit 1 (host tap 'aros1',
+#                      tools/tap-up.sh 1) with this IPv4
 set -eu
 [ $# -ge 2 ] || { echo "usage: $0 WORKDIR SCRIPT [FILE...]" >&2; exit 2; }
 img=${AROS_HOSTED_IMAGE:-$HOME/aros-midihub/build-aros-linux/bin/linux-x86_64/AROS}
@@ -34,6 +36,11 @@ if [ -n "${AROS_TAP_MTU:-}" ]; then
 fi
 if [ -n "${AROS_TAP_IP:-}" ]; then
     echo "eth0 DEV=DEVS:Networks/tap.device UNIT=0 IP=$AROS_TAP_IP NETMASK=255.255.255.0 UP" \
+        >> "$sys/System/Network/AROSTCP/db/interfaces"
+fi
+# a second interface, eth1 on tap.device unit 1 (host tap aros1: tap-up.sh 1)
+if [ -n "${AROS_TAP2_IP:-}" ]; then
+    echo "eth1 DEV=DEVS:Networks/tap.device UNIT=1 IP=$AROS_TAP2_IP NETMASK=255.255.255.0 UP" \
         >> "$sys/System/Network/AROSTCP/db/interfaces"
 fi
 { echo "FailAt 21"; cat "$script"; echo "Echo >SYS:out/done.log done"; echo "Shutdown"; } > "$sys/S/matter-run"
