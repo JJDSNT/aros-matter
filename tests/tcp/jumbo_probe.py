@@ -7,8 +7,9 @@ tap.device both at MTU 9000 (AROS_TAP_MTU), IPv4 and IPv6.
   them. Only those above the MTU less the headers (8972 bytes IPv4, 8952
   IPv6) may be fragmented: 2 fragments each way for each.
 - TCP: AROS sends 2 MB to the host over each family (tcpbench, tcp4send):
-  the SYN's MSS should be 8960 (IPv4) / 8940 (IPv6) and the segments that
-  large.
+  the SYN's MSS should be 8960 (IPv4) / 8940 (IPv6), and the segments that
+  large less the 12-byte timestamp option (checks.segments_full); the
+  host reports each transfer's Mbit/s.
 - The tap must say it took the MTU ("[tap] [0] MTU 9000" on AROS's serial).
 
     jumbo_probe.py [--arostcp FILE] [--image DIR] [--mtu 9000] [--out DIR]
@@ -50,16 +51,20 @@ def tcp_listener(log, stop):
                 continue
             n = 0
             c.settimeout(20)
+            t0 = t1 = time.time()
             try:
                 while True:
                     b = c.recv(1 << 16)
                     if not b:
                         break
                     n += len(b)
+                    t1 = time.time()
             except socket.timeout:
                 pass
             c.close()
-            log.append({"family": 6 if fam == socket.AF_INET6 else 4, "bytes": n})
+            log.append({"family": 6 if fam == socket.AF_INET6 else 4, "bytes": n,
+                        "seconds": round(t1 - t0, 3),
+                        "mbit_s": round(n * 8 / (t1 - t0) / 1e6, 1) if t1 > t0 else None})
     for _, s in socks:
         s.close()
 
@@ -169,6 +174,9 @@ def main():
                      "all_sizes_reported": all(len(res[f]) == len(SIZES) for f in ("udp4", "udp6")),
                      "tcp_both": len(tcp) == 2}
     res["sanity"]["ok"] = all(res["sanity"].values())
+    # full segments: the MSS offered, less the 12-byte timestamp option
+    res["checks"] = {"segments_full_" + f: res["tcp"][f]["largest"] == res["expected"]["syn_mss"][f] - 12
+                     for f in ("v4", "v6")}
     json.dump(res, open(os.path.join(a.out, "result.json"), "w"), indent=1)
     print(json.dumps(res, indent=1))
 
