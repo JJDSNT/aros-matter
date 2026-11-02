@@ -132,3 +132,6 @@ Para mudanças compartilhadas em AROSTCP, IPv6/multicast, mdnsd/Bonami e DNS-SD,
 - fila de operações da DynDB (o comentário do Kal, mais `ifnet_set_dns()`/`dyndb_flush()` no reload).
 
 48 suítes ok nas duas execuções; benches novos `bindgone.py`, `dnsgone.py`, `nameserver6.py`; `defrouter.py` com forwarding na tap. Evidência em `research/logs/2026-11-02/pr-group5b/`. Próximo: grupo 6 (TCP), depois do merge.
+
+**Revisão do Kal no #2053 (2026-11-02):** a entrada TCP não olhava a interface vinculada (listener com `SO_BINDTODEVICE` aceitava por qualquer interface; um com a interface removida continuava aceitando). Corrigido nos dois commits de origem (`in6_pcblookup()` com a interface; `tcp_boundif_pcb()` para IPv4; `INP_BOUNDGONE` na entrada TCP), casos novos no `cunit-net-bindtodev6` e no `bindgone.py`; force-push, corpo atualizado e resposta no PR.
+- **Achado, fora do PR:** remover uma interface por reload às vezes derruba a pilha (sinal 11 logo depois de "interface detached", ~1 em 5-8 execuções do `bindgone.py`). Mesma instrução e mesmo padrão de memória liberada no 5.26 e no 5b: anterior ao grupo. A investigar: pilha ou close do tap.device.
