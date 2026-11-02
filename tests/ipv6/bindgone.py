@@ -3,10 +3,12 @@
 
 AROS runs with two interfaces (eth0 on aros0, eth1 on aros1). bindgone.c
 binds sockets to eth1 - UDP/IPv4 and UDP/IPv6 with SO_BINDTODEVICE, UDP/IPv6
-connected in eth1's zone, a TCP/IPv6 connection over eth1's link-local - and
-then removes eth1 by an in-place reload without its db/interfaces line.
-Expected: the reload removes it, every one of those sockets then gets
-ENXIO (6), and the UDP/IPv6 socket works again once bound to lo0.
+connected in eth1's zone, a TCP/IPv6 connection over eth1's link-local, TCP
+listeners of both families with SO_BINDTODEVICE - and then removes eth1 by an
+in-place reload without its db/interfaces line. Expected: the reload removes
+it, every one of those sockets then gets ENXIO (6), the listeners hear
+nothing (a connect() over the loopback is refused), and the UDP/IPv6 socket
+works again once bound to lo0.
 """
 import argparse, os, re, subprocess, sys, time
 
@@ -14,9 +16,10 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 CROSS = os.environ.get("AROS_CROSS",
     os.path.expanduser("~/aros-midihub/build-aros-linux/bin/linux-x86_64/tools/crosstools/x86_64-aros-gcc"))
-ENXIO = 6
+ENXIO, ECONNREFUSED = 6, 61
 EXPECT = [("before u4", "rc=1"), ("gone", "1"), ("after u4", ENXIO), ("after u6", ENXIO),
-          ("after z6", ENXIO), ("after t", ENXIO), ("rebind u6", "rc=0"), ("again u6", "rc=1")]
+          ("after z6", ENXIO), ("after t", ENXIO), ("after l4", ECONNREFUSED),
+          ("after l6", ECONNREFUSED), ("rebind u6", "rc=0"), ("again u6", "rc=1")]
 
 
 def main():

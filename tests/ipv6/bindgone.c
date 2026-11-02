@@ -4,10 +4,12 @@
  * Usage: bindgone IFNAME
  * Binds sockets to IFNAME - UDP/IPv4 and UDP/IPv6 with SO_BINDTODEVICE, a
  * UDP/IPv6 socket connected in its zone, a TCP/IPv6 connection to itself
- * over its link-local address - then takes IFNAME's line out of
+ * over its link-local address, TCP listeners of both families with
+ * SO_BINDTODEVICE - then takes IFNAME's line out of
  * SYS:System/Network/AROSTCP/db/interfaces and has the stack reload, which
  * removes the interface. Afterwards it prints, per socket, what a send (or
- * for TCP, a receive; -2: nothing within 2 s) gives: "<name> rc=<n> errno=<e>". Then it binds the
+ * for TCP, a receive; -2: nothing within 2 s; for a listener, a connect()
+ * to it over the loopback) gives: "<name> rc=<n> errno=<e>". Then it binds the
  * UDP/IPv6 socket to lo0 and sends again ("rebind ...").
  */
 #define __CONFIG_ROADSHOW__
@@ -104,7 +106,9 @@ int main(int argc, char **argv)
     struct sockaddr_in a4;
     struct sockaddr_in6 a6, d6;
     socklen_t len;
-    int u4, u6, z6, tl, tc, ta, r;
+    int u4, u6, z6, tl, tc, ta, r, l4, l6, cs;
+    struct sockaddr_in b4;
+    struct sockaddr_in6 b6;
     fd_set fs; struct timeval tv;
     char c;
 
@@ -132,6 +136,14 @@ int main(int argc, char **argv)
     ta = accept(tl, (struct sockaddr *)&a6, &len);
     report("accept t", ta);
 
+    /* TCP listeners on both families, bound to the interface */
+    l4 = socket(AF_INET, SOCK_STREAM, 0);
+    l6 = socket(AF_INET6, SOCK_STREAM, 0);
+    memset(&b4, 0, sizeof(b4)); b4.sin_len = sizeof(b4); b4.sin_family = AF_INET; b4.sin_port = htons(7778);
+    memset(&b6, 0, sizeof(b6)); b6.sin6_len = sizeof(b6); b6.sin6_family = AF_INET6; b6.sin6_port = htons(7779);
+    report("listen l4", (bindtodevice(l4, argv[1]) == 0 && bind(l4, (struct sockaddr *)&b4, sizeof(b4)) == 0) ? listen(l4, 2) : -1);
+    report("listen l6", (bindtodevice(l6, argv[1]) == 0 && bind(l6, (struct sockaddr *)&b6, sizeof(b6)) == 0) ? listen(l6, 2) : -1);
+
     memset(&a4, 0, sizeof(a4)); a4.sin_len = sizeof(a4); a4.sin_family = AF_INET;
     a4.sin_port = htons(9); a4.sin_addr.s_addr = inet_addr("192.168.167.1");   /* the host on IFNAME */
     memset(&a6, 0, sizeof(a6)); a6.sin6_len = sizeof(a6); a6.sin6_family = AF_INET6;
@@ -153,11 +165,21 @@ int main(int argc, char **argv)
     r = WaitSelect(tc + 1, &fs, NULL, NULL, &tv, NULL);
     report("after t", r > 0 ? recv(tc, &c, 1, 0) : -2);
 
+    b4.sin_addr.s_addr = inet_addr("127.0.0.1");
+    cs = socket(AF_INET, SOCK_STREAM, 0);
+    report("after l4", connect(cs, (struct sockaddr *)&b4, sizeof(b4)));
+    CloseSocket(cs);
+    b6.sin6_addr.s6_addr[15] = 1;       /* ::1 */
+    cs = socket(AF_INET6, SOCK_STREAM, 0);
+    report("after l6", connect(cs, (struct sockaddr *)&b6, sizeof(b6)));
+    CloseSocket(cs);
+
     report("rebind u6", bindtodevice(u6, "lo0"));
     report("again u6", sendto(u6, "x", 1, 0, (struct sockaddr *)&a6, sizeof(a6)));
     printf("done\n");
     CloseSocket(u4); CloseSocket(u6); CloseSocket(z6);
     CloseSocket(tc); CloseSocket(tl); if (ta >= 0) CloseSocket(ta);
+    CloseSocket(l4); CloseSocket(l6);
     CloseLibrary(SocketBase);
     return 0;
 }
