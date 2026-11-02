@@ -1,6 +1,6 @@
 # Estado atual — aros-matter
 
-Atualizado: 2026-11-01
+Atualizado: 2026-11-02
 
 ## Foco atual (desde 2026-10-28)
 
@@ -115,3 +115,5 @@ Para mudanças compartilhadas em AROSTCP, IPv6/multicast, mdnsd/Bonami e DNS-SD,
 **Revisão do Kal no #2023 (2026-11-01):** quatro pontos, todos corrigidos e juntados aos commits de origem (force-push): o relógio do `TCP_USER_TIMEOUT` não parava quando o SYN era confirmado (conexão cliente ociosa caía; teste novo: par ocioso, opção antes e depois do `connect()`); `TP_UTO_TICKS()` estourava em 32 bits; `TP_MAXIDLE()` acima de 32767 (limitado a 32766, não 32767, por causa do `t_idle` saturado); `IFQ_DestinationAddress`/`IFQ_BroadcastAddress` pelas flags. Achado ao refazer o bench: keepalive com user timeout caía uma sonda tarde (`t_idle` incrementado depois dos timers). `MSG_DONTWAIT` no `sblock()` fica para depois (grupo 6). Respondido no PR; Codacy ok.
 
 **Grupo 5a (2026-11-01):** #2023 mesclado (8d0c904eae, 5.24). [#2031](https://github.com/aros-development-team/AROS/pull/2031) aberto, 7 commits, 5.25 / v0.64: G18d (SLAAC pelos tempos de vida do prefixo), busca do resolver em todos os domínios (`RES_DNSRCH`, achado no DNSSL), RDNSS/DNSSL (RFC 8106) na DynDB por interface, G18b (Redirect só do primeiro salto), flags do NA em ordem de rede (achado pelo bench do G18a: em little-endian todo NA perdia S/O/R), G18a (roteador por alcançabilidade, round robin, sonda RFC 4191 §3.5), G18c (prefixo por interface, rota na interface certa). 42 suítes nas duas execuções; benches `tests/ipv6/defrouter.py` (novo), `rfc4191.py` (expectativa da fase 4 corrigida: o /48 de A cobre 12::), S0, UDP grande, jumbo. Bancada com segunda tap (`tools/tap-up.sh 1`, `AROS_TAP2_IP`). Evidência em `research/logs/2026-11-01/pr-group5a/`. Achados para o 5b no plano. 5b só depois do merge.
+
+**Revisão do Kal no #2031 (2026-11-02):** mesclado (8355df7838, 5.25) com três comentários. Os dois primeiros em [#2050](https://github.com/aros-development-team/AROS/pull/2050) (5.26 / v0.65): o Redirect só substitui rota de host `RTF_DYNAMIC` (a estática fica, como no FreeBSD); `ndb_ra_server()`/`ndb_ra_domain()` com `AttemptSemaphore()` (no 5.25 um cliente segurando o lock via `ClearDynDomain()` travava a pilha em splnet e o próprio teste nunca voltava). O terceiro (tempos de vida pelo `GetSysTime()`) fica para o grupo 7: nd6 inteiro no relógio monotônico. 42 suítes ok. Evidência em `research/logs/2026-11-02/pr-5a-followup/`. 5b depois do merge do #2050.

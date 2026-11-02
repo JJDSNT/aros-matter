@@ -142,6 +142,8 @@ Added (2026-11-01): `SO_REUSEADDR`/`SO_REUSEPORT` and the other generic `SOL_SOC
 
 ## Group 7 — Timers and congestion (research first)
 
+- **nd6 on the monotonic clock** (Kal on #2031): prefixes, routers, neighbours and the RA DNS lifetimes follow `GetSysTime()`, so a clock step moves them; move them together to `GetUpTime()`, with a test that steps the clock.
+
 1. **RTO granularity** (RFC 6298): the 500 ms slow tick limits RTO resolution; measure first, then consider an ms-resolution RTO from the 200 ms fast timer or `GetSysTime()`.
 2. **HyStart++** (RFC 9406) for CUBIC slow start; **RACK-TLP** (RFC 8985). Only with A/B measurements showing a benefit, and after the SACK scoreboard is reviewed under loss.
 3. **TCP Fast Open** (RFC 7413): optional, last.
