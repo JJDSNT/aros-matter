@@ -1,0 +1,82 @@
+developer/debug/test/net/socket/cunit-net-sendto6.c:unusedStructMember:union member 'Anonymous0::b' is never used.
+developer/debug/test/net/socket/cunit-net-sendto6.c:variableScope:The scope of the variable 'i' can be reduced.
+developer/debug/test/net/socket/cunit-net-sendto6.c:variableScope:The scope of the variable 'n' can be reduced.
+workbench/network/stacks/AROSTCP/bsdsocket/api/amiga_api.c:unknownMacro:There is an unknown macro here somewhere. Configuration is required. If AROS_LIBFUNC_EXIT is a macro then please configure it.
+workbench/network/stacks/AROSTCP/bsdsocket/api/amiga_api.c:unknownMacro:There is an unknown macro here somewhere. Configuration is required. If AROS_LIBFUNC_INIT is a macro then please configure it.
+workbench/network/stacks/AROSTCP/bsdsocket/api/amiga_ndbent.c:unknownMacro:There is an unknown macro here somewhere. Configuration is required. If AROS_LIBFUNC_INIT is a macro then please configure it.
+workbench/network/stacks/AROSTCP/bsdsocket/api/amiga_ndbent.c:unknownMacro:There is an unknown macro here somewhere. Configuration is required. If AROS_LIBFUNC_INIT is a macro then please configure it.
+workbench/network/stacks/AROSTCP/bsdsocket/api/amiga_roadshow.c:unknownMacro:There is an unknown macro here somewhere. Configuration is required. If AROS_LIBFUNC_INIT is a macro then please configure it.
+workbench/network/stacks/AROSTCP/bsdsocket/kern/amiga_netdb.c:unknownMacro:There is an unknown macro here somewhere. Configuration is required. If DNETDB is a macro then please configure it.
+workbench/network/stacks/AROSTCP/bsdsocket/kern/uipc_socket.c:unknownMacro:There is an unknown macro here somewhere. Configuration is required. If DEVENTS is a macro then please configure it.
+workbench/network/stacks/AROSTCP/bsdsocket/net/if.c:constParameterPointer:Parameter 'ifp' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/net/if.c:constVariablePointer:Variable 'cplim' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/net/if.c:constVariablePointer:Variable 'cplim' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/net/if.c:constVariablePointer:Variable 'ep' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/net/if.c:constVariablePointer:Variable 'sdl' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/net/if.c:returnImplicitInt:Omitted return type of function 'ifubareset' defaults to int, this is not supported by ISO C99 and later standards.
+workbench/network/stacks/AROSTCP/bsdsocket/netinet/in_pcb.c:constParameterPointer:Parameter 'head' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet/in_pcb.c:constParameterPointer:Parameter 'inp' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet/in_pcb.c:constParameterPointer:Parameter 'inp' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet/in_pcb.c:constParameterPointer:Parameter 'inp' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet/in_pcb.c:constVariablePointer:Variable 'ifp' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet/in_pcb.c:constVariablePointer:Variable 'imo' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet/in_pcb.c:constVariablePointer:Variable 'so' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet/in_pcb.c:constVariablePointer:Variable 't' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet/in_pcb.c:knownConditionTrueFalse:Condition 'in_pcbisipv6(inp)' is always false
+workbench/network/stacks/AROSTCP/bsdsocket/netinet/in_pcb.c:knownConditionTrueFalse:Condition 'in_pcbisipv6(inp)' is always false
+workbench/network/stacks/AROSTCP/bsdsocket/netinet/in_pcb.c:nullPointerRedundantCheck:Either the condition 'so!=NULL' is redundant or there is possible null pointer dereference: so.
+workbench/network/stacks/AROSTCP/bsdsocket/netinet/in_pcb.c:variableScope:The scope of the variable 'ifp' can be reduced.
+workbench/network/stacks/AROSTCP/bsdsocket/netinet/tcp_input.c:constParameterPointer:Parameter 'ti' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet/tcp_input.c:constParameterPointer:Parameter 'ti' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet/tcp_input.c:constParameterPointer:Parameter 'tp' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet/tcp_input.c:constVariablePointer:Variable 'ifp' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet/tcp_input.c:constVariablePointer:Variable 'ntip' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet/tcp_input.c:constVariablePointer:Variable 'stip' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet/tcp_input.c:ctunullpointer:Null pointer dereference: m
+workbench/network/stacks/AROSTCP/bsdsocket/netinet/tcp_input.c:unusedLabelSwitchConfiguration:Label 'trimthenstep6' is not used. There is #if in function body so the label might be used in code that is removed by the preprocessor. Should this be a 'case' of the enclosing switch()?
+workbench/network/stacks/AROSTCP/bsdsocket/netinet/tcp_input.c:unusedVariable:Unused variable: rtt
+workbench/network/stacks/AROSTCP/bsdsocket/netinet/tcp_subr.c:constParameterPointer:Parameter 'faddr' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet/tcp_subr.c:constParameterPointer:Parameter 'key' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet/tcp_subr.c:constParameterPointer:Parameter 'laddr' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet/tcp_subr.c:constParameterPointer:Parameter 'tp' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet/tcp_subr.c:constVariablePointer:Variable 'fa' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet/tcp_subr.c:constVariablePointer:Variable 'inp' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet/tcp_subr.c:constVariablePointer:Variable 'la' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet/udp_usrreq.c:constParameterPointer:Parameter 'name' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet/udp_usrreq.c:unreadVariable:Variable 'mp' is assigned a value that is never used.
+workbench/network/stacks/AROSTCP/bsdsocket/netinet/udp_usrreq.c:variableScope:The scope of the variable 'uh' can be reduced.
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/in6.c:constParameterPointer:Parameter 'ifp' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/in6.c:constParameterPointer:Parameter 'ifp' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/in6.c:constParameterPointer:Parameter 'ifp' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/in6.c:constParameterPointer:Parameter 'ifp' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/in6.c:constParameterPointer:Parameter 'sin6' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/in6.c:constVariablePointer:Variable 'ia' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/in6.c:constVariablePointer:Variable 'ifp' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/in6.c:constVariablePointer:Variable 'mbytes' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/in6_pcb.c:constParameterPointer:Parameter 'head' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/in6_pcb.c:constParameterPointer:Parameter 'ifp' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/in6_pcb.c:constVariablePointer:Variable 'ia' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/in6_pcb.c:constVariablePointer:Variable 'so' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/in6_pcb.c:uninitvar:Uninitialized variable: ro
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/nd6.c:constParameterPointer:Parameter 'ifp' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/nd6.c:constParameterPointer:Parameter 'ifp' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/nd6.c:constVariablePointer:Variable 'end' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/nd6.c:constVariablePointer:Variable 'ifp' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/nd6.c:constVariablePointer:Variable 'ndi' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/nd6_nbr.c:constParameterPointer:Parameter 'dst' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/nd6_nbr.c:constParameterPointer:Parameter 'ia' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/nd6_nbr.c:constParameterPointer:Parameter 'ia' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/nd6_nbr.c:constParameterPointer:Parameter 'src' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/nd6_nbr.c:constParameterPointer:Parameter 'tgt' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/nd6_nbr.c:variableScope:The scope of the variable 'nd_opt' can be reduced.
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/nd6_rtr.c:constParameterPointer:Parameter 'ifp' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/nd6_rtr.c:constParameterPointer:Parameter 'ifp' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/nd6_rtr.c:constParameterPointer:Parameter 'ifp' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/nd6_rtr.c:constVariablePointer:Variable 'end' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/nd6_rtr.c:constVariablePointer:Variable 'ip6' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/nd6_rtr.c:constVariablePointer:Variable 'ip6' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/raw_ip6.c:constVariablePointer:Variable 'ip6' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/raw_ip6.c:constVariablePointer:Variable 'rp' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/raw_ip6.c:constVariablePointer:Variable 'sin6' can be declared as pointer to const
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/udp6_usrreq.c:uninitvar:Uninitialized variable: pi6
+workbench/network/stacks/AROSTCP/bsdsocket/netinet6/udp6_usrreq.c:unreadVariable:Variable 'optp' is assigned a value that is never used.

@@ -1,0 +1,29 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: DONTWAIT_Suite
+  Test: UDP recv: EWOULDBLOCK at once, socket still blocking (IPv4) ...passed
+  Test: UDP recv: EWOULDBLOCK at once, socket still blocking (IPv6) ...passed
+  Test: TCP recv: EWOULDBLOCK at once (IPv4) ...passed
+  Test: TCP recv: EWOULDBLOCK at once (IPv6) ...passed
+  Test: TCP send to a full peer: EWOULDBLOCK at once ...passed
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       33         0       n/a       n/a
+     Tests        :        5         0         0         0
+
+Elapsed Time: 0.000(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       33         0       n/a       n/a
+     Tests        :        5         0         0         0
+
+Elapsed Time: 0.000(s)
+

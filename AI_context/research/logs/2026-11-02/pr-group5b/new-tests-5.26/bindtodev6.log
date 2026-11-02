@@ -1,0 +1,34 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: BINDTODEV6_Suite
+  Test: the option on an IPv6 socket ...FAILED
+    1. testBINDTODEV6_OPTION:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-bindtodev6.c:138  - CU_ASSERT_EQUAL(Errno(),ENXIO)
+  Test: a peer with no zone is on the bound link ...FAILED
+    1. testBINDTODEV6_UNZONED_PEER:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-bindtodev6.c:154  - CU_ASSERT_EQUAL_FATAL(bindtodevice(s, ifname[1]),0)
+  Test: and so for connect() ...FAILED
+    1. testBINDTODEV6_UNZONED_CONNECT:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-bindtodev6.c:176  - CU_ASSERT_EQUAL_FATAL(bindtodevice(s, ifname[1]),0)
+  Test: a peer in another zone is refused ...FAILED
+    1. testBINDTODEV6_OTHER_ZONE:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-bindtodev6.c:198  - CU_ASSERT_EQUAL_FATAL(bindtodevice(s, ifname[0]),0)
+  Test: it hears only its interface ...FAILED
+    1. testBINDTODEV6_HEARS_ITS_LINK:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-bindtodev6.c:220  - CU_ASSERT_EQUAL_FATAL(bindtodevice(r, ifname[1]),0)
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       13         7       n/a       n/a
+     Tests        :        5         5         0         0
+
+Elapsed Time: 0.020(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       13         7       n/a       n/a
+     Tests        :        5         5         0         0
+
+Elapsed Time: 0.000(s)
+

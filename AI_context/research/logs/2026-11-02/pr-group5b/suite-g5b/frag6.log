@@ -1,0 +1,29 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: FRAG6_Suite
+  Test: a large datagram leaves as all its fragments ...passed
+  Test: fragment offsets follow each other, M on all but the last ...passed
+  Test: the fragments reassemble to the datagram sent ...passed
+  Test: a datagram that fits is not fragmented ...passed
+  Test: fragment identifications are unpredictable ...passed
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       28         0       n/a       n/a
+     Tests        :        5         0         0         0
+
+Elapsed Time: 0.000(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       28         0       n/a       n/a
+     Tests        :        5         0         0         0
+
+Elapsed Time: 0.000(s)
+

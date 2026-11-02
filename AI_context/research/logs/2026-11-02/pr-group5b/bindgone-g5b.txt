@@ -1,0 +1,9 @@
+PASS  before u4  want rc=1 got rc=1 errno=0
+PASS  gone       want 1 got 1
+PASS  after u4   want errno 6 got rc=-1 errno=6
+PASS  after u6   want errno 6 got rc=-1 errno=6
+PASS  after z6   want errno 6 got rc=-1 errno=6
+PASS  after t    want errno 6 got rc=-1 errno=6
+PASS  rebind u6  want rc=0 got rc=0 errno=0
+PASS  again u6   want rc=1 got rc=1 errno=0
+arostcp=/home/jaime/aros-build-ipv6-hosted-claude/ab/AROSTCP.g5b checks=8 failed=0

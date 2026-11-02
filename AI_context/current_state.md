@@ -117,3 +117,18 @@ Para mudanças compartilhadas em AROSTCP, IPv6/multicast, mdnsd/Bonami e DNS-SD,
 **Grupo 5a (2026-11-01):** #2023 mesclado (8d0c904eae, 5.24). [#2031](https://github.com/aros-development-team/AROS/pull/2031) aberto, 7 commits, 5.25 / v0.64: G18d (SLAAC pelos tempos de vida do prefixo), busca do resolver em todos os domínios (`RES_DNSRCH`, achado no DNSSL), RDNSS/DNSSL (RFC 8106) na DynDB por interface, G18b (Redirect só do primeiro salto), flags do NA em ordem de rede (achado pelo bench do G18a: em little-endian todo NA perdia S/O/R), G18a (roteador por alcançabilidade, round robin, sonda RFC 4191 §3.5), G18c (prefixo por interface, rota na interface certa). 42 suítes nas duas execuções; benches `tests/ipv6/defrouter.py` (novo), `rfc4191.py` (expectativa da fase 4 corrigida: o /48 de A cobre 12::), S0, UDP grande, jumbo. Bancada com segunda tap (`tools/tap-up.sh 1`, `AROS_TAP2_IP`). Evidência em `research/logs/2026-11-01/pr-group5a/`. Achados para o 5b no plano. 5b só depois do merge.
 
 **Revisão do Kal no #2031 (2026-11-02):** mesclado (8355df7838, 5.25) com três comentários. Os dois primeiros em [#2050](https://github.com/aros-development-team/AROS/pull/2050) (5.26 / v0.65): o Redirect só substitui rota de host `RTF_DYNAMIC` (a estática fica, como no FreeBSD); `ndb_ra_server()`/`ndb_ra_domain()` com `AttemptSemaphore()` (no 5.25 um cliente segurando o lock via `ClearDynDomain()` travava a pilha em splnet e o próprio teste nunca voltava). O terceiro (tempos de vida pelo `GetSysTime()`) fica para o grupo 7: nd6 inteiro no relógio monotônico. 42 suítes ok. Evidência em `research/logs/2026-11-02/pr-5a-followup/`. 5b depois do merge do #2050.
+
+**Grupo 5b (2026-11-02):** #2050 mesclado (6f9867b96c, 5.26). Kal comentou no #2050: `ifnet_clear_dns()` ainda bloqueava a pilha. [#2053](https://github.com/aros-development-team/AROS/pull/2053) aberto, 11 commits, 5.27 / v0.66:
+- G18f (`IPV6_PKTINFO` ganha do endereço vinculado e precisa ser nosso);
+- G18g (`connect()` a grupo sem zona pelo `IPV6_MULTICAST_IF`; G18h documentado como zona default);
+- G18i (`SO_BINDTODEVICE` em IPv6, zona no `sendto()`, entrada unicast filtrada);
+- interface removida sob sockets (use-after-free: `INP_BOUNDGONE`, `ENXIO`, TCP fechado);
+- `SIOCGIFAFLAG_IN6` + sinal no fim do DAD;
+- teste do sinal de endereço;
+- NA com R limpo tira o roteador (§7.2.5);
+- NS a cada RetransTimer e probe unicast;
+- MSS sem arredondamento a 2048 (4000: +45%);
+- `NAMESERVER` IPv6;
+- fila de operações da DynDB (o comentário do Kal, mais `ifnet_set_dns()`/`dyndb_flush()` no reload).
+
+48 suítes ok nas duas execuções; benches novos `bindgone.py`, `dnsgone.py`, `nameserver6.py`; `defrouter.py` com forwarding na tap. Evidência em `research/logs/2026-11-02/pr-group5b/`. Próximo: grupo 6 (TCP), depois do merge.

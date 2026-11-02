@@ -1,0 +1,34 @@
+{
+ "boot": "ok",
+ "v4": {
+  "1200": "ok",
+  "1452": "ok",
+  "1472": "ok",
+  "1473": "ok",
+  "1500": "ok",
+  "4000": "ok",
+  "8192": "ok",
+  "9000": "ok"
+ },
+ "v6": {
+  "1200": "ok",
+  "1452": "ok",
+  "1472": "ok",
+  "1473": "ok",
+  "1500": "ok",
+  "4000": "ok",
+  "8192": "ok",
+  "9000": "ok"
+ },
+ "fragments": {
+  "v4_from_aros": 20,
+  "v4_to_aros": 20,
+  "v6_from_aros": 22,
+  "v6_to_aros": 22
+ },
+ "sanity": {
+  "all_sizes_reported": true,
+  "fragments_seen": true,
+  "ok": true
+ }
+}

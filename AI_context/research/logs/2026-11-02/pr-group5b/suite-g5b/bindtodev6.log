@@ -1,0 +1,29 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: BINDTODEV6_Suite
+  Test: the option on an IPv6 socket ...passed
+  Test: a peer with no zone is on the bound link ...passed
+  Test: and so for connect() ...passed
+  Test: a peer in another zone is refused ...passed
+  Test: it hears only its interface ...passed
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       29         0       n/a       n/a
+     Tests        :        5         0         0         0
+
+Elapsed Time: 2.020(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       29         0       n/a       n/a
+     Tests        :        5         0         0         0
+
+Elapsed Time: 2.020(s)
+

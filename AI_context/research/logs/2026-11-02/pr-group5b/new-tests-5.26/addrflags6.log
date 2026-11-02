@@ -1,0 +1,32 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: ADDRFLAGS6_Suite
+  Test: the link-local is settled ...FAILED
+    1. testADDRFLAGS6_LINKLOCAL:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-addrflags6.c:189  - f >= 0
+  Test: a new address: tentative, the signal, usable ...FAILED
+    1. testADDRFLAGS6_DAD_PASSES:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-addrflags6.c:207  - f >= 0 && !(f & (IN6_IFF_TENTATIVE | IN6_IFF_DUPLICATED))
+  Test: a duplicate: the signal, duplicated ...FAILED
+    1. testADDRFLAGS6_DAD_DUPLICATE:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-addrflags6.c:224  - f >= 0 && (f & IN6_IFF_DUPLICATED) && !(f & IN6_IFF_TENTATIVE)
+  Test: an address no one has: EADDRNOTAVAIL ...FAILED
+    1. testADDRFLAGS6_UNKNOWN:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-addrflags6.c:236  - CU_ASSERT_EQUAL(Errno(),EADDRNOTAVAIL)
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       11         7       n/a       n/a
+     Tests        :        4         4         0         0
+
+Elapsed Time: 10.040(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       11         7       n/a       n/a
+     Tests        :        4         4         0         0
+
+Elapsed Time: 10.020(s)
+

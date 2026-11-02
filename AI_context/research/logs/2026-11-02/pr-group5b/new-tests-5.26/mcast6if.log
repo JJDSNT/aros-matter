@@ -1,0 +1,29 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: MCAST6IF_Suite
+  Test: sent on each link, received there once ...passed
+  Test: not where the group was not joined ...passed
+  Test: connected with no zone: by IPV6_MULTICAST_IF ...FAILED
+    1. testMCAST6IF_CONNECT_MULTICAST_IF:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-mcast6if.c:223  - CU_ASSERT_EQUAL_FATAL(connect(s, (struct sockaddr *)&d, sizeof(d)),0)
+  Test: connected in a zone: there ...passed
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       27         1       n/a       n/a
+     Tests        :        4         1         0         0
+
+Elapsed Time: 3.020(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       27         2       n/a       n/a
+     Tests        :        4         2         0         0
+
+Elapsed Time: 2.020(s)
+

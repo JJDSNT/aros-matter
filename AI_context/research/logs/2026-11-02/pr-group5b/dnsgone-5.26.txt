@@ -1,0 +1,6 @@
+PASS  want before 1        got before 1
+FAIL  want reload done     got reload stalled
+PASS  want reload replied  got reload replied
+PASS  want after 0         got after 0
+PASS  want kept 1          got kept 1
+arostcp=/home/jaime/aros-build-ipv6-hosted-claude/ab/AROSTCP.f5a checks=5 failed=1

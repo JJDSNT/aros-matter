@@ -1,0 +1,18 @@
+rasend done
+PASS  phase  0 RIO installs its route (router lifetime 0)
+PASS  phase  1 RIO lifetime 0 removes it
+PASS  phase  2 more preferred of two routers wins
+PASS  phase  3 the other takes over when it withdraws
+PASS  phase  4 longest prefix is used
+PASS  phase  5 reserved preference / bad length ignored
+PASS  phase  6 more preferred default router wins
+PASS  phase  7 other default router takes over
+PASS  phase  8 router lifetime 0 removes the default
+PASS  phase  9 ::/0 RIO overrides router lifetime
+PASS  phase 10 ::/0 RIO lifetime 0 removes the default
+PASS  phase 11 short-lived RIO installed
+PASS  phase 12 short-lived RIO expires
+PASS  phase 13 default and RIO route before reload
+PASS  phase 14 default and RIO route learned again after an in-place reload
+PASS  phase 15 cleanup
+arostcp=/home/jaime/aros-build-ipv6-hosted-claude/ab/AROSTCP.g5b phases=16 failed=0

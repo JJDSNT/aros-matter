@@ -1,0 +1,1 @@
+PASS  the static IPv6 NAMESERVER answers: one.rdnss.test 192.0.2.77
