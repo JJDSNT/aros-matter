@@ -1,0 +1,100 @@
+{
+ "exact": {
+  "rcv_nxt": 352774900,
+  "challenge_acks": 0,
+  "challenge_ack": false,
+  "aros_rst": false,
+  "after": [],
+  "aros_rc": -1,
+  "aros_errno": 54,
+  "survived": false,
+  "reset": true,
+  "verdict": "ok"
+ },
+ "old": {
+  "rcv_nxt": 1046782628,
+  "challenge_acks": 0,
+  "challenge_ack": false,
+  "aros_rst": false,
+  "after": [],
+  "aros_rc": 1,
+  "aros_errno": 0,
+  "survived": true,
+  "reset": false,
+  "verdict": "ok"
+ },
+ "inwin": {
+  "rcv_nxt": 1671812343,
+  "challenge_acks": 1,
+  "challenge_ack": true,
+  "aros_rst": false,
+  "after": [
+   "flags=0x10 seq=2352693142 ack=1671812343 len=0"
+  ],
+  "aros_rc": 1,
+  "aros_errno": 0,
+  "survived": true,
+  "reset": false,
+  "verdict": "ok"
+ },
+ "syn": {
+  "rcv_nxt": 658811398,
+  "challenge_acks": 1,
+  "challenge_ack": true,
+  "aros_rst": false,
+  "after": [
+   "flags=0x10 seq=3859753838 ack=658811398 len=0"
+  ],
+  "aros_rc": 1,
+  "aros_errno": 0,
+  "survived": true,
+  "reset": false,
+  "verdict": "ok"
+ },
+ "beyond": {
+  "rcv_nxt": 2723352805,
+  "challenge_acks": 0,
+  "challenge_ack": false,
+  "aros_rst": false,
+  "after": [],
+  "aros_rc": 1,
+  "aros_errno": 0,
+  "survived": true,
+  "reset": false,
+  "verdict": "ok"
+ },
+ "oldack": {
+  "rcv_nxt": 233242021,
+  "challenge_acks": 1,
+  "challenge_ack": true,
+  "aros_rst": false,
+  "after": [
+   "flags=0x10 seq=4019071716 ack=233242021 len=0"
+  ],
+  "aros_rc": 1,
+  "aros_errno": 0,
+  "survived": true,
+  "reset": false,
+  "verdict": "ok"
+ },
+ "limit": {
+  "rcv_nxt": 154048132,
+  "challenge_acks": 5,
+  "challenge_ack": true,
+  "aros_rst": false,
+  "after": [
+   "flags=0x10 seq=310293288 ack=154048132 len=0",
+   "flags=0x10 seq=310293288 ack=154048132 len=0",
+   "flags=0x10 seq=310293288 ack=154048132 len=0",
+   "flags=0x10 seq=310293288 ack=154048132 len=0",
+   "flags=0x10 seq=310293288 ack=154048132 len=0"
+  ],
+  "aros_rc": 1,
+  "aros_errno": 0,
+  "survived": true,
+  "reset": false,
+  "verdict": "ok"
+ },
+ "bench_ok": true,
+ "fails": 0
+}
