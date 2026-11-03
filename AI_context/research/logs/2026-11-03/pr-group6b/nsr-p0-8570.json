@@ -1,0 +1,26 @@
+{
+ "boot": "ok",
+ "host_tcp_sack": "0",
+ "reorder": {
+  "stalls": [],
+  "seconds": 0.252,
+  "data_segments": 1146,
+  "retransmissions": 445,
+  "sent_3_or_more": [],
+  "timeouts": 0,
+  "needless_retransmissions": 0,
+  "acks_with_sack": 0,
+  "acks_2plus_sack": 0,
+  "host": {
+   "bytes": 1000000,
+   "host_seconds": 0.231
+  },
+  "complete": true
+ },
+ "checks": {
+  "reorder_host_sacked": false
+ },
+ "shaping_errors": [],
+ "ifb_stats": "qdisc netem 806c: root refcnt 2 limit 1000 delay 5ms reorder 100% gap 10\n Sent 1734246 bytes 1151 pkt (dropped 0, overlimits 0 requeues 115) \n backlog 0b 0p requeues 115\n",
+ "bench_ok": false
+}

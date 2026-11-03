@@ -29,10 +29,17 @@ whether all the bytes arrived, and stalls: silences of 0.5 s or more on
 both sides that do not end in a retransmission - the hosted machine
 stopped, as AROS's TSval shows, and the seconds count it in.
 
-    loss_probe.py [--arostcp FILE] [--image DIR] [--only a,b] [--out DIR]
+    loss_probe.py [--arostcp FILE] [--image DIR] [--only a,b] [--nosack] [--prr 0|1] [--out DIR]
+
+--prr sets net.inet.tcp.prr on AROS (tests/tcp/tcpctl.c) before the
+transfers: an A/B of PRR in one binary.
+
+--nosack turns SACK off on the host (net.ipv4.tcp_sack) for the run, under
+a lock (~/.cache/aros-work/host-tcp-sack.lock) and put back at the end,
+on an error or a signal: loss recovery without SACK (NewReno, RFC 6582).
 Needs sudo -n for tc, ip, tcpdump and the watcher's raw socket.
 """
-import argparse, json, os, re, socket, struct, subprocess, sys, threading, time
+import argparse, atexit, json, os, re, signal, socket, struct, subprocess, sys, threading, time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
@@ -56,6 +63,34 @@ def sh(*a, quiet=False):
     if r.returncode and not quiet:
         SH_ERRORS.append("%s: %s" % (" ".join(a[:6]), r.stderr.strip()[:200]))
     return r
+
+
+LOCK = os.path.expanduser("~/.cache/aros-work/host-tcp-sack.lock")
+_sack_saved = []
+
+
+def nosack_begin():
+    """Turn SACK off on the host (net.ipv4.tcp_sack, IPv6 too) for this run:
+    under a lock no other run may hold, and put back whatever happens."""
+    os.makedirs(os.path.dirname(LOCK), exist_ok=True)
+    fd = os.open(LOCK, os.O_CREAT | os.O_EXCL | os.O_WRONLY)    # fails if another run has it
+    os.write(fd, str(os.getpid()).encode())
+    os.close(fd)
+    _sack_saved.append(subprocess.run(["sysctl", "-n", "net.ipv4.tcp_sack"], capture_output=True,
+                                      text=True).stdout.strip() or "1")
+    atexit.register(nosack_end)
+    for sig in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP):
+        signal.signal(sig, lambda *_: sys.exit(1))
+    sh("sysctl", "-q", "-w", "net.ipv4.tcp_sack=0")
+
+
+def nosack_end():
+    if _sack_saved:
+        sh("sysctl", "-q", "-w", "net.ipv4.tcp_sack=%s" % _sack_saved.pop())
+        try:
+            os.unlink(LOCK)
+        except OSError:
+            pass
 
 
 def match(port):
@@ -228,15 +263,31 @@ def main():
         os.path.expanduser("~/aros-build-ipv6-hosted-claude/bin/linux-x86_64/AROS")))
     ap.add_argument("--arostcp")
     ap.add_argument("--only", default=",".join(SCENARIOS))
+    ap.add_argument("--nosack", action="store_true", help="SACK off on the host for this run")
+    ap.add_argument("--prr", choices=("0", "1"), help="set net.inet.tcp.prr on AROS first (tcpctl)")
     ap.add_argument("--out", default=os.path.join(HERE, "out", "loss-" + time.strftime("%Y%m%d-%H%M%S")))
     a = ap.parse_args()
     if a.watch:
         return watch(int(a.watch[0]), a.watch[1])
     only = a.only.split(",")
     os.makedirs(a.out, exist_ok=True)
+    if a.nosack:
+        nosack_begin()
+    try:
+        run(a, only)
+    finally:
+        nosack_end()
+
+
+def run(a, only):
     exe = os.path.join(a.out, "tcpbench")
     subprocess.run([run_tcp.CROSS, "-std=gnu99", "-O2", "-Wall", "-Wno-pointer-sign", "-o", exe,
                     os.path.join(HERE, "tcpbench.c")], check=True, capture_output=True)
+    exes = [exe]
+    if a.prr is not None:
+        exes.append(os.path.join(a.out, "tcpctl"))
+        subprocess.run([run_tcp.CROSS, "-std=gnu99", "-O2", "-Wall", "-Wno-pointer-sign", "-o", exes[-1],
+                        os.path.join(HERE, "tcpctl.c")], check=True, capture_output=True)
     subprocess.run([os.path.join(ROOT, "tools", "tap-up.sh")], check=True, stdout=subprocess.DEVNULL)
     clear()
     run_tcp.kill_strays()
@@ -255,12 +306,14 @@ def main():
     script = os.path.join(a.out, "loss.script")
     with open(script, "w") as f:
         f.write("Execute SYS:System/Network/AROSTCP/S/startnet\nWait 4\n")
+        if a.prr is not None:
+            f.write("C:tcpctl 13 %s >SYS:out/tcpctl.log\n" % a.prr)     # TCPCTL_PRR
         for name in only:
             f.write("C:tcpbench eth0 %s send %d %d >SYS:out/%s.log\nWait 1\n" % (host_ll, SCENARIOS[name], BYTES, name))
     env = dict(os.environ, AROS_HOSTED_IMAGE=a.image, AROS_TAP_IP=run_tcp.AROS_IP, AROS_RUN_TIMEOUT="400")
     if a.arostcp:
         env["AROS_AROSTCP"] = os.path.abspath(a.arostcp)
-    r = subprocess.run([os.path.join(ROOT, "tools", "hosted-run.sh"), os.path.join(a.out, "aros"), script, exe],
+    r = subprocess.run([os.path.join(ROOT, "tools", "hosted-run.sh"), os.path.join(a.out, "aros"), script] + exes,
                        env=env, capture_output=True, text=True)
     time.sleep(1)
     for pid in subprocess.run(["pgrep", "-f", "^tcpdump -i %s -n -s 128 -w %s" % (IFACE, pcap)],
@@ -277,7 +330,9 @@ def main():
     text = sh("tcpdump", "-tt", "-nn", "-S", "-v", "-r", pcap).stdout
     open(os.path.join(a.out, "loss.txt"), "w").write(text)
     pk = run_tcp.parse(text)
-    res = {"boot": "ok" if "finished" in r.stdout else "did not finish"}
+    res = {"boot": "ok" if "finished" in r.stdout else "did not finish",
+           "host_tcp_sack": subprocess.run(["sysctl", "-n", "net.ipv4.tcp_sack"], capture_output=True,
+                                           text=True).stdout.strip()}
     w = {}
     if os.path.exists(os.path.join(a.out, "watch.json")):
         w = json.load(open(os.path.join(a.out, "watch.json")))
@@ -288,18 +343,26 @@ def main():
         res[name] = x
     # the bench checks itself: each scenario did what it is for
     checks = {}
-    if "partial" in res:
+    if a.nosack:
+        # SACK was off: the host sent no SACK block, in any scenario
+        checks["host_sent_no_sack"] = all(res[n]["acks_with_sack"] == 0 for n in only)
+        checks["host_tcp_sack_was_0"] = res["host_tcp_sack"] == "0"
+    if "partial" in res and not a.nosack:
         checks["partial_has_multi_sack"] = res["partial"]["acks_2plus_sack"] > 0
     if "lostrexmit" in res:
         t = w.get("target")
         checks["lostrexmit_target_3_copies"] = t is not None and t in res["lostrexmit"]["sent_3_or_more"]
         if t is not None:
             res["lostrexmit"]["sent_3_or_more"] = [s for s in res["lostrexmit"]["sent_3_or_more"] if s != t]
-    if "reorder" in res:
+    if "reorder" in res and not a.nosack:
         # the host saw segments out of order: it SACKed
         checks["reorder_host_sacked"] = res["reorder"]["acks_with_sack"] > 0
     if "random" in res:
         checks["random_has_retransmissions"] = res["random"]["retransmissions"] > 0
+    if a.prr is not None:
+        log = os.path.join(a.out, "aros", "out", "tcpctl.log")
+        res["tcpctl"] = open(log).read().strip() if os.path.exists(log) else None
+        checks["prr_set"] = bool(res["tcpctl"]) and res["tcpctl"].startswith("tcpctl 13 = %s (rc 0)" % a.prr)
     res["checks"] = checks
     res["shaping_errors"] = SH_ERRORS
     res["ifb_stats"] = ifb_stats
