@@ -154,6 +154,10 @@ Order (2026-11-02, may change with the results): monotonic clock (a correctness 
 2. **HyStart++** (RFC 9406) for CUBIC slow start; **RACK-TLP** (RFC 8985). Only with A/B measurements showing a benefit. Before RACK-TLP, a second SACK review, for what RACK needs and the scoreboard may lack (group 6's checked the accounting): per-segment send times, a reordering window, D-SACK detection, the tail loss probe - with the group 6 scenarios (partial SACK, reordering, lost retransmission) as the base.
 3. **TCP Fast Open** (RFC 7413): optional, last.
 
+## After group 7 (candidates)
+
+- **Options in SYN cookies** (raised in the review of #2078, 2026-11-03). A connection made from a cookie has no window scaling, SACK or timestamps: the cookie (the SYN-ACK's ISN) carries only the MSS. Only connections opened while the cache answers with cookies are affected (a bucket full, then `SYNCOOKIE_PAUSE`, 15 s): their window stays at 64 KB, loss recovery is NewReno, no PAWS or timestamp RTT. FreeBSD and Linux keep the options in the low bits of the SYN-ACK's TSval, which the final ACK echoes; it needs the client's timestamps, without which there is nothing to keep. It has to agree with the per-connection TSval offset (#2078, RFC 7323 section 5.4), as Linux's does. An improvement under attack only, nothing in Matter depends on it: after group 7, or earlier if a review asks.
+
 ## aros-midihub (checked 2026-11-01)
 
 Written up for midihub in its `docs/arostcp-stack-findings-2026-11-01.md` (commit 81feeef).
