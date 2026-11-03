@@ -1,0 +1,122 @@
+diff --git a/arch/all-unix/devs/networks/tap/init.c b/arch/all-unix/devs/networks/tap/init.c
+index c77b8e3951..4b29ffa4d8 100644
+--- a/arch/all-unix/devs/networks/tap/init.c
++++ b/arch/all-unix/devs/networks/tap/init.c
+@@ -231,6 +231,7 @@ static int GM_UNIQUENAME(open)(LIBBASETYPEPTR LIBBASE, struct IOSana2Req *req, U
+ 
+             /* container for the openers */
+             NEWLIST(&(unit->openers));
++            InitSemaphore(&unit->read_lock);
+ 
+             /* and for the trackers */
+             NEWLIST(&(unit->trackers));
+@@ -269,9 +270,9 @@ static int GM_UNIQUENAME(open)(LIBBASETYPEPTR LIBBASE, struct IOSana2Req *req, U
+     if (error == 0) {
+         req->ios2_Req.io_Unit = (APTR) unit;
+ 
+-        Disable();
++        ObtainSemaphore(&unit->read_lock);
+         AddTail((APTR) &(unit->openers), (APTR) opener);
+-        Enable();
++        ReleaseSemaphore(&unit->read_lock);
+ 
+         unit->refcount ++;
+ 
+@@ -330,6 +331,11 @@ static int GM_UNIQUENAME(close)(LIBBASETYPEPTR LIBBASE, struct IOSana2Req *req)
+ 
+     D(bug("[tap] in close\n"));
+ 
++    /* off the openers first: the iotask may be delivering to its reads */
++    ObtainSemaphore(&unit->read_lock);
++    Remove((APTR) opener);
++    ReleaseSemaphore(&unit->read_lock);
++
+     unit->refcount --;
+ 
+     D(bug("[tap] [%d] refcount is now %d\n", unit->num, unit->refcount));
+@@ -371,9 +377,6 @@ static int GM_UNIQUENAME(close)(LIBBASETYPEPTR LIBBASE, struct IOSana2Req *req)
+     }
+ 
+     /* cleanup the opener structure too */
+-    Disable();
+-    Remove((APTR) opener);
+-    Enable();
+     FreeVec(opener);
+ 
+     req->ios2_Req.io_Unit = NULL;
+@@ -402,6 +405,7 @@ AROS_LH1(long, abort_io, AROS_LHA(struct IOSana2Req *, req, A1), LIBBASETYPEPTR,
+     AROS_LIBFUNC_INIT
+ 
+     struct tap_opener *opener = (struct tap_opener *) req->ios2_BufferManagement;
++    struct tap_unit *unit = (struct tap_unit *) req->ios2_Req.io_Unit;
+     struct Node *node;
+     long result = -1;   /* not ours / not pending -> nothing aborted */
+ 
+@@ -411,10 +415,13 @@ AROS_LH1(long, abort_io, AROS_LHA(struct IOSana2Req *, req, A1), LIBBASETYPEPTR,
+      * A queued CMD_READ sits on the opener's read_pending port until a matching
+      * packet arrives (see tap_read()/iotask).  Without this the request can only
+      * ever complete on traffic, so a caller tearing an interface down would hang
+-     * in WaitIO().  Pull it back off the queue under Disable() (the same lock the
+-     * iotask uses to Remove()) and reply it IOERR_ABORTED.
++     * in WaitIO().  Pull it back off the queue and reply it IOERR_ABORTED -
++     * holding read_lock, so that the iotask is not delivering a frame to it
++     * meanwhile (it would go on writing into it after its owner freed it, and
++     * reply it again); Disable() as well, as PutMsg() queues reads under it.
+      */
+-    if (opener != NULL) {
++    if (opener != NULL && unit != NULL) {
++        ObtainSemaphore(&unit->read_lock);
+         Disable();
+         ForeachNode(&(opener->read_pending.mp_MsgList), node) {
+             if (node == (struct Node *) req) {
+@@ -431,6 +438,7 @@ AROS_LH1(long, abort_io, AROS_LHA(struct IOSana2Req *, req, A1), LIBBASETYPEPTR,
+             ReplyMsg((struct Message *) req);
+             D(bug("[tap] abort_io: aborted parked request %p\n", req));
+         }
++        ReleaseSemaphore(&unit->read_lock);
+     }
+ 
+     return result;
+diff --git a/arch/all-unix/devs/networks/tap/iotask.c b/arch/all-unix/devs/networks/tap/iotask.c
+index b9c1209f50..82fb373fd1 100644
+--- a/arch/all-unix/devs/networks/tap/iotask.c
++++ b/arch/all-unix/devs/networks/tap/iotask.c
+@@ -81,7 +81,10 @@ static void tap_receive(struct tap_base *TAPBase, struct tap_unit *unit)
+      * all multicast) and for IPv4 multicast / IGMP.
+      */
+ 
+-    /* now we loop through our openers, seeing if anyone wants the packet */
++    /* now we loop through our openers, seeing if anyone wants the packet -
++     * holding read_lock: abort_io() or a close must not take a read while it
++     * is being filled */
++    ObtainSemaphore(&unit->read_lock);
+     ForeachNodeSafe(&(unit->openers), opener, opener_next) {
+ 
+         /* loop pending read requests */
+@@ -154,6 +157,7 @@ static void tap_receive(struct tap_base *TAPBase, struct tap_unit *unit)
+         if (accepted)
+             break;
+     }
++    ReleaseSemaphore(&unit->read_lock);
+ 
+     if (! accepted) {
+         D(bug("[tap] [io:%d] no one claimed the packet, orphaning\n", unit->num));
+diff --git a/arch/all-unix/devs/networks/tap/tap.h b/arch/all-unix/devs/networks/tap/tap.h
+index 182abb29d2..a64d7b5e0f 100644
+--- a/arch/all-unix/devs/networks/tap/tap.h
++++ b/arch/all-unix/devs/networks/tap/tap.h
+@@ -118,6 +118,14 @@ struct tap_unit
+     ULONG                       flags;
+ 
+     struct MinList              openers;
++    /*
++     * Held while a frame is delivered to the openers' pending reads (the
++     * iotask), while abort_io() takes one back, and while an opener is added
++     * or removed: without it a read could be aborted - replied, and freed by
++     * its owner - while the iotask was still copying into it, and then be
++     * replied a second time.
++     */
++    struct SignalSemaphore      read_lock;
+ 
+     struct MinList              trackers;
+     struct Sana2DeviceStats     stats;

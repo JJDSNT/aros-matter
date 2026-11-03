@@ -1,0 +1,5 @@
+PASS  boot 0: 30 reloads, no crash
+PASS  boot 1: 30 reloads, no crash
+PASS  boot 2: 30 reloads, no crash
+PASS  boot 3: 30 reloads, no crash
+arostcp=/home/jaime/aros-build-ipv6-hosted-claude/ab/AROSTCP.c528 boots=4 failed=0

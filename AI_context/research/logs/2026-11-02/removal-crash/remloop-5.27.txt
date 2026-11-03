@@ -1,0 +1,3 @@
+FAIL  boot 0: 3 reloads, crash, did not finish
+PASS  boot 1: 30 reloads, no crash
+arostcp=/home/jaime/aros-build-ipv6-hosted-claude/ab/AROSTCP.g5b2 boots=2 failed=1
