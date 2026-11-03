@@ -1,6 +1,6 @@
 # Estado atual — aros-matter
 
-Atualizado: 2026-11-02
+Atualizado: 2026-11-03
 
 ## Foco atual (desde 2026-10-28)
 
@@ -139,3 +139,12 @@ Para mudanças compartilhadas em AROSTCP, IPv6/multicast, mdnsd/Bonami e DNS-SD,
 **#2053 mesclado (c388bc08e9, 5.27). Crash de remoção (2026-11-02):** causa na AROSTCP. O pedido `S2_ONEVENT` que o driver recusa (tap.device: `IOERR_NOCMD`) ou que não é reenviado após `S2EVENT_OFFLINE` ficava fora de toda lista, ainda `NT_REPLYMSG`; o `WaitIO()` do `sana_unrun()` fazia um segundo `Remove()` por links velhos, corrompendo a lista do `SanaPort` (crash no `GetMsg()` do `sana_poll()`) ou o heap (TLSF: "free-list corruption at REMOVE_HEADER", mesma mensagem do ISSUE-0037 do Bellatrix, outra causa: no x86_64 o alinhamento de 16 já garante o MIN_PAYLOAD). Correção: `sana_connect()` libera o pedido. [#2067](https://github.com/aros-development-team/AROS/pull/2067), 5.28 / v0.67; bench `tests/ipv6/remloop.py`: 0/16 boots caem com a correção, 7/9 sem; 48 suítes ok.
 - Achado em paralelo, **não demonstrado**: corrida no tap.device (iotask preenche uma leitura sem lock enquanto `abort_io()` pode respondê-la). Patch guardado em `research/logs/2026-11-02/removal-crash/tap-race-fix.patch`; só vira PR se for demonstrada (p.ex. alargando a janela).
 - Ferramentas de depuração: `tests/debug/segmap.c` (onde está o código de cada módulo, via `debug.library`) e um dump de pilha local no trap handler do hosted (não commitado; patch é trivial).
+
+**#2067 mesclado (eebbac3697, 5.28). Grupo 6a (2026-11-03), branch `review/arostcp-series6a`:**
+- `0a92fffe97` `sblock()` sem esperar com `MSG_DONTWAIT`/`SS_NBIO` (Kal no #2023). Só se demonstra quando o `MSG_WAITALL` pede mais que o buffer (`sb_hiwat`, arredondado ao MSS no connect): só então dorme segurando o lock. `cunit-net-sblock`: 5.28 falha 2/3, com a correção 3/3 nas duas execuções.
+- Flags `SOL_SOCKET` fora do splnet: **conforme**, nada a fazer. A API é serializada pelo `syscall_semaphore`, e a tarefa da pilha só lê `so_options` (palavra inteira; `sonewconn()` copia).
+- `2944f4a195` um RST antes da janela não fecha mais a conexão: o 4.4BSD aparava o segmento à janela antes de olhar o RST (RFC 9293 §3.10.7.4).
+- `98224d7735` RFC 5961 (R2, descrever em alto nível): challenge ACK para RST na janela fora do RCV.NXT exato, SYN em estado sincronizado e ACK mais velho que SND.UNA − max_sndwnd; limite de 5/s por conexão (`t_challenge_*` no fim do `tcpcb`).
+- Bench novo `tests/tcp/rst_probe.py` (injeta pela tap via AF_PACKET; modo `hold` no `tcpbench`): 5.28 falha 4/7 (o RST velho derruba; dados injetados com ACK velho são aceitos), A falha 4/7 (só corrige o velho), A+B passa 7/7; os controles (`exact`, `beyond`) são verdadeiros nos três. 10 RSTs → 5 challenge ACKs.
+- Regressão: 48 suítes ok com A+B; `run_tcp.py` igual ao 5.28 (variação de RTO de 1,5-4 s nos dois). Evidência em `research/logs/2026-11-03/pr-group6a/`.
+- Falta no 6a: TSval com deslocamento aleatório por conexão (RFC 7323 §5.4), revisão dos SYN cookies (RFC 4987). Depois, o 6b.

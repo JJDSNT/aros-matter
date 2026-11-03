@@ -1,0 +1,33 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: SBLOCK_Suite
+  Test: MSG_DONTWAIT does not wait for a held buffer ...DBG dontwait r=-1 errno=35 t=120
+FAILED
+    1. testSBLOCK_DONTWAIT:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-sblock.c:183  - ticks_since(&t0) < TICKS_PER_SECOND / 2
+  Test: nor does a non-blocking socket ...FAILED
+    1. testSBLOCK_NBIO:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-sblock.c:202  - ticks_since(&t0) < TICKS_PER_SECOND / 2
+  Test: a blocking call waits, then gets its data ...DBG block r=1 errno=35 t=121
+passed
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       13         2       n/a       n/a
+     Tests        :        3         2         0         0
+
+Elapsed Time: 23.800(s)
+
+DBG dontwait r=-1 errno=35 t=121
+DBG block r=1 errno=35 t=119
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       13         2       n/a       n/a
+     Tests        :        3         2         0         0
+
+Elapsed Time: 23.720(s)
+

@@ -1,0 +1,94 @@
+{
+ "exact": {
+  "rcv_nxt": 2009689374,
+  "challenge_acks": 0,
+  "challenge_ack": false,
+  "aros_rst": false,
+  "after": [],
+  "aros_rc": -1,
+  "aros_errno": 54,
+  "survived": false,
+  "reset": true,
+  "verdict": "ok"
+ },
+ "old": {
+  "rcv_nxt": 3183449551,
+  "challenge_acks": 0,
+  "challenge_ack": false,
+  "aros_rst": false,
+  "after": [],
+  "aros_rc": 1,
+  "aros_errno": 0,
+  "survived": true,
+  "reset": false,
+  "verdict": "ok"
+ },
+ "inwin": {
+  "rcv_nxt": 617856248,
+  "challenge_acks": 0,
+  "challenge_ack": false,
+  "aros_rst": false,
+  "after": [],
+  "aros_rc": -1,
+  "aros_errno": 54,
+  "survived": false,
+  "reset": true,
+  "verdict": "FAIL"
+ },
+ "syn": {
+  "rcv_nxt": 2081861244,
+  "challenge_acks": 0,
+  "challenge_ack": false,
+  "aros_rst": true,
+  "after": [
+   "flags=0x14 seq=709713385 ack=2081861244 len=0",
+   "flags=0x14 seq=0 ack=2081862245 len=0"
+  ],
+  "host_send": "[Errno 104] Connection reset by peer",
+  "aros_rc": -1,
+  "aros_errno": 54,
+  "survived": false,
+  "reset": true,
+  "verdict": "FAIL"
+ },
+ "beyond": {
+  "rcv_nxt": 3374895881,
+  "challenge_acks": 0,
+  "challenge_ack": false,
+  "aros_rst": false,
+  "after": [],
+  "aros_rc": 1,
+  "aros_errno": 0,
+  "survived": true,
+  "reset": false,
+  "verdict": "ok"
+ },
+ "oldack": {
+  "rcv_nxt": 1075692582,
+  "challenge_acks": 0,
+  "challenge_ack": false,
+  "aros_rst": false,
+  "after": [
+   "flags=0x10 seq=3750422982 ack=1075692583 len=0",
+   "flags=0x10 seq=3750422982 ack=1075692583 len=0",
+   "flags=0x11 seq=3750422982 ack=1075692583 len=0"
+  ],
+  "aros_rc": 1,
+  "aros_byte": "z",
+  "verdict": "FAIL: took the injected data"
+ },
+ "limit": {
+  "rcv_nxt": 3753742982,
+  "challenge_acks": 0,
+  "challenge_ack": false,
+  "aros_rst": false,
+  "after": [],
+  "aros_rc": -1,
+  "aros_errno": 54,
+  "survived": false,
+  "reset": true,
+  "verdict": "FAIL"
+ },
+ "bench_ok": true,
+ "fails": 4
+}

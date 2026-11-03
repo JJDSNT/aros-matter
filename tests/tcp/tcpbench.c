@@ -16,6 +16,9 @@
  *   uto PORT MS        TCP_USER_TIMEOUT, then send until the connection fails
  *   zerowin PORT MS    TCP_USER_TIMEOUT, fill a peer that never reads, wait
  *                      for the connection to fail
+ *   hold PORT N        N connections, one after the other; on each, wait
+ *                      up to 10 s for one byte: "hold <i> rc=<n> c=<byte>
+ *                      errno=<e>" (rc -2: nothing came)
  * The last three print "<mode> done ms=<since connect> wait=<since the
  * window closed, zerowin> errno=<e>".
  */
@@ -27,6 +30,7 @@
 #include <bsdsocket/socketbasetags.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
+#include <sys/time.h>
 #include <net/if.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
@@ -209,6 +213,32 @@ int main(int argc, char **argv)
             CloseSocket(s);
         }
         printf("zerowin done ms=%ld wait=%ld errno=%d\n", now_ms() - t0, t1 ? now_ms() - t1 : -1, e);
+    } else if (!strcmp(mode, "hold")) {
+        int n = argc > 5 ? atoi(argv[5]) : 1;
+        for (i = 0; i < n; i++) {
+            fd_set fs;
+            struct timeval tv;
+            char c = '-';
+            int r, e = 0;
+
+            if ((s = tcp_connect(port)) < 0)
+                break;
+            FD_ZERO(&fs);
+            FD_SET(s, &fs);
+            tv.tv_sec = 10;
+            tv.tv_usec = 0;
+            r = WaitSelect(s + 1, &fs, NULL, NULL, &tv, NULL);
+            if (r > 0) {
+                r = recv(s, &c, 1, 0);
+                if (r < 0)
+                    e = errno;
+            } else
+                r = -2;
+            printf("hold %d rc=%d c=%c errno=%d\n", i, r, r == 1 ? c : '-', e);
+            CloseSocket(s);
+            Delay(25);
+        }
+        printf("hold done %d\n", i);
     } else if (!strcmp(mode, "stall")) {
         if ((s = tcp_connect(port)) >= 0) {
             Delay(2 * 50);          /* the host starts dropping everything */

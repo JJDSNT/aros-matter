@@ -1,0 +1,110 @@
+{
+ "connect": {
+  "syns": 10,
+  "syn_options": "mss 1440,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 9 ecr 0",
+  "syn_flags": "S",
+  "source_ports": [
+   63176,
+   61637,
+   52411,
+   51068,
+   54809,
+   54744,
+   59612,
+   64695,
+   59293,
+   54079
+  ],
+  "isn_deltas": [
+   3403651866,
+   1897160209,
+   838887259,
+   4200619817,
+   523024418,
+   1675825510,
+   1798640651,
+   3835053687,
+   2334481468
+  ]
+ },
+ "send": {
+  "data_segments": 1436,
+  "distinct": 1408,
+  "retransmissions": 28,
+  "expected_losses": 28,
+  "retransmissions_after_quiet_200ms_or_more": 12,
+  "longest_quiet_before_a_retransmission": 3.856,
+  "host_acks_with_sack": 229,
+  "seconds": 21.397,
+  "mss_seen": 1428
+ },
+ "unread": {
+  "aros_close_flags": [
+   "R."
+  ]
+ },
+ "stall": {
+  "transmissions": 4,
+  "intervals": [
+   1.3,
+   3.0,
+   6.0
+  ]
+ },
+ "host": {
+  "7001": [
+   {
+    "ok": true
+   },
+   {
+    "ok": true
+   },
+   {
+    "ok": true
+   },
+   {
+    "ok": true
+   },
+   {
+    "ok": true
+   },
+   {
+    "ok": true
+   },
+   {
+    "ok": true
+   },
+   {
+    "ok": true
+   },
+   {
+    "ok": true
+   },
+   {
+    "ok": true
+   }
+  ],
+  "7002": [
+   {
+    "bytes": 2000000,
+    "seconds": 21.417
+   }
+  ],
+  "7003": [
+   {
+    "after_close": "RST"
+   }
+  ],
+  "7004": [
+   {
+    "bytes": 100
+   }
+  ]
+ },
+ "sanity": {
+  "packet_too_big_seen": 0,
+  "fragments_seen": 0,
+  "ok": true
+ },
+ "boot": "ok"
+}
