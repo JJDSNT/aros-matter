@@ -1,0 +1,39 @@
+{
+ "boot": "ok",
+ "passive_bytes": 200000,
+ "passive": {
+  "synack_tsval": [
+   10
+  ],
+  "segments": 210,
+  "spread": 0,
+  "ok": true
+ },
+ "active": {
+  "syn_tsvals": [
+   10,
+   10,
+   10,
+   11,
+   11,
+   12,
+   12,
+   12,
+   13,
+   13
+  ],
+  "pairs_within_1000": 45,
+  "below_1000": 10,
+  "ok": false
+ },
+ "stall": {
+  "transmissions": 4,
+  "intervals": [
+   1.441,
+   2.999,
+   6.0
+  ]
+ },
+ "stall_ok": true,
+ "bench_ok": true
+}
