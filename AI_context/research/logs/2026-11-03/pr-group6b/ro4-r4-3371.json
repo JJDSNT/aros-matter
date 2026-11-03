@@ -1,0 +1,59 @@
+{
+ "boot": "ok",
+ "reorder": {
+  "stalls": [],
+  "seconds": 0.251,
+  "data_segments": 878,
+  "retransmissions": 173,
+  "sent_3_or_more": [],
+  "timeouts": 0,
+  "needless_retransmissions": 0,
+  "acks_with_sack": 752,
+  "acks_2plus_sack": 460,
+  "host": {
+   "bytes": 1000000,
+   "host_seconds": 0.236
+  },
+  "complete": true
+ },
+ "random": {
+  "stalls": [],
+  "seconds": 0.357,
+  "data_segments": 716,
+  "retransmissions": 14,
+  "sent_3_or_more": [],
+  "timeouts": 0,
+  "needless_retransmissions": 0,
+  "acks_with_sack": 316,
+  "acks_2plus_sack": 28,
+  "host": {
+   "bytes": 1000000,
+   "host_seconds": 0.357
+  },
+  "complete": true
+ },
+ "partial": {
+  "stalls": [],
+  "seconds": 0.314,
+  "data_segments": 721,
+  "retransmissions": 20,
+  "sent_3_or_more": [],
+  "timeouts": 0,
+  "needless_retransmissions": 0,
+  "acks_with_sack": 285,
+  "acks_2plus_sack": 250,
+  "host": {
+   "bytes": 1000000,
+   "host_seconds": 0.314
+  },
+  "complete": true
+ },
+ "checks": {
+  "partial_has_multi_sack": true,
+  "reorder_host_sacked": true,
+  "random_has_retransmissions": true
+ },
+ "shaping_errors": [],
+ "ifb_stats": "qdisc netem 8058: root refcnt 2 limit 1000 delay 5ms reorder 100% gap 10\n Sent 1327826 bytes 883 pkt (dropped 0, overlimits 0 requeues 88) \n backlog 0b 0p requeues 88\n",
+ "bench_ok": true
+}

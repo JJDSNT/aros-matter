@@ -25,7 +25,9 @@ segments, needless retransmissions (of data the host had acknowledged or
 SACKed in an ACK seen 5 ms or more before), segments sent 3+ times (beyond the lostrexmit one, a sign the
 same hole is retransmitted again and again), quiet gaps of 500 ms or more
 before a retransmission (timeouts), the host's ACKs with 2+ SACK blocks,
-and whether all the bytes arrived.
+whether all the bytes arrived, and stalls: silences of 0.5 s or more on
+both sides that do not end in a retransmission - the hosted machine
+stopped, as AROS's TSval shows, and the seconds count it in.
 
     loss_probe.py [--arostcp FILE] [--image DIR] [--only a,b] [--out DIR]
 Needs sudo -n for tc, ip, tcpdump and the watcher's raw socket.
@@ -200,7 +202,13 @@ def analyse(pk, port):
             if prev is not None and p["t"] - prev >= 0.5:
                 quiet += 1
         prev = p["t"]
+    # silences of 0.5 s or more on both sides that do not end in a
+    # retransmission: the hosted machine stalled, not the stack
+    flow = [p for p in pk if p["dport"] == port or p["sport"] == port]
+    stalls = [round(b["t"] - a["t"], 3) for a, b in zip(flow, flow[1:])
+              if b["t"] - a["t"] >= 0.5 and not (b["dport"] == port and b["len"] > 0 and count.get(b["seq"], 0) > 1)]
     return {
+        "stalls": stalls,
         "seconds": round(data[-1]["t"] - data[0]["t"], 3) if data else None,
         "data_segments": len(data),
         "retransmissions": retx,
@@ -303,9 +311,10 @@ def main():
     json.dump(res, open(os.path.join(a.out, "result.json"), "w"), indent=1)
     for name in only:
         x = res[name]
-        print("%-10s %6ss segs=%-5s retx=%-4s needless=%-4s 3+=%-3d timeouts=%-2d multi_sack_acks=%-4d complete=%s" % (
+        print("%-10s %6ss segs=%-5s retx=%-4s needless=%-4s 3+=%-3d timeouts=%-2d multi_sack_acks=%-4d complete=%s%s" % (
             name, x["seconds"], x["data_segments"], x["retransmissions"], x["needless_retransmissions"],
-            len(x["sent_3_or_more"]), x["timeouts"], x["acks_2plus_sack"], x["complete"]))
+            len(x["sent_3_or_more"]), x["timeouts"], x["acks_2plus_sack"], x["complete"],
+            " STALL %s" % x["stalls"] if x["stalls"] else ""))
     print("checks=%s bench_ok=%s out=%s" % (checks, res["bench_ok"], a.out))
 
 

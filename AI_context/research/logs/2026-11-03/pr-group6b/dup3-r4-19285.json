@@ -1,0 +1,55 @@
+{
+ "dsack": {
+  "debug": {
+   "snd_max": 3166758117,
+   "una": 3166626941,
+   "mss": 1428,
+   "host_win": 1055,
+   "after_drop": 2164
+  },
+  "una": 3166626941,
+  "in_flight": 131176,
+  "mss": 1428,
+  "retransmitted_at": [],
+  "aros_segments_seen": 0,
+  "attempt": 2,
+  "verdict": "ok"
+ },
+ "newsack": {
+  "debug": {
+   "snd_max": 4242906800,
+   "una": 4242775704,
+   "mss": 1428,
+   "host_win": 965,
+   "after_drop": 2200
+  },
+  "una": 4242775704,
+  "in_flight": 131096,
+  "mss": 1428,
+  "retransmitted_at": [
+   0.0
+  ],
+  "aros_segments_seen": 3,
+  "attempt": 3,
+  "verdict": "ok"
+ },
+ "samewin": {
+  "debug": {
+   "snd_max": 654284005,
+   "una": 654153201,
+   "mss": 1428,
+   "host_win": 1138,
+   "after_drop": 2165
+  },
+  "una": 654153201,
+  "in_flight": 130804,
+  "mss": 1428,
+  "retransmitted_at": [
+   0.0
+  ],
+  "aros_segments_seen": 1,
+  "attempt": 6,
+  "verdict": "ok"
+ },
+ "bench_ok": true
+}
