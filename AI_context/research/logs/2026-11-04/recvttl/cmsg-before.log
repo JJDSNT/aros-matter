@@ -1,0 +1,41 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: CMSG_Suite
+  Test: IPV6_PKTINFO over ::1 ...passed
+  Test: IPV6_HOPLIMIT over ::1 ...passed
+  Test: both IPv6 messages arrive ...passed
+  Test: short control buffer sets MSG_CTRUNC ...passed
+  Test: IP_RECVDSTADDR over 127.0.0.1 ...passed
+  Test: IPV6_TCLASS by option and per datagram ...passed
+  Test: IP_TOS by option and per datagram ...passed
+  Test: IP_RECVTTL: off by default, on and off ...FAILED
+    1. testCMSG_V4_TTL_OPTION:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-cmsg.c:311  - CU_ASSERT_EQUAL(v,0)
+  Test: IP_RECVTTL: the TTL the datagram arrived with ...FAILED
+    1. testCMSG_V4_TTL:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-cmsg.c:333  - CU_ASSERT_EQUAL(setsockopt(r, IPPROTO_IP, IP_RECVTTL, &off, sizeof(off)),0)
+  Test: IP_RECVTTL on a fragmented datagram ...FAILED
+    1. testCMSG_V4_TTL_FRAGMENTED:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-cmsg.c:355  - CU_ASSERT_EQUAL(got_ttl(r),42)
+  Test: IP_RECVTTL and a short control buffer ...FAILED
+    1. testCMSG_V4_TTL_CTRUNC:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-cmsg.c:378  - mh.msg_flags & MSG_CTRUNC
+  Test: a multicast datagram has its ancillary data ...FAILED
+    1. testCMSG_V4_MCAST:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-cmsg.c:494  - CU_ASSERT_PTR_NOT_NULL(c)
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :      112        18       n/a       n/a
+     Tests        :       12         5         0         0
+
+Elapsed Time: 0.020(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :      112        18       n/a       n/a
+     Tests        :       12         5         0         0
+
+Elapsed Time: 0.000(s)
+
