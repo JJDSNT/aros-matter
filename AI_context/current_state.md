@@ -1,6 +1,6 @@
 # Estado atual — aros-matter
 
-Atualizado: 2026-11-03
+Atualizado: 2026-11-04
 
 ## Foco atual (desde 2026-10-28)
 
@@ -166,3 +166,5 @@ Para mudanças compartilhadas em AROSTCP, IPv6/multicast, mdnsd/Bonami e DNS-SD,
 - **PR [#2085](https://github.com/aros-development-team/AROS/pull/2085) aberto** (grupo 6b, 5.31 / v0.70): `b354478278` dupack com SACK (D-SACK não conta), `4b02ee0d44` recuperação SACK RFC 6675, `a6ebd27b01` sysctl `net.inet.tcp.prr` (**PRR fica desligado**: A/B no mesmo binário via `tests/tcp/tcpctl.c` deu empate em todos os cenários; decisão do usuário: desligado + sysctl, ligar só com medição que mostre ganho, p.ex. perda em rajada no grupo 7), `fbe07ddde5` SACK do receptor RFC 2018 (primeiro bloco = segmento que disparou; nenhum bloco abaixo do ACK — antes 52/52 fora de ordem e 44 falsos D-SACK). Bench `tests/tcp/rcvsack_probe.py`. 49 suítes ok (k2); bisect ok; cppcheck sem achados novos (2 a menos; consertos de const/escopo/init aplicados nos commits de origem).
 - Pendente (só aros-matter): `tests/tcp/listen_probe.py` escrito para o commit do Kal `d6425105cc` (stray ACK → RST seq=SEG.ACK; RST → nada; ACK errado no handshake → RST; handshake certo → dados confirmados, controle), ainda não rodado.
 - #2085: Codacy acusou 3 (cppcheck mais estrito que o local: negativeIndex falso positivo na macro TCP_SACK_ADD → função `tcp_sack_addblk()`; variableScope de `end` e `sent`). Corrigido nos commits de origem (fixup), force-push (`0bcf190766`); benches iguais; Codacy passa, 0 novos. Lição: o cppcheck local não substitui o do Codacy.
+
+**#2085 mesclado (2026-11-04).** Comentário do Kal (não bloqueante): `tcp_sack_rcvblocks()` quadrático (um `tcp_sack_run()` por segmento, cada um do início da fila; ~10k passos com 100 segmentos) e `tcpcb` +224 bytes com o placar de 32. Follow-up [#2099](https://github.com/aros-development-team/AROS/pull/2099) (5.32 / v0.71): `755c491faa` uma passada por faixa até `MAX_SACK_BLKS`; `9bfd3d098f` custo anotado em `TCP_SACK_BOARD`. 49 suítes ok; `rcvsack_probe` sem bloco abaixo do ACK. Dois ACKs com primeiro bloco que não é o mais alto: em ambos o segmento recebido por último está no primeiro bloco (Linux mandou um segmento mais baixo por último) — conforme a RFC 2018; a métrica `first_block_not_highest` supõe chegada em ordem crescente e deve ser lida assim.

@@ -1,0 +1,18 @@
+{
+ "first_block_below_ack": 0,
+ "multi_block_acks": 26,
+ "first_block_not_highest": 2,
+ "report_delay_median_ms": 0.4,
+ "report_delay_max_ms": 0.6,
+ "acks_after_ooo": 14,
+ "first_block_misses": 14,
+ "max_blocks": 3,
+ "ooo_segments": 109,
+ "ooo_segments_never_sacked": 0,
+ "host_retransmissions_delivered": 25,
+ "acks_with_sack": 201,
+ "host_seconds": 1.421,
+ "aros_got": "recv done 1000000",
+ "boot": "ok",
+ "bench_ok": true
+}
