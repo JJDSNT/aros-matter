@@ -47,3 +47,7 @@ Pré-requisito descoberto: o mdnsd IPv6 vai precisar dos fixes de multicast IPv6
 
 - 2026-10-28: criada; o mantenedor confirmou que o IPv6 no mdnsd será trabalho futuro dele.
 - 2026-11-01: núcleo IPv6 mesclado upstream (#1980, bonami 41.6): `ff02::fb`, AAAA publicado e consultado, índice de interface em `MDNSRecordEvent`. Falta para o Matter: browse/resolve de serviço só-IPv6 (o `MDNSDiscoveryEvent` ainda é IPv4; hoje só via `QueryRecordA()`), várias addresses no resultado, subtipos (não há suporte). Lado da pilha: flags de endereço IPv6 e sinal no fim do DAD (grupo 5 item 10). Sugestões registradas no midihub, `docs/arostcp-stack-findings-2026-11-01.md`.
+
+## 2026-11-04 — IP_RECVTTL no AROSTCP (dependência)
+
+O mDNSd precisa do TTL dos datagramas IPv4 recebidos para a checagem de TTL 255 (RFC 6762 §11). O AROSTCP ganha `IP_RECVTTL` na 5.33 (branch `review/arostcp-recvttl`), na convenção FreeBSD: `setsockopt(s, IPPROTO_IP, IP_RECVTTL, &on, sizeof(int))`, e o `recvmsg()` traz `cmsg_level IPPROTO_IP`, `cmsg_type IP_RECVTTL`, TTL em 1 byte (`*(u_char *)CMSG_DATA(c)`). Não usar `IP_TTL`/int (Linux). No IPv6, `IPV6_RECVHOPLIMIT` → `IPV6_HOPLIMIT` (int). Exigir bsdsocket.library ≥ 5.33 ou tolerar `ENOPROTOOPT`.
