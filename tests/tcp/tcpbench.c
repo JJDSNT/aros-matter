@@ -262,7 +262,10 @@ int main(int argc, char **argv)
             t0 = now_ms();
             while ((t = now_ms() - t0) < secs * 1000) {
                 fd_set wf;
-                struct timeval tv = { 0, 20000 };
+                struct timeval tv;
+
+                tv.tv_sec = 0;
+                tv.tv_usec = 20000;
 
                 FD_ZERO(&wf);
                 FD_SET(s, &wf);
