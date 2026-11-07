@@ -144,7 +144,7 @@ def run(a, mode, host_ll, exes, log, rep=0):
     with open(script, "w") as f:
         f.write("Execute SYS:System/Network/AROSTCP/S/startnet\nWait 4\n")
         if a.ssthresh:          # the link route's ssthresh (rtssthresh.c)
-            f.write("C:rtssthresh eth0 %d >>SYS:out/tcpctl.log\n" % a.ssthresh)
+            f.write("C:rtssthresh eth0 %d %s >>SYS:out/tcpctl.log\n" % (a.ssthresh, host_ll))
         for kv in filter(None, sets.split(";")):
             leaf, val = kv.split("=")
             f.write("C:tcpctl %s %s >>SYS:out/tcpctl.log\n" % (leaf, val))
@@ -195,11 +195,14 @@ def run(a, mode, host_ll, exes, log, rep=0):
            "min_rtt_ms": cap["min_rtt_ms"], "max_rtt_ss_ms": None, "rtt_at_exit_ms": None,
            "steady_s": cap["steady_s"], "mbit_per_100ms": cap["mbit"],
            "boot": "ok" if "finished" in r.stdout else "did not finish"}
-    # how congestion avoidance grows cwnd in the 5 s after slow start ends
-    if exit_s is not None:
-        after = [cw for t, cw, ss, rtt in samples if exit_s * 1000 <= t <= exit_s * 1000 + 5000]
-        if after:
-            res["ca_growth_5s_mss"] = (after[-1] - after[0]) // mss
+    # how congestion avoidance grows cwnd in the 5 s after it begins (cwnd
+    # at a non-initial ssthresh; with --ssthresh that is after slow start
+    # climbed to the route's value, not at t = 0)
+    ca0 = next((t for t, cw, ss, rtt in samples if ss < INITIAL_SSTHRESH - mss and cw >= ss), None)
+    if ca0 is not None:
+        after = [cw for t, cw, ss, rtt in samples if ca0 <= t <= ca0 + 5000]
+        res["ca_start_s"] = ca0 / 1000
+        res["ca_growth_5s_mss"] = (after[-1] - after[0]) // mss
     # RTT inflation during the first slow start, and at its end
     if exit_s is not None:
         ss_rtts = [r for t, r in cap["rtts"] if t <= exit_s]

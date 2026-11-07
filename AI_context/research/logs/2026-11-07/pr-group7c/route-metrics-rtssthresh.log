@@ -1,0 +1,13 @@
+0 get neighbour before: send 192 errno 0
+0 get neighbour before: reply type 4 errno 0 flags 0x101 index 0 inits 0x0 ssthresh 0 dst fe80:: zone 0
+1 change fe80::/64: send 224 errno 0
+1 change fe80::/64: reply type 3 errno 0 flags 0x0 index 0 inits 0x20 ssthresh 71400 dst fe80:: zone 0
+1 get fe80::/64: send 224 errno 0
+1 get fe80::/64: reply type 4 errno 0 flags 0x101 index 0 inits 0x0 ssthresh 71400 dst fe80:: zone 0
+2 udp to fe80::1 sent
+3 get neighbour: send 192 errno 0
+3 get neighbour: reply type 4 errno 0 flags 0x405 index 0 inits 0x0 ssthresh 71400 dst fe80::1 zone 0
+4 change neighbour: send 192 errno 0
+4 change neighbour: reply type 3 errno 0 flags 0x4 index 0 inits 0x20 ssthresh 71400 dst fe80::1 zone 0
+5 get neighbour: send 192 errno 0
+5 get neighbour: reply type 4 errno 0 flags 0x405 index 0 inits 0x0 ssthresh 71400 dst fe80::1 zone 0

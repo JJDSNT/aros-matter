@@ -1,0 +1,10 @@
+suites: 51
+== loss
+random      1.281s segs=715   retx=14   needless=0    3+=0   timeouts=0  multi_sack_acks=0    complete=True
+partial     0.738s segs=722   retx=20   needless=0    3+=1   timeouts=0  multi_sack_acks=186  complete=True
+lostrexmit  0.586s segs=703   retx=2    needless=0    3+=0   timeouts=0  multi_sack_acks=0    complete=True
+reorder     0.659s segs=703   retx=2    needless=0    3+=0   timeouts=0  multi_sack_acks=104  complete=True
+checks={'partial_has_multi_sack': True, 'lostrexmit_target_3_copies': True, 'reorder_host_sacked': True, 'random_has_retransmissions': True} bench_ok=True out=/tmp/claude-1000/-home-jaime-aros-matter/0a6f1726-e248-409a-bd23-3f46961832ea/scratchpad/g7c-loss
+== rto
+delay    0 ms jitter   0  rtt  0.000 s  rto min/med/max 0.22/0.24/0.24 s  rfc6298 1.000  linux 0.200  spurious 0  tsval [220, 240, 240, 240, 240, 240, 240, 240]  ok=True boot=ok
+delay  200 ms jitter   0  rtt  0.200 s  rto min/med/max 0.26/0.26/0.34 s  rfc6298 1.000  linux 0.400  spurious 0  tsval [260, 260, 340, 260, 260, 260, 260, 260]  ok=True boot=ok

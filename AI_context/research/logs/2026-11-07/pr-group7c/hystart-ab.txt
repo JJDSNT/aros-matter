@@ -1,0 +1,28 @@
+== rate 0 Mbit queue 0 KB
+base:15=1;16=0 exit=None s by None cwnd=None ssthresh=None max_cwnd=871 drops=0 retx=0 minrtt=20.0 maxrtt_ss=None rtt_exit=None steady=0.2 s bytes=139172088
+abc8:15=8;16=0 exit=None s by None cwnd=None ssthresh=None max_cwnd=1043 drops=0 retx=0 minrtt=20.0 maxrtt_ss=None rtt_exit=None steady=0.1 s bytes=115461404
+hystart:15=1;16=1 exit=None s by None cwnd=None ssthresh=None max_cwnd=1638 drops=0 retx=0 minrtt=20.0 maxrtt_ss=None rtt_exit=None steady=0.2 s bytes=139733656
+base:15=1;16=0 exit=None s by None cwnd=None ssthresh=None max_cwnd=935 drops=0 retx=0 minrtt=20.0 maxrtt_ss=None rtt_exit=None steady=0.2 s bytes=118569336
+abc8:15=8;16=0 exit=None s by None cwnd=None ssthresh=None max_cwnd=747 drops=0 retx=0 minrtt=20.0 maxrtt_ss=None rtt_exit=None steady=0.2 s bytes=140318040
+hystart:15=1;16=1 exit=None s by None cwnd=None ssthresh=None max_cwnd=840 drops=0 retx=0 minrtt=20.0 maxrtt_ss=None rtt_exit=None steady=0.9 s bytes=139350592
+== rate 20 Mbit queue 100 KB
+base:15=1;16=0 exit=0.18 s by loss cwnd=179 ssthresh=120 max_cwnd=286 drops=165 retx=204 minrtt=20.1 maxrtt_ss=61.0 rtt_exit=50.5 steady=1.0 s bytes=22867144
+abc8:15=8;16=0 exit=0.18 s by loss cwnd=207 ssthresh=141 max_cwnd=286 drops=190 retx=384 minrtt=20.0 maxrtt_ss=60.7 rtt_exit=55.7 steady=0.6 s bytes=22808596
+hystart:15=1;16=1 exit=0.18 s by loss cwnd=174 ssthresh=110 max_cwnd=174 drops=82 retx=100 minrtt=20.2 maxrtt_ss=60.5 rtt_exit=55.0 steady=0.9 s bytes=23446912
+base:15=1;16=0 exit=0.24 s by loss cwnd=189 ssthresh=119 max_cwnd=286 drops=164 retx=206 minrtt=20.1 maxrtt_ss=123.2 rtt_exit=118.3 steady=1.0 s bytes=22967104
+abc8:15=8;16=0 exit=0.18 s by loss cwnd=202 ssthresh=141 max_cwnd=286 drops=169 retx=265 minrtt=20.0 maxrtt_ss=61.0 rtt_exit=56.9 steady=0.7 s bytes=22978252
+hystart:15=1;16=1 exit=0.18 s by loss cwnd=169 ssthresh=109 max_cwnd=205 drops=78 retx=83 minrtt=20.1 maxrtt_ss=61.1 rtt_exit=54.8 steady=0.2 s bytes=23448340
+== rate 20 Mbit queue 256 KB
+base:15=1;16=0 exit=0.36 s by loss cwnd=286 ssthresh=278 max_cwnd=372 drops=163 retx=212 minrtt=20.0 maxrtt_ss=124.6 rtt_exit=121.6 steady=1.1 s bytes=23648260
+abc8:15=8;16=0 exit=0.3 s by loss cwnd=285 ssthresh=290 max_cwnd=332 drops=167 retx=204 minrtt=20.0 maxrtt_ss=125.1 rtt_exit=114.2 steady=1.0 s bytes=23069644
+hystart:15=1;16=1 exit=0.42 s by loss cwnd=258 ssthresh=181 max_cwnd=286 drops=62 retx=126 minrtt=20.1 maxrtt_ss=124.9 rtt_exit=121.8 steady=0.5 s bytes=23395504
+base:15=1;16=0 exit=0.36 s by loss cwnd=285 ssthresh=265 max_cwnd=357 drops=144 retx=165 minrtt=20.0 maxrtt_ss=126.4 rtt_exit=123.0 steady=0.7 s bytes=23696812
+abc8:15=8;16=0 exit=0.36 s by loss cwnd=286 ssthresh=290 max_cwnd=367 drops=166 retx=199 minrtt=20.1 maxrtt_ss=124.6 rtt_exit=123.5 steady=1.2 s bytes=22875712
+hystart:15=1;16=1 exit=0.42 s by loss cwnd=259 ssthresh=181 max_cwnd=286 drops=64 retx=115 minrtt=20.1 maxrtt_ss=125.3 rtt_exit=122.1 steady=0.5 s bytes=23286976
+== rate 20 Mbit queue 1024 KB
+base:15=1;16=0 exit=None s by None cwnd=None ssthresh=None max_cwnd=1384 drops=0 retx=0 minrtt=20.0 maxrtt_ss=None rtt_exit=None steady=0.1 s bytes=23876464 ok=False
+abc8:15=8;16=0 exit=None s by None cwnd=None ssthresh=None max_cwnd=1266 drops=0 retx=0 minrtt=20.0 maxrtt_ss=None rtt_exit=None steady=0.1 s bytes=23799352 ok=False
+hystart:15=1;16=1 exit=0.78 s by hystart cwnd=409 ssthresh=408 max_cwnd=424 drops=0 retx=0 minrtt=20.0 maxrtt_ss=173.1 rtt_exit=173.0 steady=0.1 s bytes=23845048
+base:15=1;16=0 exit=None s by None cwnd=None ssthresh=None max_cwnd=1250 drops=0 retx=0 minrtt=20.0 maxrtt_ss=None rtt_exit=None steady=0.1 s bytes=23776504 ok=False
+abc8:15=8;16=0 exit=None s by None cwnd=None ssthresh=None max_cwnd=1219 drops=0 retx=0 minrtt=20.0 maxrtt_ss=None rtt_exit=None steady=0.1 s bytes=23879320 ok=False
+hystart:15=1;16=1 exit=0.42 s by hystart cwnd=175 ssthresh=174 max_cwnd=304 drops=0 retx=0 minrtt=20.2 maxrtt_ss=95.5 rtt_exit=97.0 steady=0.1 s bytes=23839336

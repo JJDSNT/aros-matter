@@ -1,0 +1,15 @@
+== rate 0 Mbit queue 0 KB
+abc1:15=1    exit=None s by None cwnd=None ssthresh=None max_cwnd=869 drops=0 retx=0 minrtt=20.0 maxrtt_ss=None rtt_exit=None steady=0.2 s bytes=139474980 ok=True boot=ok
+abc2:15=2    exit=None s by None cwnd=None ssthresh=None max_cwnd=893 drops=0 retx=0 minrtt=20.0 maxrtt_ss=None rtt_exit=None steady=0.2 s bytes=140335892 ok=True boot=ok
+abc1:15=1    exit=None s by None cwnd=None ssthresh=None max_cwnd=944 drops=0 retx=0 minrtt=20.0 maxrtt_ss=None rtt_exit=None steady=1.4 s bytes=115524988 ok=True boot=ok
+abc2:15=2    exit=None s by None cwnd=None ssthresh=None max_cwnd=631 drops=0 retx=0 minrtt=20.0 maxrtt_ss=None rtt_exit=None steady=4.2 s bytes=121816100 ok=True boot=ok
+== rate 20 Mbit queue 100 KB
+abc1:15=1    exit=0.18 s by loss cwnd=182 ssthresh=120 max_cwnd=286 drops=162 retx=219 minrtt=20.0 maxrtt_ss=60.8 rtt_exit=55.2 steady=0.8 s bytes=22975672 ok=True boot=ok
+abc2:15=2    exit=0.18 s by loss cwnd=203 ssthresh=142 max_cwnd=285 drops=218 retx=338 minrtt=20.0 maxrtt_ss=61.9 rtt_exit=54.7 steady=1.0 s bytes=22848580 ok=True boot=ok
+abc1:15=1    exit=0.18 s by loss cwnd=176 ssthresh=117 max_cwnd=286 drops=148 retx=189 minrtt=20.0 maxrtt_ss=61.5 rtt_exit=54.4 steady=0.9 s bytes=22945684 ok=True boot=ok
+abc2:15=2    exit=0.18 s by loss cwnd=200 ssthresh=140 max_cwnd=286 drops=216 retx=360 minrtt=20.3 maxrtt_ss=60.8 rtt_exit=56.3 steady=0.9 s bytes=22905700 ok=True boot=ok
+== rate 20 Mbit queue 256 KB
+abc1:15=1    exit=0.36 s by loss cwnd=286 ssthresh=271 max_cwnd=340 drops=153 retx=196 minrtt=20.0 maxrtt_ss=124.7 rtt_exit=121.7 steady=0.8 s bytes=23645404 ok=True boot=ok
+abc2:15=2    exit=0.3 s by loss cwnd=286 ssthresh=283 max_cwnd=321 drops=171 retx=208 minrtt=20.1 maxrtt_ss=124.6 rtt_exit=114.8 steady=1.0 s bytes=23655400 ok=True boot=ok
+abc1:15=1    exit=0.36 s by loss cwnd=286 ssthresh=267 max_cwnd=348 drops=146 retx=158 minrtt=20.0 maxrtt_ss=125.4 rtt_exit=123.8 steady=0.7 s bytes=23619700 ok=True boot=ok
+abc2:15=2    exit=0.36 s by loss cwnd=285 ssthresh=291 max_cwnd=377 drops=165 retx=186 minrtt=20.1 maxrtt_ss=125.3 rtt_exit=124.2 steady=1.2 s bytes=22838584 ok=True boot=ok
