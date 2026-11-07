@@ -1,0 +1,78 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: TCPINFO_Suite
+  Test: an established connection (IPv4) ...
+    rto 200000 us, rtt 1000 us, rttvar 375 us, mss 1448, options 0x7
+passed
+  Test: an established connection (IPv6) ...
+    rto 200000 us, rtt 1000 us, rttvar 375 us, mss 1464, options 0x7
+passed
+  Test: the initial window, to a local destination (IPv4) ...
+    snd_cwnd 14480, mss 1448, initial window 14480
+passed
+  Test: the initial window, to a local destination (IPv6) ...
+    snd_cwnd 14600, mss 1464, initial window 14600
+passed
+  Test: slow start counts the bytes acknowledged ...
+    acked 17376: abc_l 2 grows cwnd 5792, abc_l 1 2896
+passed
+  Test: HyStart++ does not end slow start without a delay ...
+    ssthresh 1073725440 -> 1073725440, cwnd 14480 -> 84656
+passed
+  Test: a route's ssthresh reaches a new connection (IPv4) ...
+    route ssthresh 50000: connection's ssthresh 50000
+passed
+  Test: a route's ssthresh reaches a new connection (IPv6) ...
+    route ssthresh 50000: connection's ssthresh 50000
+passed
+  Test: a receiver ACKs at least every second segment ...
+    20 segments: 0 pure ACKs
+FAILED
+    1. testTCPINFO_ACK_EVERY_SECOND:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-tcpinfo.c:279  - a1 - a0 >= 9
+  Test: data moves the sequence numbers ...passed
+  Test: over the loopback the RTO is the floor ...
+    after 20 exchanges: rto 200000 us, rtt 1000 us, rttvar 187 us
+passed
+  Test: a short buffer gets the start ...passed
+  Test: a listening socket reports LISTEN ...passed
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :      153         1       n/a       n/a
+     Tests        :       13         1         0         0
+
+Elapsed Time: 1.980(s)
+
+
+    rto 200000 us, rtt 1000 us, rttvar 375 us, mss 1448, options 0x7
+
+    rto 200000 us, rtt 1000 us, rttvar 375 us, mss 1464, options 0x7
+
+    snd_cwnd 14480, mss 1448, initial window 14480
+
+    snd_cwnd 14600, mss 1464, initial window 14600
+
+    acked 17376: abc_l 2 grows cwnd 5792, abc_l 1 2896
+
+    ssthresh 1073725440 -> 1073725440, cwnd 14480 -> 84656
+
+    route ssthresh 50000: connection's ssthresh 50000
+
+    route ssthresh 50000: connection's ssthresh 50000
+
+    20 segments: 0 pure ACKs
+
+    after 20 exchanges: rto 200000 us, rtt 1000 us, rttvar 187 us
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :      153         1       n/a       n/a
+     Tests        :       13         1         0         0
+
+Elapsed Time: 1.920(s)
+

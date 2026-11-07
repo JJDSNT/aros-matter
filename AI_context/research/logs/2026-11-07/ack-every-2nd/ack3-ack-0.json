@@ -1,0 +1,48 @@
+{
+ "bytes_sent": 2031616,
+ "error": null,
+ "mss_option": 1460,
+ "segment_sizes": {
+  "1448": 1393,
+  "456": 81,
+  "912": 12,
+  "832": 2,
+  "1208": 1
+ },
+ "full_segment": 1448,
+ "acks": 720,
+ "segments_per_ack": {
+  "1": 107,
+  "2": 605,
+  "6": 3,
+  "7": 3,
+  "10": 1,
+  "17": 1
+ },
+ "acks_over_2_segments": 8,
+ "share_over_2": 0.011,
+ "max_ack_delay_ms": 1.4,
+ "host_offload": [
+  "tcp-segmentation-offload: off",
+  "tx-tcp-segmentation: off [requested on]",
+  "tx-tcp-ecn-segmentation: off [requested on]",
+  "tx-tcp-mangleid-segmentation: off",
+  "tx-tcp6-segmentation: off [requested on]",
+  "tx-tcp-accecn-segmentation: off [fixed]",
+  "generic-segmentation-offload: on",
+  "generic-receive-offload: on",
+  "tx-fcoe-segmentation: off [fixed]",
+  "tx-gre-segmentation: off [fixed]",
+  "tx-gre-csum-segmentation: off [fixed]",
+  "tx-ipxip4-segmentation: off [fixed]",
+  "tx-ipxip6-segmentation: off [fixed]",
+  "tx-udp_tnl-segmentation: off [requested on]",
+  "tx-udp_tnl-csum-segmentation: off [requested on]",
+  "tx-tunnel-remcsum-segmentation: off [fixed]",
+  "tx-sctp-segmentation: off [fixed]",
+  "tx-esp-segmentation: off [fixed]",
+  "tx-udp-segmentation: off [requested on]"
+ ],
+ "boot": "ok",
+ "ok": true
+}
