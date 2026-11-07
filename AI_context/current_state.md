@@ -185,3 +185,14 @@ Para mudanças compartilhadas em AROSTCP, IPv6/multicast, mdnsd/Bonami e DNS-SD,
 - **netstat e libkvm:** `kvm_openfiles()` exige que o `SBTC_RELEASESTRPTR` da pilha seja igual ao `STACK_RELEASE` da libkvm (versão do kernel **e data**). Ao testar uma pilha nova, recompilar `arostcp-linklibs-kvm` e `workbench-network-common-c-netstat` junto; senão `kvm_open: Wrong bsdsocket.library version` (no stderr), rc=1.
 - 50 suítes ok nas duas execuções (5.36: só os casos novos/alterados falham); cada commit compila sozinho sem avisos; cppcheck sem achados novos.
 - **Bancada:** a imagem `~/aros-build-ipv6-hosted-claude` tinha a CRT de 30/10; programas compilados depois do `956444232f` (errno por thread) saíam com rc=20 sem saída (`ip`, `netstat`). Recompilar `compiler-stdc`, `compiler-posixc`, `compiler-stdcio` ao trazer o master.
+
+**#2153 mesclado (2026-11-07, `65873a4272`, 5.37).**
+
+**Grupo 7b (2026-11-07), branch `review/arostcp-rtt-ms` (de `65873a4272`), 5.38 / v0.77:** item 1 do grupo 7, [nota de desenho](research/2026-11-07-tcp-rtt-rto-design.md). Três commits:
+- `TCP_INFO` (o header declarava, o `tcp_ctloutput()` recusava): estrutura do FreeBSD, num cluster. Teste novo `cunit-net-tcpinfo`.
+- RTT e RTO em ms: `tcp_ms()` (`GetUpTime()`) é o relógio do TSval e das amostras; SRTT/RTTVAR do FreeBSD (escala 32/16); RTO = SRTT + max(G, 4·RTTVAR); piso `net.inet.tcp.rexmit_min` 200 ms (**decisão do usuário**: desvio do SHOULD de 1 s da RFC 6298 §2.4); RTO inicial `rttdflt` 1 s (era 6 s), 3 s após SYN retransmitido (§5.7); SYN-ACK 1/2/4/8 s; REXMT como prazo (`t_rexmt_at`) checado no tick rápido (~60 ms, `UNIT_VBLANK`: uma contagem ficava 20% atrasada).
+- IW10 para todo destino: o `if(!local)` do 4.4BSD deixava destinos da LAN sem slow start (cwnd 1 GB).
+- Medido (benches novos `tests/tcp/rto_probe.py`, `cwnd_probe.py`): RTO 1,28/1,16/2,36/1,76 s → 0,24/0,20/0,26/0,56 s (RTT 0,4/50/200/500 ms); jitter 200±100 → 0,59 s sem espúrias; SYN 5,8 → 1,0 s. `loss_probe`: retransmissão perdida 1,68 → 0,55 s; com slow start, perda aleatória 0,33 → 1,34 s (esperado). 51 suítes ok nas duas execuções; bisect sem avisos; cppcheck sem achados novos. Evidência: `research/logs/2026-11-07/rto-granularity/`, `cubic-curve/`, `pr-group7b/`.
+- **CUBIC em ms: descartado** — com o IW corrigido a curva já segue a RFC 9438 a 1-2 MSS (sem ganho para A/B).
+- Achados para depois: `sb_max` 512 KB e `SO_SNDBUF` padrão 128 KB limitam a janela em caminhos longos; o tick rápido é ~60 ms (`UNIT_VBLANK`).
+- **Próximo:** HyStart++ (RFC 9406), agora que a LAN tem slow start; depois RACK-TLP.
