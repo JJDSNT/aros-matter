@@ -66,7 +66,16 @@ estados (keepalive, 2MSL, persist, SYN cache, limites de ICMP) fica no tick lent
 ## 4. Decisão: o piso do RTO
 
 **Decidido (usuário, 2026-11-07): 200 ms, com o sysctl `net.inet.tcp.rexmit_min`** (como o
-FreeBSD); o PR explica o desvio do SHOULD da RFC 6298 §2.4.
+FreeBSD); o PR explica o desvio do SHOULD da RFC 6298 §2.4. Condições:
+
+- O piso é só o piso: o RTO continua `SRTT + max(G, 4·RTTVAR)`, então pode ficar bem acima de
+  200 ms. Backoff exponencial e teto de 64 s mantidos.
+- **RTO inicial separado do piso: 1 s** (RFC 6298 §2.1), sem amostra de RTT. Hoje ele é 6 s
+  nominais: `tcp_newtcpcb()` faz `t_rxtcur` = `((TCPTV_SRTTBASE >> 2) + (TCPTV_SRTTDFLT << 2)) >> 1`
+  = 12 ticks (4.4BSD). Medir primeiro (SYN descartado, intervalo até a retransmissão).
+- **A/B obrigatório contra a 5.36**, com RTT alto, jitter, reordenação e ACK atrasado do par;
+  contar retransmissões espúrias (dado que o par já tinha, pela captura) e só concluir sem
+  aumento relevante delas.
 
 - **RFC 6298 §2.4:** o RTO deve ser arredondado para 1 s se for menor (SHOULD), por cautela com
   timers grossos e ACKs atrasados.
@@ -81,8 +90,10 @@ cauda continua custando 1 s até existir o TLP (que usa 2·SRTT, independente do
 ## 5. Commits previstos (um por mudança, cada um com o seu teste)
 
 1. `TCP_INFO` (sem mudar o RTO): o teste mostra o estado atual (`tcpi_rto` 1,5 s em loopback).
-2. Relógio em ms + amostras de RTT + timer em ms + piso: `rto_probe` A/B nos 4 RTTs; `tcpi_rto`
-   no CUnit; `run_tcp`, `loss_probe`, `tsval_probe` (que conta o TSval em ticks) sem regressão.
+2. Relógio em ms + amostras de RTT + timer em ms + piso de 200 ms + RTO inicial de 1 s:
+   `rto_probe` A/B nos 4 RTTs, com jitter e com ACK atrasado, contando retransmissões espúrias;
+   SYN descartado (RTO inicial); `tcpi_rto` no CUnit; `run_tcp`, `loss_probe` (reorder conta as
+   espúrias), `tsval_probe` (que conta o TSval em ticks) sem regressão.
 3. CUBIC em ms: A/B de vazão no `run_tcp`/`loss_probe` e no roteador estreito do grupo 3.
 
 ## 6. Riscos
