@@ -191,7 +191,7 @@ def serve(c, dropper, log):
     c.close()
 
 
-def analyse(pk, delay_ms):
+def analyse(pk, delay_ms, jitter_ms=0):
     conns = {}
     for p in pk:
         if p["dport"] == PORT and p["len"] > 0:
@@ -211,10 +211,18 @@ def analyse(pk, delay_ms):
             if nxt:
                 rtts.append(nxt[0] - q["t"])
         ts = [re.search(r"TS val (\d+)", p["opts"]) for p in tails]
+        # nothing but the tail's first copy is dropped: any other copy of
+        # data already sent is a spurious retransmission
+        seen, spurious = set(), 0
+        for q in reqs:
+            if q["seq"] in seen:
+                spurious += 1
+            seen.add(q["seq"])
         row = {"port": sport, "tail_copies": len(tails),
                "rtt_ms": round(1000 * statistics.median(rtts), 1) if rtts else None,
                "rto_s": round(tails[1]["t"] - tails[0]["t"], 3) if len(tails) >= 2 else None,
-               "tsval_step": (int(ts[1].group(1)) - int(ts[0].group(1))) if len(ts) >= 2 and ts[0] and ts[1] else None}
+               "tsval_step": (int(ts[1].group(1)) - int(ts[0].group(1))) if len(ts) >= 2 and ts[0] and ts[1] else None,
+               "spurious": spurious + max(0, len(tails) - 2)}
         rows.append(row)
     rtos = [r["rto_s"] for r in rows if r["rto_s"] is not None]
     rtt = statistics.median([r["rtt_ms"] for r in rows if r["rtt_ms"] is not None] or [0]) / 1000
@@ -222,11 +230,12 @@ def analyse(pk, delay_ms):
         "delay_ms": delay_ms, "connections": rows,
         "rto_s": {"min": min(rtos), "median": statistics.median(rtos), "max": max(rtos)} if rtos else None,
         "rtt_s": round(rtt, 3),
+        "spurious": sum(r["spurious"] for r in rows),
         "rfc6298_fine_clock_s": round(max(1.0, rtt + 0.004), 3),
         "linux_s": round(rtt + 0.2, 3),
         # the bench's own checks: every tail dropped once, and the RTT seen is
         # the delay set (within 20 ms)
-        "ok": bool(rows) and all(r["tail_copies"] == 2 for r in rows) and abs(rtt * 1000 - delay_ms) < 20,
+        "ok": bool(rows) and all(r["tail_copies"] >= 2 for r in rows) and abs(rtt * 1000 - delay_ms) < max(20, jitter_ms),
     }
 
 
@@ -249,7 +258,11 @@ def run_one(a, delay, host_ll, exe, server, syn=False):
     out = os.path.join(a.out, "d%d" % delay)
     os.makedirs(out, exist_ok=True)
     run_tcp.tc_clear()
-    if delay:
+    if delay and a.jitter:
+        # normal jitter; one segment in flight at a time, so no reordering
+        run_tcp.tc("qdisc", "add", "dev", IFACE, "root", "netem", "delay", "%dms" % delay,
+                   "%dms" % a.jitter, "distribution", "normal")
+    elif delay:
         run_tcp.tc_delay(delay)
     dropper = Dropper()
     watcher = Watcher(dropper)
@@ -289,7 +302,8 @@ def boot(a, delay, host_ll, exe, out, dropper, watcher, log, syn=False):
     text = subprocess.run(["sudo", "-n", "tcpdump", "-tt", "-nn", "-S", "-v", "-r", pcap],
                           capture_output=True, text=True).stdout
     open(os.path.join(out, "rto.txt"), "w").write(text)
-    res = analyse_syn(run_tcp.parse(text)) if syn else analyse(run_tcp.parse(text), delay)
+    res = analyse_syn(run_tcp.parse(text)) if syn else analyse(run_tcp.parse(text), delay, a.jitter)
+    res["jitter_ms"] = a.jitter
     res["boot"] = "ok" if "finished" in r.stdout else "did not finish"
     res["tails_seen_by_watcher"] = watcher.seen
     res["host"] = log
@@ -308,6 +322,7 @@ def main():
     ap.add_argument("--arostcp")
     ap.add_argument("--delays", default="0,50,200,500")
     ap.add_argument("--reps", type=int, default=8)
+    ap.add_argument("--jitter", type=int, default=0, help="netem jitter (ms, normal) on top of each delay")
     ap.add_argument("--syn", action="store_true", help="measure the initial RTO instead: drop each first SYN")
     ap.add_argument("--out", default=os.path.join(ROOT, "tests", "tcp", "out", "rto-" + time.strftime("%Y%m%d-%H%M%S")))
     a = ap.parse_args()
@@ -336,9 +351,9 @@ def main():
     for d in [int(x) for x in a.delays.split(",")]:
         res = run_one(a, d, host_ll, exe, server)
         s = res["rto_s"] or {}
-        print("delay %4d ms  rtt %6.3f s  rto min/med/max %s/%s/%s s  rfc6298 %.3f  linux %.3f  tsval %s  ok=%s boot=%s" % (
-            d, res["rtt_s"], s.get("min"), s.get("median"), s.get("max"), res["rfc6298_fine_clock_s"],
-            res["linux_s"], [c["tsval_step"] for c in res["connections"]], res["ok"], res["boot"]))
+        print("delay %4d ms jitter %3d  rtt %6.3f s  rto min/med/max %s/%s/%s s  rfc6298 %.3f  linux %.3f  spurious %d  tsval %s  ok=%s boot=%s" % (
+            d, a.jitter, res["rtt_s"], s.get("min"), s.get("median"), s.get("max"), res["rfc6298_fine_clock_s"],
+            res["linux_s"], res["spurious"], [c["tsval_step"] for c in res["connections"]], res["ok"], res["boot"]))
         summary.append(res)
     json.dump(summary, open(os.path.join(a.out, "summary.json"), "w"), indent=1)
 

@@ -20,6 +20,9 @@
  *                      of 100 bytes each way (RTT samples), 0.5 s idle,
  *                      then a 77-byte tail the host drops once (the RTO,
  *                      tests/tcp/rto_probe.py); wait for the host's 1 byte
+ *   cwnd PORT SECS     send for SECS seconds, without blocking; every 50 ms
+ *                      print "cwnd <ms> <snd_cwnd> <ssthresh> <rtt us> <mss>" from
+ *                      TCP_INFO (the CUBIC curve, tests/tcp/cwnd_probe.py)
  *   hold PORT N        N connections, one after the other; on each, wait
  *                      up to 10 s for one byte: "hold <i> rc=<n> c=<byte>
  *                      errno=<e>" (rc -2: nothing came)
@@ -243,6 +246,43 @@ int main(int argc, char **argv)
             Delay(25);
         }
         printf("hold done %d\n", i);
+    } else if (!strcmp(mode, "cwnd")) {
+        long secs = argc > 5 ? atol(argv[5]) : 20, t0, t, last = -1000;
+        int on = 1;
+
+        if ((s = tcp_connect(port)) >= 0) {
+            int sb = 400 * 1024;       /* under sb_max (512 KB) with its mbuf overhead */
+            socklen_t sl = sizeof(sb);
+
+            /* a send buffer that never holds the window back */
+            setsockopt(s, SOL_SOCKET, SO_SNDBUF, &sb, sizeof(sb));
+            getsockopt(s, SOL_SOCKET, SO_SNDBUF, &sb, &sl);
+            printf("sndbuf %d\n", sb);
+            IoctlSocket(s, FIONBIO, (char *)&on);
+            t0 = now_ms();
+            while ((t = now_ms() - t0) < secs * 1000) {
+                fd_set wf;
+                struct timeval tv = { 0, 20000 };
+
+                FD_ZERO(&wf);
+                FD_SET(s, &wf);
+                if (WaitSelect(s + 1, NULL, &wf, NULL, &tv, NULL) > 0 &&
+                        send(s, buf, sizeof(buf), 0) < 0 && errno != EWOULDBLOCK)
+                    break;
+                if (t - last >= 50) {
+                    struct tcp_info ti;
+                    socklen_t l = sizeof(ti);
+
+                    if (getsockopt(s, IPPROTO_TCP, TCP_INFO, &ti, &l) == 0)
+                        printf("cwnd %ld %lu %lu %lu %lu\n", t, (unsigned long)ti.tcpi_snd_cwnd,
+                               (unsigned long)ti.tcpi_snd_ssthresh, (unsigned long)ti.tcpi_rtt,
+                               (unsigned long)ti.tcpi_snd_mss);
+                    last = t;
+                }
+            }
+            CloseSocket(s);
+        }
+        printf("cwnd done\n");
     } else if (!strcmp(mode, "rto")) {
         int reps = argc > 5 ? atoi(argv[5]) : 8, n = argc > 6 ? atoi(argv[6]) : 20, r, i;
 
