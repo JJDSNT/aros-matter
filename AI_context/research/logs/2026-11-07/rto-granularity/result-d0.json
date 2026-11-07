@@ -1,0 +1,70 @@
+{
+ "delay_ms": 0,
+ "connections": [
+  {
+   "port": 49438,
+   "tail_copies": 2,
+   "rtt_ms": 0.1,
+   "rto_s": 1.28,
+   "tsval_step": 3
+  },
+  {
+   "port": 49823,
+   "tail_copies": 2,
+   "rtt_ms": 0.1,
+   "rto_s": 1.28,
+   "tsval_step": 3
+  },
+  {
+   "port": 50811,
+   "tail_copies": 2,
+   "rtt_ms": 0.1,
+   "rto_s": 1.28,
+   "tsval_step": 3
+  },
+  {
+   "port": 55116,
+   "tail_copies": 2,
+   "rtt_ms": 0.1,
+   "rto_s": 1.28,
+   "tsval_step": 3
+  },
+  {
+   "port": 57496,
+   "tail_copies": 2,
+   "rtt_ms": 0.1,
+   "rto_s": 1.08,
+   "tsval_step": 3
+  },
+  {
+   "port": 61314,
+   "tail_copies": 2,
+   "rtt_ms": 0.1,
+   "rto_s": 1.28,
+   "tsval_step": 3
+  },
+  {
+   "port": 62036,
+   "tail_copies": 2,
+   "rtt_ms": 0.1,
+   "rto_s": 1.28,
+   "tsval_step": 3
+  },
+  {
+   "port": 62061,
+   "tail_copies": 2,
+   "rtt_ms": 0.1,
+   "rto_s": 1.28,
+   "tsval_step": 3
+  }
+ ],
+ "rto_s": {
+  "min": 1.08,
+  "median": 1.28,
+  "max": 1.28
+ },
+ "rtt_s": 0.0,
+ "rfc6298_fine_clock_s": 1.0,
+ "linux_s": 0.2,
+ "ok": true
+}

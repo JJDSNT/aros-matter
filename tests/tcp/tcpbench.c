@@ -16,6 +16,10 @@
  *   uto PORT MS        TCP_USER_TIMEOUT, then send until the connection fails
  *   zerowin PORT MS    TCP_USER_TIMEOUT, fill a peer that never reads, wait
  *                      for the connection to fail
+ *   rto PORT REPS N    REPS connections, one after the other: N exchanges
+ *                      of 100 bytes each way (RTT samples), 0.5 s idle,
+ *                      then a 77-byte tail the host drops once (the RTO,
+ *                      tests/tcp/rto_probe.py); wait for the host's 1 byte
  *   hold PORT N        N connections, one after the other; on each, wait
  *                      up to 10 s for one byte: "hold <i> rc=<n> c=<byte>
  *                      errno=<e>" (rc -2: nothing came)
@@ -239,6 +243,35 @@ int main(int argc, char **argv)
             Delay(25);
         }
         printf("hold done %d\n", i);
+    } else if (!strcmp(mode, "rto")) {
+        int reps = argc > 5 ? atoi(argv[5]) : 8, n = argc > 6 ? atoi(argv[6]) : 20, r, i;
+
+        for (r = 0; r < reps; r++) {
+            int ok = 0, got = 0;
+            char c;
+
+            if ((s = tcp_connect(port)) < 0)
+                break;
+            for (i = 0; i < n; i++) {
+                int k;
+
+                if (send(s, buf, 100, 0) != 100)
+                    break;
+                for (got = 0; got < 100; got += k)
+                    if ((k = recv(s, buf, 100 - got, 0)) <= 0)
+                        break;
+                if (got < 100)
+                    break;
+            }
+            if (i == n) {
+                Delay(25);
+                if (send(s, buf, 77, 0) == 77 && recv(s, &c, 1, 0) == 1)
+                    ok = 1;
+            }
+            printf("rto %d ok=%d exchanges=%d errno=%d\n", r, ok, i, ok ? 0 : errno);
+            CloseSocket(s);
+            Delay(10);
+        }
     } else if (!strcmp(mode, "stall")) {
         if ((s = tcp_connect(port)) >= 0) {
             Delay(2 * 50);          /* the host starts dropping everything */

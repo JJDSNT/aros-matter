@@ -1,0 +1,282 @@
+[
+ {
+  "delay_ms": 0,
+  "connections": [
+   {
+    "port": 49438,
+    "tail_copies": 2,
+    "rtt_ms": 0.1,
+    "rto_s": 1.28,
+    "tsval_step": 3
+   },
+   {
+    "port": 49823,
+    "tail_copies": 2,
+    "rtt_ms": 0.1,
+    "rto_s": 1.28,
+    "tsval_step": 3
+   },
+   {
+    "port": 50811,
+    "tail_copies": 2,
+    "rtt_ms": 0.1,
+    "rto_s": 1.28,
+    "tsval_step": 3
+   },
+   {
+    "port": 55116,
+    "tail_copies": 2,
+    "rtt_ms": 0.1,
+    "rto_s": 1.28,
+    "tsval_step": 3
+   },
+   {
+    "port": 57496,
+    "tail_copies": 2,
+    "rtt_ms": 0.1,
+    "rto_s": 1.08,
+    "tsval_step": 3
+   },
+   {
+    "port": 61314,
+    "tail_copies": 2,
+    "rtt_ms": 0.1,
+    "rto_s": 1.28,
+    "tsval_step": 3
+   },
+   {
+    "port": 62036,
+    "tail_copies": 2,
+    "rtt_ms": 0.1,
+    "rto_s": 1.28,
+    "tsval_step": 3
+   },
+   {
+    "port": 62061,
+    "tail_copies": 2,
+    "rtt_ms": 0.1,
+    "rto_s": 1.28,
+    "tsval_step": 3
+   }
+  ],
+  "rto_s": {
+   "min": 1.08,
+   "median": 1.28,
+   "max": 1.28
+  },
+  "rtt_s": 0.0,
+  "rfc6298_fine_clock_s": 1.0,
+  "linux_s": 0.2,
+  "ok": true
+ },
+ {
+  "delay_ms": 50,
+  "connections": [
+   {
+    "port": 53102,
+    "tail_copies": 2,
+    "rtt_ms": 50.3,
+    "rto_s": 1.16,
+    "tsval_step": 3
+   },
+   {
+    "port": 56221,
+    "tail_copies": 2,
+    "rtt_ms": 50.5,
+    "rto_s": 1.16,
+    "tsval_step": 3
+   },
+   {
+    "port": 58551,
+    "tail_copies": 2,
+    "rtt_ms": 50.3,
+    "rto_s": 1.16,
+    "tsval_step": 3
+   },
+   {
+    "port": 61227,
+    "tail_copies": 2,
+    "rtt_ms": 50.6,
+    "rto_s": 1.16,
+    "tsval_step": 3
+   },
+   {
+    "port": 61765,
+    "tail_copies": 2,
+    "rtt_ms": 50.4,
+    "rto_s": 1.16,
+    "tsval_step": 3
+   },
+   {
+    "port": 65204,
+    "tail_copies": 2,
+    "rtt_ms": 50.5,
+    "rto_s": 1.16,
+    "tsval_step": 3
+   },
+   {
+    "port": 65404,
+    "tail_copies": 2,
+    "rtt_ms": 50.4,
+    "rto_s": 2.46,
+    "tsval_step": 5
+   },
+   {
+    "port": 65456,
+    "tail_copies": 2,
+    "rtt_ms": 50.4,
+    "rto_s": 1.16,
+    "tsval_step": 3
+   }
+  ],
+  "rto_s": {
+   "min": 1.16,
+   "median": 1.16,
+   "max": 2.46
+  },
+  "rtt_s": 0.05,
+  "rfc6298_fine_clock_s": 1.0,
+  "linux_s": 0.25,
+  "ok": true
+ },
+ {
+  "delay_ms": 200,
+  "connections": [
+   {
+    "port": 51265,
+    "tail_copies": 2,
+    "rtt_ms": 200.4,
+    "rto_s": 1.06,
+    "tsval_step": 3
+   },
+   {
+    "port": 52845,
+    "tail_copies": 2,
+    "rtt_ms": 200.5,
+    "rto_s": 2.36,
+    "tsval_step": 5
+   },
+   {
+    "port": 52963,
+    "tail_copies": 2,
+    "rtt_ms": 200.4,
+    "rto_s": 2.36,
+    "tsval_step": 5
+   },
+   {
+    "port": 55023,
+    "tail_copies": 2,
+    "rtt_ms": 200.4,
+    "rto_s": 2.36,
+    "tsval_step": 5
+   },
+   {
+    "port": 59539,
+    "tail_copies": 2,
+    "rtt_ms": 200.4,
+    "rto_s": 2.36,
+    "tsval_step": 5
+   },
+   {
+    "port": 62478,
+    "tail_copies": 2,
+    "rtt_ms": 200.5,
+    "rto_s": 2.36,
+    "tsval_step": 5
+   },
+   {
+    "port": 63289,
+    "tail_copies": 2,
+    "rtt_ms": 200.5,
+    "rto_s": 2.36,
+    "tsval_step": 5
+   },
+   {
+    "port": 63648,
+    "tail_copies": 2,
+    "rtt_ms": 200.4,
+    "rto_s": 2.36,
+    "tsval_step": 5
+   }
+  ],
+  "rto_s": {
+   "min": 1.06,
+   "median": 2.36,
+   "max": 2.36
+  },
+  "rtt_s": 0.2,
+  "rfc6298_fine_clock_s": 1.0,
+  "linux_s": 0.4,
+  "ok": true
+ },
+ {
+  "delay_ms": 500,
+  "connections": [
+   {
+    "port": 49423,
+    "tail_copies": 2,
+    "rtt_ms": 500.4,
+    "rto_s": 1.76,
+    "tsval_step": 4
+   },
+   {
+    "port": 55370,
+    "tail_copies": 2,
+    "rtt_ms": 500.4,
+    "rto_s": 1.76,
+    "tsval_step": 4
+   },
+   {
+    "port": 56474,
+    "tail_copies": 2,
+    "rtt_ms": 501.1,
+    "rto_s": 1.74,
+    "tsval_step": 4
+   },
+   {
+    "port": 59039,
+    "tail_copies": 2,
+    "rtt_ms": 500.5,
+    "rto_s": 1.78,
+    "tsval_step": 4
+   },
+   {
+    "port": 59259,
+    "tail_copies": 2,
+    "rtt_ms": 500.4,
+    "rto_s": 1.76,
+    "tsval_step": 4
+   },
+   {
+    "port": 60663,
+    "tail_copies": 2,
+    "rtt_ms": 500.4,
+    "rto_s": 1.76,
+    "tsval_step": 4
+   },
+   {
+    "port": 60789,
+    "tail_copies": 2,
+    "rtt_ms": 500.3,
+    "rto_s": 1.76,
+    "tsval_step": 4
+   },
+   {
+    "port": 63873,
+    "tail_copies": 2,
+    "rtt_ms": 500.5,
+    "rto_s": 1.76,
+    "tsval_step": 4
+   }
+  ],
+  "rto_s": {
+   "min": 1.74,
+   "median": 1.76,
+   "max": 1.78
+  },
+  "rtt_s": 0.5,
+  "rfc6298_fine_clock_s": 1.0,
+  "linux_s": 0.7,
+  "ok": true
+ }
+]

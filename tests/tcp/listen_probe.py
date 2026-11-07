@@ -31,6 +31,7 @@ import run_tcp
 IFACE = run_tcp.IFACE
 PORT = 7081
 HOST_IP = "192.168.166.1"
+SOL_PACKET = 263             # <linux/socket.h>; Python lacks socket.SOL_PACKET
 PACKET_QDISC_BYPASS = 20
 
 
@@ -50,7 +51,7 @@ def cksum(b):
 class Wire:
     def __init__(self, aros_ip, aros_mac):
         self.p = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.htons(0x0003))
-        self.p.setsockopt(socket.SOL_PACKET, PACKET_QDISC_BYPASS, 1)
+        self.p.setsockopt(SOL_PACKET, PACKET_QDISC_BYPASS, 1)
         self.p.bind((IFACE, 0))
         self.src = socket.inet_aton(HOST_IP)
         self.dst = socket.inet_aton(aros_ip)

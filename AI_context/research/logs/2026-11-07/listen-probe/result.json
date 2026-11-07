@@ -1,0 +1,50 @@
+{
+ "aros_mac": "d6:71:38:a3:47:ad",
+ "cases": {
+  "stray": {
+   "replies": [
+    {
+     "flags": 4,
+     "seq": 2656987005,
+     "ack": 0,
+     "len": 0
+    }
+   ],
+   "ok": true
+  },
+  "rst": {
+   "replies": [],
+   "ok": true
+  },
+  "badack": {
+   "replies": [
+    {
+     "flags": 4,
+     "seq": 2482529853,
+     "ack": 0,
+     "len": 0
+    }
+   ],
+   "ok": true
+  },
+  "goodack": {
+   "replies": [
+    {
+     "flags": 16,
+     "seq": 1722411426,
+     "ack": 2677350955,
+     "len": 0
+    },
+    {
+     "flags": 16,
+     "seq": 1722411426,
+     "ack": 2677350960,
+     "len": 0
+    }
+   ],
+   "ok": true
+  }
+ },
+ "bench_ok": true,
+ "fails": []
+}
