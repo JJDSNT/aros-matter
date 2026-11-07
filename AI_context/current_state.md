@@ -176,7 +176,7 @@ Para mudanças compartilhadas em AROSTCP, IPv6/multicast, mdnsd/Bonami e DNS-SD,
 
 **#2105 mesclado (2026-11-05, `f4a4deec2d`).** Depois dele entrou o #2116 (cabeçalhos UDP/IPv6 contíguos) e commits do Kal (bases compartilhadas, 5.36 / v0.75).
 
-**Grupo 7a (2026-11-07), branch `review/arostcp-nd6-monotonic` (de `492163d979`, 5.36):** relógio monotônico, o primeiro item do grupo 7 (Kal no #2031). Três commits, 5.37 / v0.76:
+**Grupo 7a (2026-11-07), branch `review/arostcp-nd6-monotonic` (de `492163d979`, 5.36), PR [#2153](https://github.com/aros-development-team/AROS/pull/2153) aberto:** relógio monotônico, o primeiro item do grupo 7 (Kal no #2031). Três commits, 5.37 / v0.76:
 - `423365096d` Neighbour Discovery em `GetUpTime()`: estados de vizinho, roteadores, prefixos, RIO, endereços SLAAC/temporários, DAD/RS, servidores e domínios do RA (`ndb_ra_now()`). Nada disso sai para o usuário como hora do dia; o `in_var.h` já dizia "seconds since boot".
 - `b18e5764fa` `rmx_expire` em uptime; `rt_expire_out()`/`rt_expire_in()` convertem para hora Unix UTC no routing socket (RTM_GET, NET_RT_DUMP, RTV_EXPIRE) e no `GetRouteInfo()`, como o rtsock do FreeBSD. Antes saía o `GetSysTime()` (época 1978, hora local); `ip -d route` mostrava esse número como "segundos restantes", agora mostra o que falta. `cunit-net-pmtu4/6` comparam com `time()`.
 - `8feb79de63` cache do resolver em `GetUpTime()`; `dnstest.h` ganha TTL por registro (dois nomes novos com 600 s e 3 s; os outros seguem TTL 0).
