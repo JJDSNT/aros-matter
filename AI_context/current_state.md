@@ -1,6 +1,6 @@
 # Estado atual — aros-matter
 
-Atualizado: 2026-11-04
+Atualizado: 2026-11-07
 
 ## Foco atual (desde 2026-10-28)
 
@@ -173,3 +173,15 @@ Para mudanças compartilhadas em AROSTCP, IPv6/multicast, mdnsd/Bonami e DNS-SD,
 - **Dependência para o mDNSd:** ler `IP_RECVTTL` com `cmsg_type == IP_RECVTTL` e `*(u_char *)CMSG_DATA(c)` (não `IP_TTL`/int); exigir bsdsocket.library ≥ 5.33. IPv6: `IPV6_RECVHOPLIMIT` → `IPV6_HOPLIMIT`, int (RFC 3542).
 - Candidato (não planejado): dados ancilares em sockets raw IPv4 (`IP_RECVDSTADDR`/`TOS`/`TTL` no `rip_input()`, como o `ip_savecontrol()` do FreeBSD), útil a ping/traceroute; só se pedido.
 - Build: `config.status --recheck` foi preciso após `2ecaeb33fc` (configure mudou no master); taps somem quando o WSL reinicia (`tools/tap-up.sh`).
+
+**#2105 mesclado (2026-11-05, `f4a4deec2d`).** Depois dele entrou o #2116 (cabeçalhos UDP/IPv6 contíguos) e commits do Kal (bases compartilhadas, 5.36 / v0.75).
+
+**Grupo 7a (2026-11-07), branch `review/arostcp-nd6-monotonic` (de `492163d979`, 5.36):** relógio monotônico, o primeiro item do grupo 7 (Kal no #2031). Três commits, 5.37 / v0.76:
+- `423365096d` Neighbour Discovery em `GetUpTime()`: estados de vizinho, roteadores, prefixos, RIO, endereços SLAAC/temporários, DAD/RS, servidores e domínios do RA (`ndb_ra_now()`). Nada disso sai para o usuário como hora do dia; o `in_var.h` já dizia "seconds since boot".
+- `b18e5764fa` `rmx_expire` em uptime; `rt_expire_out()`/`rt_expire_in()` convertem para hora Unix UTC no routing socket (RTM_GET, NET_RT_DUMP, RTV_EXPIRE) e no `GetRouteInfo()`, como o rtsock do FreeBSD. Antes saía o `GetSysTime()` (época 1978, hora local); `ip -d route` mostrava esse número como "segundos restantes", agora mostra o que falta. `cunit-net-pmtu4/6` comparam com `time()`.
+- `8feb79de63` cache do resolver em `GetUpTime()`; `dnstest.h` ganha TTL por registro (dois nomes novos com 600 s e 3 s; os outros seguem TTL 0).
+- Suíte nova `cunit-net-clockstep` (TR_SETSYSTIME ±1 dia, restaura a cada caso; o primeiro caso confere que o passo move só o `GetSysTime()`). 5.36: 5/6 falham; cada commit vira os seus casos. Evidência em `research/logs/2026-11-07/pr-group7a/`.
+- `netstat -r` (lê a memória da pilha, kvm) compara com `CLOCK_MONOTONIC`, como o FreeBSD com `CLOCK_UPTIME`; antes a expiração ficava sempre no passado e a linha saía sem interface e sem Expire. Não mudados: o que é hora do dia (timestamps ICMP, BPF, `if_lastchange`, logs) e o ritmo do ARP (diferença sem sinal).
+- **netstat e libkvm:** `kvm_openfiles()` exige que o `SBTC_RELEASESTRPTR` da pilha seja igual ao `STACK_RELEASE` da libkvm (versão do kernel **e data**). Ao testar uma pilha nova, recompilar `arostcp-linklibs-kvm` e `workbench-network-common-c-netstat` junto; senão `kvm_open: Wrong bsdsocket.library version` (no stderr), rc=1.
+- 50 suítes ok nas duas execuções (5.36: só os casos novos/alterados falham); cada commit compila sozinho sem avisos; cppcheck sem achados novos.
+- **Bancada:** a imagem `~/aros-build-ipv6-hosted-claude` tinha a CRT de 30/10; programas compilados depois do `956444232f` (errno por thread) saíam com rc=20 sem saída (`ip`, `netstat`). Recompilar `compiler-stdc`, `compiler-posixc`, `compiler-stdcio` ao trazer o master.

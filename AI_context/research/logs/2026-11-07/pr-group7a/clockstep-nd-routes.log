@@ -1,0 +1,36 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: CLOCKSTEP_Suite
+  Test: a step moves the system time only ...passed
+  Test: an address outlives a step forward ...passed
+  Test: an address ends on time after a step back ...passed
+  Test: an RIO route outlives a step forward ...passed
+  Test: an RIO route ends on time after a step back ...passed
+  Test: an RDNSS server outlives a step forward ...passed
+  Test: a path MTU outlives a step forward ...passed
+  Test: a route's expiry reads back as given ...passed
+  Test: a cached answer outlives a step forward ...FAILED
+    1. testCLOCKSTEP_DNSCACHE_FORWARD:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-clockstep.c:577  - CU_ASSERT_EQUAL(dns_lookup("cached.rdnss.test"),83)
+  Test: a cached answer ends on time after a step back ...FAILED
+    1. testCLOCKSTEP_DNSCACHE_BACK:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-clockstep.c:594  - CU_ASSERT_EQUAL(dns_lookup("short.rdnss.test"),0)
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       45         2       n/a       n/a
+     Tests        :       10         2         0         0
+
+Elapsed Time: 23.060(s)
+
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       45         2       n/a       n/a
+     Tests        :       10         2         0         0
+
+Elapsed Time: 22.820(s)
+

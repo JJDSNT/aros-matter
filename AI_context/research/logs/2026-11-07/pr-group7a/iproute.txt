@@ -1,0 +1,5 @@
+::1 via ::1 proto kernel scope host flags [UHL]
+2001:db8:4d54:54::1 via fe80::2c72:6bff:fe11:79a9 proto redirect scope host mtu 1400 expires 521s flags [UGHD]
+fe80::/64 dev eth0 proto kernel scope link flags [UC]
+fe80::4d54:2 dev eth0 proto kernel scope host flags [UHL]
+fe80::2c72:6bff:fe11:79a9 dev eth0 proto kernel scope host flags [UHL]

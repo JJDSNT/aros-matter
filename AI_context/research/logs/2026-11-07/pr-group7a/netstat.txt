@@ -1,0 +1,14 @@
+Routing tables
+
+Internet:
+Destination      Gateway            Flags     Refs     Use     Netif Expire
+127.0.0.1        127.0.0.1          UH          1       46       lo0
+192.168.166      192.168.166.2      U           1        2      eth0
+
+Internet6:
+Destination      Gateway            Flags     Refs     Use     Netif Expire
+::1              ::1                UHL         1        0       lo0
+2001:db8:4d54:54::1 fe80::2c72:6bff:fe11:79a9 UGHD        1        0      eth0    521
+fe80::           link#2             UC          1        0      eth0
+fe80::4d54:2     2e:72:6b:11:79:a9  UHL         0        0      eth0
+fe80::2c72:6bff:fe11:79a9 2e:72:6b:11:79:a9  UHL         0        0      eth0
