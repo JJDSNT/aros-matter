@@ -276,10 +276,14 @@ int main(int argc, char **argv)
                     struct tcp_info ti;
                     socklen_t l = sizeof(ti);
 
-                    if (getsockopt(s, IPPROTO_TCP, TCP_INFO, &ti, &l) == 0)
+                    if (getsockopt(s, IPPROTO_TCP, TCP_INFO, &ti, &l) == 0) {
                         printf("cwnd %ld %lu %lu %lu %lu\n", t, (unsigned long)ti.tcpi_snd_cwnd,
                                (unsigned long)ti.tcpi_snd_ssthresh, (unsigned long)ti.tcpi_rtt,
                                (unsigned long)ti.tcpi_snd_mss);
+                        printf("state wnd=%lu flight=%lu unsent=%ld rto=%lu\n", (unsigned long)ti.tcpi_snd_wnd,
+                               (unsigned long)(ti.tcpi_snd_max - ti.tcpi_snd_una),
+                               (long)(ti.tcpi_snd_max - ti.tcpi_snd_nxt), (unsigned long)ti.tcpi_rto);
+                    }
                     last = t;
                 }
             }

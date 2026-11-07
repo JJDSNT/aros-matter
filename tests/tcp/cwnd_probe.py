@@ -33,19 +33,24 @@ C, BETA = 0.4, 0.7
 
 
 def sink(lsock, log):
-    while True:
-        c, _ = lsock.accept()
-        n = 0
+    """Read every connection to the end, each in its own thread: one from
+    an earlier boot never gets its FIN (the machine is stopped), and a
+    single reader stuck on it would shut the window of the next one."""
+    def drain(c):
         try:
+            c.settimeout(5)
             while True:
                 d = c.recv(65536)
                 if not d:
                     break
-                n += len(d)
-        except OSError as e:
-            log.append({"error": str(e)})
-        log.append({"bytes": n})
+                log.append(len(d))
+        except OSError:
+            pass
         c.close()
+
+    while True:
+        c, _ = lsock.accept()
+        threading.Thread(target=drain, args=(c,), daemon=True).start()
 
 
 def epochs(samples, mss):
@@ -149,7 +154,7 @@ def main():
         pass
     ep = analyse(samples, mss)
     res = {"mss": mss, "delay_ms": a.delay, "every": a.every, "samples": len(samples), "epochs": ep,
-           "bytes": sum(x.get("bytes", 0) for x in log), "boot": "ok" if "finished" in r.stdout else "did not finish",
+           "bytes": sum(log), "boot": "ok" if "finished" in r.stdout else "did not finish",
            # the bench's own check: losses happened, so there are epochs to look at
            "ok": len(ep) >= 2}
     json.dump(res, open(os.path.join(a.out, "result.json"), "w"), indent=1)

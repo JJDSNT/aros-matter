@@ -196,3 +196,11 @@ Para mudanças compartilhadas em AROSTCP, IPv6/multicast, mdnsd/Bonami e DNS-SD,
 - **CUBIC em ms: descartado** — com o IW corrigido a curva já segue a RFC 9438 a 1-2 MSS (sem ganho para A/B).
 - Achados para depois: `sb_max` 512 KB e `SO_SNDBUF` padrão 128 KB limitam a janela em caminhos longos; o tick rápido é ~60 ms (`UNIT_VBLANK`).
 - **Próximo:** HyStart++ (RFC 9406), agora que a LAN tem slow start; depois RACK-TLP.
+
+**Grupo 7c (2026-11-07), branch `review/arostcp-ss-hystart` (sobre o #2155), PR só depois do merge do #2155 (decisão: escopo separado, um PR AROSTCP por vez):**
+- `cb21745794` ABC (`tcp_ss.c`, sysctl `abc_l`, padrão 1 = RFC 5681; L=2 dava 30-50% mais descartes no `ss_probe`).
+- `75d2a1d719` HyStart++ (RFC 9406, sysctl `hystart` = 1). A/B isolando a detecção (L=8 sem detecção): descartes 100 KB 82/78 vs 190/169, 256 KB 62/64 vs 167/166; sem gargalo não sai cedo; fila de 1 MB sai pelo CSS sem perda.
+- **Sem commit (working tree):** correção do CUBIC (`origin_point = cwnd` quando cwnd ≥ W_max, RFC 9438 §4.10): CA nos 5 s após a saída do HyStart++ cresce 7-16 → 40 MSS. E o caso CUnit `cunit-net-tcpinfo` "a route's ssthresh reaches a new connection" (passa 12/12: as métricas de rota chegam ao TCP no loopback v4/v6).
+- Teste isolado do CUBIC (sem HyStart++) via `ssthresh` de rota na tap falhou: `tests/tcp/rtssthresh.c` muda `fe80::/64` (rc=0) mas a conexão não herda — hipótese: rota do vizinho clonada antes. Próximo: mudar a rota do próprio vizinho (ou criá-la antes) e confirmar.
+- Fila de prioridades (com sugestões do ChatGPT via usuário): P0 fechar 7c; P1 métricas de rota (rota clonada/zona; comando `route` sem `-prefixlen`/zona) e stretch ACK na tap (loopback mostrou 12 segmentos em 2 ACKs, não conclusivo); P2 timers em `UNIT_VBLANK` (~60 ms; medir cadência antes/depois); P3 buffers (`SO_SNDBUF` 128 KB, `sb_max` 512 KB; medir RTT × buffer antes de autotuning, com limite global); P4 RACK-TLP; P5 pacing. Ferramentas (`netstat`/libkvm exige release idêntica; `route` IPv6) em frente paralela.
+- Benches novos: `tests/tcp/ss_probe.py` (gargalo tbf via ifb; modos por sysctl; RTT/vazão da captura), `rtssthresh.c`; `sink` com thread por conexão (a de um boot anterior nunca fecha e travava a seguinte).
