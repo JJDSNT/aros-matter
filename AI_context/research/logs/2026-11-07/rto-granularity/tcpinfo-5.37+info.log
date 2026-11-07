@@ -1,0 +1,37 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: TCPINFO_Suite
+  Test: an established connection (IPv4) ...
+    rto 1500000 us, rtt 500000 us, rttvar 250000 us, mss 1448, options 0x7
+passed
+  Test: an established connection (IPv6) ...
+    rto 1500000 us, rtt 500000 us, rttvar 250000 us, mss 1464, options 0x7
+passed
+  Test: data moves the sequence numbers ...passed
+  Test: a short buffer gets the start ...passed
+  Test: a listening socket reports LISTEN ...passed
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       39         0       n/a       n/a
+     Tests        :        5         0         0         0
+
+Elapsed Time: 0.520(s)
+
+
+    rto 1500000 us, rtt 500000 us, rttvar 250000 us, mss 1448, options 0x7
+
+    rto 1500000 us, rtt 500000 us, rttvar 250000 us, mss 1464, options 0x7
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :       39         0       n/a       n/a
+     Tests        :        5         0         0         0
+
+Elapsed Time: 0.500(s)
+

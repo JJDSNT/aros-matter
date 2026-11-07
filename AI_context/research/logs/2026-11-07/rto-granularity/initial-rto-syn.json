@@ -1,0 +1,38 @@
+{
+ "connections": [
+  {
+   "port": 50543,
+   "syn_copies": 2,
+   "rto_s": 5.799
+  },
+  {
+   "port": 60638,
+   "syn_copies": 2,
+   "rto_s": 5.838
+  },
+  {
+   "port": 62372,
+   "syn_copies": 2,
+   "rto_s": 5.8
+  },
+  {
+   "port": 63297,
+   "syn_copies": 2,
+   "rto_s": 5.8
+  }
+ ],
+ "initial_rto_s": {
+  "min": 5.799,
+  "median": 5.8,
+  "max": 5.838
+ },
+ "rfc6298_s": 1.0,
+ "ok": true,
+ "boot": "ok",
+ "tails_seen_by_watcher": 8,
+ "host": [],
+ "aros": [
+  "connect done 4",
+  ""
+ ]
+}

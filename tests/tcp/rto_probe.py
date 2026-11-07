@@ -30,6 +30,7 @@ import run_tcp
 
 IFACE = run_tcp.IFACE
 PORT = 7101
+SYN_PORT = 7102                # --syn: the first SYN of each connection dropped
 EXCHANGES = 20
 TAIL = 77
 TS_HDR = 32                    # TCP header with timestamps
@@ -55,7 +56,7 @@ class Dropper:
     """The u32 filter that drops the tail; armed per connection."""
     def __init__(self):
         self.lock = threading.Lock()
-        self.armed = False
+        self.armed = self.syn_armed = False
         tc("qdisc", "add", "dev", IFACE, "ingress")
 
     def arm(self):
@@ -71,6 +72,19 @@ class Dropper:
             if self.armed:
                 tc("filter", "del", "dev", IFACE, "parent", "ffff:", "prio", "1")
                 self.armed = False
+            if self.syn_armed:
+                tc("filter", "del", "dev", IFACE, "parent", "ffff:", "prio", "2")
+                self.syn_armed = False
+
+    def arm_syn(self):
+        """A SYN (no ACK) to SYN_PORT: TCP flags at 40 + 13."""
+        with self.lock:
+            if not self.syn_armed:
+                r = tc("filter", "add", "dev", IFACE, "parent", "ffff:", "protocol", "ipv6", "prio", "2",
+                       "u32", "match", "u8", "6", "0xff", "at", "6",
+                       "match", "u16", str(SYN_PORT), "0xffff", "at", "42",
+                       "match", "u8", "0x02", "0x12", "at", "53", "action", "drop")
+                self.syn_armed = r.returncode == 0
 
 
 def watch():
@@ -93,6 +107,10 @@ def watch():
             subprocess.run(["tc", "filter", "del", "dev", IFACE, "parent", "ffff:", "prio", "1"],
                            capture_output=True)
             print("tail", flush=True)
+        elif struct.unpack("!H", ip[42:44])[0] == SYN_PORT and ip[40 + 13] & 0x12 == 0x02:
+            subprocess.run(["tc", "filter", "del", "dev", IFACE, "parent", "ffff:", "prio", "2"],
+                           capture_output=True)
+            print("syn", flush=True)
 
 
 class Watcher(threading.Thread):
@@ -111,6 +129,10 @@ class Watcher(threading.Thread):
                 self.seen += 1
                 with self.d.lock:
                     self.d.armed = False
+            elif line.strip() == "syn":
+                self.seen += 1
+                with self.d.lock:
+                    self.d.syn_armed = False
 
     def stop(self):
         kill_children(self.proc, "TERM")
@@ -126,6 +148,19 @@ class Server:
         self.lsock.bind(("::", PORT))
         self.lsock.listen(4)
         threading.Thread(target=self.run, daemon=True).start()
+        self.ssock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+        self.ssock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.ssock.bind(("::", SYN_PORT))
+        self.ssock.listen(4)
+        threading.Thread(target=self.run_syn, daemon=True).start()
+
+    def run_syn(self):
+        """Accept, close, and drop the next connection's first SYN."""
+        while True:
+            c, _ = self.ssock.accept()
+            c.close()
+            if self.dropper is not None:
+                self.dropper.arm_syn()
 
     def run(self):
         while True:
@@ -195,7 +230,22 @@ def analyse(pk, delay_ms):
     }
 
 
-def run_one(a, delay, host_ll, exe, server):
+def analyse_syn(pk):
+    """Per connection to SYN_PORT: the times between copies of its SYN."""
+    syns = {}
+    for p in pk:
+        if p["dport"] == SYN_PORT and "S" in p["flags"] and "." not in p["flags"]:
+            syns.setdefault(p["sport"], []).append(p["t"])
+    rows = [{"port": sp, "syn_copies": len(t), "rto_s": round(t[1] - t[0], 3) if len(t) >= 2 else None}
+            for sp, t in sorted(syns.items())]
+    rtos = [r["rto_s"] for r in rows if r["rto_s"] is not None]
+    return {"connections": rows,
+            "initial_rto_s": {"min": min(rtos), "median": statistics.median(rtos), "max": max(rtos)} if rtos else None,
+            "rfc6298_s": 1.0,
+            "ok": bool(rows) and all(r["syn_copies"] == 2 for r in rows)}
+
+
+def run_one(a, delay, host_ll, exe, server, syn=False):
     out = os.path.join(a.out, "d%d" % delay)
     os.makedirs(out, exist_ok=True)
     run_tcp.tc_clear()
@@ -206,8 +256,10 @@ def run_one(a, delay, host_ll, exe, server):
     watcher.start()
     log = []
     server.dropper, server.log = dropper, log
+    if syn:
+        dropper.arm_syn()
     try:
-        return boot(a, delay, host_ll, exe, out, dropper, watcher, log)
+        return boot(a, delay, host_ll, exe, out, dropper, watcher, log, syn)
     finally:
         server.dropper = None
         watcher.stop()
@@ -215,15 +267,18 @@ def run_one(a, delay, host_ll, exe, server):
         run_tcp.tc_clear()
 
 
-def boot(a, delay, host_ll, exe, out, dropper, watcher, log):
+def boot(a, delay, host_ll, exe, out, dropper, watcher, log, syn=False):
     pcap = os.path.join(out, "rto.pcap")
     dump = subprocess.Popen(["sudo", "-n", "tcpdump", "-i", IFACE, "-n", "-s", "128", "-w", pcap,
-                             "ip6 and tcp port %d" % PORT], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                             "ip6 and (tcp port %d or tcp port %d)" % (PORT, SYN_PORT)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     time.sleep(1)
     script = os.path.join(out, "rto.script")
     with open(script, "w") as f:
         f.write("Execute SYS:System/Network/AROSTCP/S/startnet\nWait 4\n")
-        f.write("C:tcpbench eth0 %s rto %d %d %d >SYS:out/rto.log\n" % (host_ll, PORT, a.reps, EXCHANGES))
+        if syn:
+            f.write("C:tcpbench eth0 %s connect %d %d >SYS:out/rto.log\n" % (host_ll, SYN_PORT, a.reps))
+        else:
+            f.write("C:tcpbench eth0 %s rto %d %d %d >SYS:out/rto.log\n" % (host_ll, PORT, a.reps, EXCHANGES))
     env = dict(os.environ, AROS_HOSTED_IMAGE=a.image, AROS_TAP_IP=run_tcp.AROS_IP, AROS_RUN_TIMEOUT="600")
     if a.arostcp:
         env["AROS_AROSTCP"] = os.path.abspath(a.arostcp)
@@ -234,7 +289,7 @@ def boot(a, delay, host_ll, exe, out, dropper, watcher, log):
     text = subprocess.run(["sudo", "-n", "tcpdump", "-tt", "-nn", "-S", "-v", "-r", pcap],
                           capture_output=True, text=True).stdout
     open(os.path.join(out, "rto.txt"), "w").write(text)
-    res = analyse(run_tcp.parse(text), delay)
+    res = analyse_syn(run_tcp.parse(text)) if syn else analyse(run_tcp.parse(text), delay)
     res["boot"] = "ok" if "finished" in r.stdout else "did not finish"
     res["tails_seen_by_watcher"] = watcher.seen
     res["host"] = log
@@ -253,6 +308,7 @@ def main():
     ap.add_argument("--arostcp")
     ap.add_argument("--delays", default="0,50,200,500")
     ap.add_argument("--reps", type=int, default=8)
+    ap.add_argument("--syn", action="store_true", help="measure the initial RTO instead: drop each first SYN")
     ap.add_argument("--out", default=os.path.join(ROOT, "tests", "tcp", "out", "rto-" + time.strftime("%Y%m%d-%H%M%S")))
     a = ap.parse_args()
     if a.watch:
@@ -272,6 +328,11 @@ def main():
         sys.exit("no IPv6 link-local address on %s" % IFACE)
     summary = []
     server = Server()
+    if a.syn:
+        res = run_one(a, 0, host_ll, exe, server, syn=True)
+        print("initial RTO (SYN) min/med/max %s s  rfc6298 1.0  ok=%s boot=%s" % (res["initial_rto_s"], res["ok"], res["boot"]))
+        json.dump(res, open(os.path.join(a.out, "summary.json"), "w"), indent=1)
+        return
     for d in [int(x) for x in a.delays.split(",")]:
         res = run_one(a, d, host_ll, exe, server)
         s = res["rto_s"] or {}
