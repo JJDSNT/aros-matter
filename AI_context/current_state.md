@@ -188,7 +188,7 @@ Para mudanças compartilhadas em AROSTCP, IPv6/multicast, mdnsd/Bonami e DNS-SD,
 
 **#2153 mesclado (2026-11-07, `65873a4272`, 5.37).**
 
-**Grupo 7b (2026-11-07), branch `review/arostcp-rtt-ms` (de `65873a4272`), 5.38 / v0.77:** item 1 do grupo 7, [nota de desenho](research/2026-11-07-tcp-rtt-rto-design.md). Três commits:
+**Grupo 7b (2026-11-07), branch `review/arostcp-rtt-ms` (de `65873a4272`), 5.38 / v0.77, PR [#2155](https://github.com/aros-development-team/AROS/pull/2155) aberto:** item 1 do grupo 7, [nota de desenho](research/2026-11-07-tcp-rtt-rto-design.md). Três commits:
 - `TCP_INFO` (o header declarava, o `tcp_ctloutput()` recusava): estrutura do FreeBSD, num cluster. Teste novo `cunit-net-tcpinfo`.
 - RTT e RTO em ms: `tcp_ms()` (`GetUpTime()`) é o relógio do TSval e das amostras; SRTT/RTTVAR do FreeBSD (escala 32/16); RTO = SRTT + max(G, 4·RTTVAR); piso `net.inet.tcp.rexmit_min` 200 ms (**decisão do usuário**: desvio do SHOULD de 1 s da RFC 6298 §2.4); RTO inicial `rttdflt` 1 s (era 6 s), 3 s após SYN retransmitido (§5.7); SYN-ACK 1/2/4/8 s; REXMT como prazo (`t_rexmt_at`) checado no tick rápido (~60 ms, `UNIT_VBLANK`: uma contagem ficava 20% atrasada).
 - IW10 para todo destino: o `if(!local)` do 4.4BSD deixava destinos da LAN sem slow start (cwnd 1 GB).
