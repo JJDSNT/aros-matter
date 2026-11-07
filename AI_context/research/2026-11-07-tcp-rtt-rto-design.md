@@ -65,6 +65,9 @@ estados (keepalive, 2MSL, persist, SYN cache, limites de ICMP) fica no tick lent
 
 ## 4. Decisão: o piso do RTO
 
+**Decidido (usuário, 2026-11-07): 200 ms, com o sysctl `net.inet.tcp.rexmit_min`** (como o
+FreeBSD); o PR explica o desvio do SHOULD da RFC 6298 §2.4.
+
 - **RFC 6298 §2.4:** o RTO deve ser arredondado para 1 s se for menor (SHOULD), por cautela com
   timers grossos e ACKs atrasados.
 - **FreeBSD e Linux:** ~200-230 ms em LAN, há muitos anos.
