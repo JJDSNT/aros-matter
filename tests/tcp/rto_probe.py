@@ -87,13 +87,14 @@ class Dropper:
                 self.syn_armed = r.returncode == 0
 
 
-def watch():
+def watch(syn_drops=1):
     """Run as root (--watch): print "tail" and take the filter away each
     time AROS's tail goes by, before the ingress filter sees it. Only an
     ETH_P_ALL socket gets a packet before ingress, as tcpdump does; one for
     ETH_P_IPV6 alone gets it after, so never a dropped one."""
     p = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.htons(0x0003))
     p.bind((IFACE, 0))
+    syns = {}                           # SYN copies seen per source port
     while True:
         f, addr = p.recvfrom(2048)
         if addr[2] == socket.PACKET_OUTGOING or len(f) < 14 + 40 + 20 or f[12:14] != b"\x86\xdd":
@@ -108,18 +109,23 @@ def watch():
                            capture_output=True)
             print("tail", flush=True)
         elif struct.unpack("!H", ip[42:44])[0] == SYN_PORT and ip[40 + 13] & 0x12 == 0x02:
-            subprocess.run(["tc", "filter", "del", "dev", IFACE, "parent", "ffff:", "prio", "2"],
-                           capture_output=True)
-            print("syn", flush=True)
+            # the first syn_drops copies of each connection's SYN are dropped
+            sport = struct.unpack("!H", ip[40:42])[0]
+            syns[sport] = syns.get(sport, 0) + 1
+            if syns[sport] == syn_drops:
+                subprocess.run(["tc", "filter", "del", "dev", IFACE, "parent", "ffff:", "prio", "2"],
+                               capture_output=True)
+                print("syn", flush=True)
 
 
 class Watcher(threading.Thread):
     """The root helper; marks the filter gone each time it takes it away."""
-    def __init__(self, dropper):
+    def __init__(self, dropper, syn_drops=1):
         super().__init__(daemon=True)
         self.d = dropper
         self.seen = 0
-        self.proc = subprocess.Popen(["sudo", "-n", sys.executable, "-I", os.path.abspath(__file__), "--watch"],
+        self.proc = subprocess.Popen(["sudo", "-n", sys.executable, "-I", os.path.abspath(__file__), "--watch",
+                                      "--syn-drops", str(syn_drops)],
                                      stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True)
         time.sleep(0.5)
 
@@ -239,19 +245,22 @@ def analyse(pk, delay_ms, jitter_ms=0):
     }
 
 
-def analyse_syn(pk):
-    """Per connection to SYN_PORT: the times between copies of its SYN."""
+def analyse_syn(pk, drops=1):
+    """Per connection to SYN_PORT: the times between copies of its SYN; with
+    drops copies dropped, drops intervals, which should double (RFC 6298
+    section 5.5: 1, 2, 4 s...)."""
     syns = {}
     for p in pk:
         if p["dport"] == SYN_PORT and "S" in p["flags"] and "." not in p["flags"]:
             syns.setdefault(p["sport"], []).append(p["t"])
-    rows = [{"port": sp, "syn_copies": len(t), "rto_s": round(t[1] - t[0], 3) if len(t) >= 2 else None}
+    rows = [{"port": sp, "syn_copies": len(t), "rto_s": round(t[1] - t[0], 3) if len(t) >= 2 else None,
+             "intervals_s": [round(t[i] - t[i - 1], 3) for i in range(1, len(t))]}
             for sp, t in sorted(syns.items())]
     rtos = [r["rto_s"] for r in rows if r["rto_s"] is not None]
     return {"connections": rows,
             "initial_rto_s": {"min": min(rtos), "median": statistics.median(rtos), "max": max(rtos)} if rtos else None,
             "rfc6298_s": 1.0,
-            "ok": bool(rows) and all(r["syn_copies"] == 2 for r in rows)}
+            "ok": bool(rows) and all(r["syn_copies"] == drops + 1 for r in rows)}
 
 
 def run_one(a, delay, host_ll, exe, server, syn=False):
@@ -265,7 +274,7 @@ def run_one(a, delay, host_ll, exe, server, syn=False):
     elif delay:
         run_tcp.tc_delay(delay)
     dropper = Dropper()
-    watcher = Watcher(dropper)
+    watcher = Watcher(dropper, a.syn_drops)
     watcher.start()
     log = []
     server.dropper, server.log = dropper, log
@@ -302,7 +311,7 @@ def boot(a, delay, host_ll, exe, out, dropper, watcher, log, syn=False):
     text = subprocess.run(["sudo", "-n", "tcpdump", "-tt", "-nn", "-S", "-v", "-r", pcap],
                           capture_output=True, text=True).stdout
     open(os.path.join(out, "rto.txt"), "w").write(text)
-    res = analyse_syn(run_tcp.parse(text)) if syn else analyse(run_tcp.parse(text), delay, a.jitter)
+    res = analyse_syn(run_tcp.parse(text), a.syn_drops) if syn else analyse(run_tcp.parse(text), delay, a.jitter)
     res["jitter_ms"] = a.jitter
     res["boot"] = "ok" if "finished" in r.stdout else "did not finish"
     res["tails_seen_by_watcher"] = watcher.seen
@@ -324,10 +333,11 @@ def main():
     ap.add_argument("--reps", type=int, default=8)
     ap.add_argument("--jitter", type=int, default=0, help="netem jitter (ms, normal) on top of each delay")
     ap.add_argument("--syn", action="store_true", help="measure the initial RTO instead: drop each first SYN")
+    ap.add_argument("--syn-drops", type=int, default=1, help="with --syn: SYN copies dropped per connection")
     ap.add_argument("--out", default=os.path.join(ROOT, "tests", "tcp", "out", "rto-" + time.strftime("%Y%m%d-%H%M%S")))
     a = ap.parse_args()
     if a.watch:
-        return watch()
+        return watch(a.syn_drops)
     os.makedirs(a.out, exist_ok=True)
     exe = os.path.join(a.out, "tcpbench")
     subprocess.run([run_tcp.CROSS, "-std=gnu99", "-O2", "-Wall", "-Wno-pointer-sign", "-o", exe,
@@ -346,6 +356,8 @@ def main():
     if a.syn:
         res = run_one(a, 0, host_ll, exe, server, syn=True)
         print("initial RTO (SYN) min/med/max %s s  rfc6298 1.0  ok=%s boot=%s" % (res["initial_rto_s"], res["ok"], res["boot"]))
+        for c in res["connections"]:
+            print("  SYN intervals %s s" % c["intervals_s"])
         json.dump(res, open(os.path.join(a.out, "summary.json"), "w"), indent=1)
         return
     for d in [int(x) for x in a.delays.split(",")]:

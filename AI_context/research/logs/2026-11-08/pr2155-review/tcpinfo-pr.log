@@ -1,0 +1,58 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: TCPINFO_Suite
+  Test: an established connection (IPv4) ...
+    rto 200000 us, rtt 1000 us, rttvar 375 us, mss 1448, options 0x7
+passed
+  Test: an established connection (IPv6) ...
+    rto 200000 us, rtt 1000 us, rttvar 375 us, mss 1464, options 0x7
+passed
+  Test: the initial window, to a local destination (IPv4) ...
+    snd_cwnd 14480, mss 1448, initial window 14480
+passed
+  Test: the initial window, to a local destination (IPv6) ...
+    snd_cwnd 14600, mss 1464, initial window 14600
+passed
+  Test: data moves the sequence numbers ...passed
+  Test: over the loopback the RTO is the floor ...
+    after 20 exchanges: rto 200000 us, rtt 1000 us, rttvar 187 us
+passed
+  Test: an unanswered SYN backs off from 1 s ...
+    SYN unanswered: RTO 400000 us after one timeout, 1600000 us after two
+FAILED
+    1. testTCPINFO_SYN_BACKOFF:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-tcpinfo.c:187  - CU_ASSERT_EQUAL(rto2,4000000)
+  Test: a short buffer gets the start ...passed
+  Test: a listening socket reports LISTEN ...passed
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :      133         2       n/a       n/a
+     Tests        :        9         1         0         0
+
+Elapsed Time: 4.540(s)
+
+
+    rto 200000 us, rtt 1000 us, rttvar 375 us, mss 1448, options 0x7
+
+    rto 200000 us, rtt 1000 us, rttvar 375 us, mss 1464, options 0x7
+
+    snd_cwnd 14480, mss 1448, initial window 14480
+
+    snd_cwnd 14600, mss 1464, initial window 14600
+
+    after 20 exchanges: rto 200000 us, rtt 1000 us, rttvar 187 us
+
+    SYN unanswered: RTO 400000 us after one timeout, 1600000 us after two
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :      133         2       n/a       n/a
+     Tests        :        9         1         0         0
+
+Elapsed Time: 4.520(s)
+
