@@ -267,6 +267,7 @@ def main():
     ap.add_argument("--prr", choices=("0", "1"), help="set net.inet.tcp.prr on AROS first (tcpctl)")
     ap.add_argument("--out", default=os.path.join(HERE, "out", "loss-" + time.strftime("%Y%m%d-%H%M%S")))
     a = ap.parse_args()
+    run_tcp.clock()                     # sampled from now; the capture's times made monotonic
     if a.watch:
         return watch(int(a.watch[0]), a.watch[1])
     only = a.only.split(",")
@@ -328,6 +329,7 @@ def run(a, only):
             sh("kill", str(w.pid), quiet=True)
     clear()
     text = sh("tcpdump", "-tt", "-nn", "-S", "-v", "-r", pcap).stdout
+    text = run_tcp.clock().monotonic(text)    # wall clock -> monotonic (WSL2 steps)
     open(os.path.join(a.out, "loss.txt"), "w").write(text)
     pk = run_tcp.parse(text)
     res = {"boot": "ok" if "finished" in r.stdout else "did not finish",

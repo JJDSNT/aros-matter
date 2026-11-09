@@ -34,6 +34,7 @@ def main():
     ap.add_argument("--gap", type=int, default=0)
     ap.add_argument("--out", default=os.path.join(ROOT, "tests", "tcp", "out", "ack-" + time.strftime("%Y%m%d-%H%M%S")))
     a = ap.parse_args()
+    run_tcp.clock()                     # sampled from now; the capture's times made monotonic
     os.makedirs(a.out, exist_ok=True)
     exe = os.path.join(a.out, "tcpserve")
     subprocess.run([run_tcp.CROSS, "-std=gnu99", "-O2", "-Wall", "-Wno-pointer-sign", "-o", exe,
@@ -85,6 +86,7 @@ def main():
         subprocess.run(["sudo", "-n", "kill", "-INT", pid])
     dump.wait(timeout=10)
     text = subprocess.run(["sudo", "-n", "tcpdump", "-tt", "-nn", "-S", "-r", pcap], capture_output=True, text=True).stdout
+    text = run_tcp.clock().monotonic(text)    # wall clock -> monotonic (WSL2 steps)
     sizes = collections.Counter()
     data = []                                   # (t, end) of each new data segment from the host
     acks = []                                   # (t, ack) from AROS

@@ -64,6 +64,7 @@ def main():
     ap.add_argument("--arostcp")
     ap.add_argument("--out", default=os.path.join(HERE, "out", "tsval-" + time.strftime("%Y%m%d-%H%M%S")))
     a = ap.parse_args()
+    run_tcp.clock()                     # sampled from now; the capture's times made monotonic
     os.makedirs(a.out, exist_ok=True)
     exes = []
     for prog in ("tcpbench", "tcpserve"):
@@ -102,6 +103,7 @@ def main():
     run_tcp.tc_clear()
     text = subprocess.run(["sudo", "-n", "tcpdump", "-tt", "-nn", "-S", "-v", "-r", pcap],
                           capture_output=True, text=True).stdout
+    text = run_tcp.clock().monotonic(text)    # wall clock -> monotonic (WSL2 steps)
     open(os.path.join(a.out, "tsval.txt"), "w").write(text)
 
     res = {"boot": "ok" if "finished" in r.stdout else "did not finish", "passive_bytes": log.get("passive_bytes")}

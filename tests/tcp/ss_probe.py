@@ -166,6 +166,7 @@ def run(a, mode, host_ll, exes, log, rep=0):
     m = re.search(r"dropped (\d+)", stats)
     drops = int(m.group(1)) if m else None
     text = subprocess.run(["sudo", "-n", "tcpdump", "-tt", "-nn", "-S", "-r", pcap], capture_output=True, text=True).stdout
+    text = run_tcp.clock().monotonic(text)    # wall clock -> monotonic (WSL2 steps)
     cap = analyse_capture(text)
     retx = cap["retx"]
     samples, mss = [], 1428
@@ -237,6 +238,7 @@ def main():
                     help="name:leaf=value;leaf=value,... (net.inet.tcp leaves, set before sending)")
     ap.add_argument("--out", default=os.path.join(ROOT, "tests", "tcp", "out", "ss-" + time.strftime("%Y%m%d-%H%M%S")))
     a = ap.parse_args()
+    run_tcp.clock()                     # sampled from now; the capture's times made monotonic
     os.makedirs(a.out, exist_ok=True)
     exes = []
     for src in ("tcpbench", "tcpctl", "rtssthresh"):

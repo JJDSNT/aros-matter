@@ -130,6 +130,51 @@ LINE = re.compile(r"^(\d+\.\d+) IP6 .*?\) ([0-9a-f:]+)\.(\d+) > ([0-9a-f:]+)\.(\
                   r"(?:, options \[([^\]]*)\])?, length (\d+)")
 
 
+class ClockMap(threading.Thread):
+    """tcpdump stamps packets with the wall clock (CLOCK_REALTIME). On WSL2
+    that clock is resynchronised with Windows in steps of about +1.2 s every
+    ~32 s, so an interval in a capture that crosses one is that much too
+    long. This samples the wall clock against the monotonic one every 20 ms
+    while a bench runs; monotonic() turns a capture's text into monotonic
+    seconds, so intervals are right."""
+    def __init__(self):
+        super().__init__(daemon=True)
+        self.samples = []               # (wall, wall - monotonic)
+        self.start()
+
+    def run(self):
+        while True:
+            r, m = time.time(), time.monotonic()
+            self.samples.append((r, r - m))
+            time.sleep(0.02)
+
+    def to_mono(self, t):
+        import bisect
+        walls = [w for w, _ in self.samples]
+        i = bisect.bisect_right(walls, t) - 1
+        return t - self.samples[max(i, 0)][1]
+
+    def monotonic(self, text):
+        """The capture's text with each line's leading time made monotonic."""
+        out = []
+        for line in text.splitlines():
+            m = re.match(r"(\d+\.\d+)(\s.*)", line)
+            out.append("%.6f%s" % (self.to_mono(float(m.group(1))), m.group(2)) if m else line)
+        return "\n".join(out)
+
+
+_clock = None
+
+
+def clock():
+    """The bench's ClockMap, started at the first call (call it before the
+    capture starts)."""
+    global _clock
+    if _clock is None:
+        _clock = ClockMap()
+    return _clock
+
+
 def parse(text):
     pk = []
     for raw in text.splitlines():
@@ -203,6 +248,7 @@ def main():
     ap.add_argument("--advmss", type=int, help="make the host advertise this MSS to AROS (route advmss)")
     ap.add_argument("--out", default=os.path.join(ROOT, "tests", "tcp", "out", time.strftime("%Y%m%d-%H%M%S")))
     a = ap.parse_args()
+    clock()                     # sampled from now; the capture's times made monotonic
     global SHAPE
     SHAPE = not a.no_shape
     os.makedirs(a.out, exist_ok=True)
@@ -257,6 +303,7 @@ def main():
                         "proto", "kernel", "metric", "256"])
     text = subprocess.run(["sudo", "-n", "tcpdump", "-tt", "-nn", "-S", "-v", "-r", pcap],
                           capture_output=True, text=True).stdout
+    text = clock().monotonic(text)    # wall clock -> monotonic (WSL2 steps)
     open(os.path.join(a.out, "tcp.txt"), "w").write(text)
     res = analyse(parse(text))
     res["host"] = lst.log

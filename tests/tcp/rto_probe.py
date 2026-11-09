@@ -310,6 +310,7 @@ def boot(a, delay, host_ll, exe, out, dropper, watcher, log, syn=False):
     kill_children(dump, "INT")
     text = subprocess.run(["sudo", "-n", "tcpdump", "-tt", "-nn", "-S", "-v", "-r", pcap],
                           capture_output=True, text=True).stdout
+    text = run_tcp.clock().monotonic(text)    # wall clock -> monotonic (WSL2 steps)
     open(os.path.join(out, "rto.txt"), "w").write(text)
     res = analyse_syn(run_tcp.parse(text), a.syn_drops) if syn else analyse(run_tcp.parse(text), delay, a.jitter)
     res["jitter_ms"] = a.jitter
@@ -336,6 +337,7 @@ def main():
     ap.add_argument("--syn-drops", type=int, default=1, help="with --syn: SYN copies dropped per connection")
     ap.add_argument("--out", default=os.path.join(ROOT, "tests", "tcp", "out", "rto-" + time.strftime("%Y%m%d-%H%M%S")))
     a = ap.parse_args()
+    run_tcp.clock()                     # sampled from now; the capture's times made monotonic
     if a.watch:
         return watch(a.syn_drops)
     os.makedirs(a.out, exist_ok=True)
