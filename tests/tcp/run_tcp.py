@@ -149,10 +149,19 @@ class ClockMap(threading.Thread):
             time.sleep(0.02)
 
     def to_mono(self, t):
+        """A wall time to monotonic. Between a sample before a step and the
+        one after it, the wall clock jumped: a time past what the earlier
+        sample can account for (its wall time plus the monotonic time to
+        the next sample) is after the step, and takes the later offset."""
         import bisect
         walls = [w for w, _ in self.samples]
-        i = bisect.bisect_right(walls, t) - 1
-        return t - self.samples[max(i, 0)][1]
+        i = max(bisect.bisect_right(walls, t) - 1, 0)
+        if i + 1 < len(self.samples):
+            w0, o0 = self.samples[i]
+            w1, o1 = self.samples[i + 1]
+            if t > w0 + ((w1 - o1) - (w0 - o0)):
+                return t - o1
+        return t - self.samples[i][1]
 
     def monotonic(self, text):
         """The capture's text with each line's leading time made monotonic."""

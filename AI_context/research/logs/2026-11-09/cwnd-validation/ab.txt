@@ -1,0 +1,16 @@
+cv0 rtt  20 sndbuf default:  49.5 Mbit/s  median cwnd 619 KB  max 630 KB
+cv0 rtt 100 sndbuf default:  10.1 Mbit/s  median cwnd 616 KB  max 616 KB
+cv1 rtt  20 sndbuf default:  49.8 Mbit/s  median cwnd 254 KB  max 254 KB
+cv1 rtt 100 sndbuf default:  10.2 Mbit/s  median cwnd 255 KB  max 255 KB
+== ss 100KB cv0
+hystart:16=1 exit=0.18 s by loss cwnd=170 ssthresh=107 max_cwnd=191 drops=75 retx=81 minrtt=-1554.8 maxrtt_ss=61.6 steady=0.2 s bytes=23474044
+hystart:16=1 exit=0.18 s by loss cwnd=170 ssthresh=107 max_cwnd=184 drops=63 retx=66 minrtt=20.1 maxrtt_ss=61.1 steady=0.2 s bytes=23496892
+== ss 100KB cv1
+hystart:16=1 exit=0.24 s by loss cwnd=153 ssthresh=89 max_cwnd=162 drops=30 retx=30 minrtt=20.2 maxrtt_ss=61.2 steady=0.3 s bytes=23522596
+hystart:16=1 exit=0.18 s by loss cwnd=166 ssthresh=105 max_cwnd=193 drops=59 retx=60 minrtt=-1670.2 maxrtt_ss=61.3 steady=0.2 s bytes=23478328
+== loss cv1
+random      1.281s segs=715   retx=14   needless=0    3+=0   timeouts=0  multi_sack_acks=0    complete=True
+partial     0.711s segs=722   retx=20   needless=0    3+=1   timeouts=0  multi_sack_acks=173  complete=True
+lostrexmit  0.625s segs=703   retx=2    needless=0    3+=0   timeouts=0  multi_sack_acks=0    complete=True
+reorder     0.438s segs=737   retx=36   needless=0    3+=0   timeouts=0  multi_sack_acks=170  complete=True
+checks={'partial_has_multi_sack': True, 'lostrexmit_target_3_copies': True, 'reorder_host_sacked': True, 'random_has_retransmissions': True} bench_ok=True out=/tmp/claude-1000/-home-jaime-aros-matter/0a6f1726-e248-409a-bd23-3f46961832ea/scratchpad/cv1-loss
