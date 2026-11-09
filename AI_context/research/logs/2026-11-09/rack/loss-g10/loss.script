@@ -1,0 +1,10 @@
+Execute SYS:System/Network/AROSTCP/S/startnet
+Wait 4
+C:tcpbench eth0 fe80::e090:2aff:fe98:97bd send 7051 1000000 >SYS:out/random.log
+Wait 1
+C:tcpbench eth0 fe80::e090:2aff:fe98:97bd send 7052 1000000 >SYS:out/partial.log
+Wait 1
+C:tcpbench eth0 fe80::e090:2aff:fe98:97bd send 7053 1000000 >SYS:out/lostrexmit.log
+Wait 1
+C:tcpbench eth0 fe80::e090:2aff:fe98:97bd send 7054 1000000 >SYS:out/reorder.log
+Wait 1

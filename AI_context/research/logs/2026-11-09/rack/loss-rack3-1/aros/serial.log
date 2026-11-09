@@ -1,0 +1,8 @@
+[Bootstrap] RAM memory block allocated: 0x4008b000 - 0x5008b000 (268435456 bytes)
+[Bootstrap] Entering kernel at 0x5008b000...
+[KRN] Protecting host process stack (0x00007fff97017fe0 - 0x00007fff97021fe0)
+Xlib:  extension "XFree86-VidModeExtension" missing on display ":99".
+[tap] unit 0 attached to aros0
+[tap] [0] MTU 1500 (frame buffer 1514 bytes)
+[tap] [0] hardware address: e6:c6:36:0f:0f:99
+[AROSTCP] eth0 is now online.

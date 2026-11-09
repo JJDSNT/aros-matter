@@ -2,7 +2,7 @@
 
 Atualizado: 2026-11-09
 
-**Mapa dos grupos (onde estamos e o que falta): [research/2026-11-09-roadmap.md](research/2026-11-09-roadmap.md).**
+**Mapa dos grupos (onde estamos e o que falta): [research/2026-11-09-roadmap.md](research/2026-11-09-roadmap.md). Bugs: [bugs.md](bugs.md).**
 
 ## Foco atual (desde 2026-10-28)
 
@@ -272,3 +272,5 @@ Para mudanças compartilhadas em AROSTCP, IPv6/multicast, mdnsd/Bonami e DNS-SD,
 7. Rotas link-local com zona 0 (uma `fe80::/64` para todas as interfaces; G1).
 8. P5 pacing; F-RTO/TFO só se houver ganho medido (B2-D).
 Ferramentas: `route` (zonas IPv6, `-prefixlen`), acoplamento libkvm/release.
+
+**G10 completo (2026-11-09), `review/arostcp-tlp`:** TLP `ccdaf3c008`, RACK `1b984c8bde` (mapa de envio `t_xmap`, reo_wnd, entrada em recuperação em qualquer ACK, margem de 1 ms pela truncagem do `tcp_ms()`), anulação por D-SACK `12f718e589`. loss_probe, mediana de 5 (contra só TLP): random 1,29→0,52 s, partial 0,72→0,38, retransmissão perdida 0,37→0,19, reordenação 0,58→0,29 com 27→11 retx desnecessárias. tail igual (139 ms). 51 suítes ok. Evidência `research/logs/2026-11-09/rack/`. Sem timer de reordenação (§6.2.6) — nota no Readme.

@@ -1,0 +1,93 @@
+{
+ "boot": "ok",
+ "host_tcp_sack": "1",
+ "random": {
+  "stalls": [],
+  "seconds": 1.249,
+  "data_segments": 716,
+  "retransmissions": 15,
+  "sent_3_or_more": [
+   1880870736
+  ],
+  "timeouts": 0,
+  "needless_retransmissions": 0,
+  "acks_with_sack": 102,
+  "acks_2plus_sack": 1,
+  "host": {
+   "bytes": 1000000,
+   "host_seconds": 1.249
+  },
+  "complete": true
+ },
+ "partial": {
+  "stalls": [],
+  "seconds": 0.568,
+  "data_segments": 724,
+  "retransmissions": 23,
+  "sent_3_or_more": [
+   472591764,
+   472594620,
+   472598904
+  ],
+  "timeouts": 0,
+  "needless_retransmissions": 0,
+  "acks_with_sack": 366,
+  "acks_2plus_sack": 324,
+  "host": {
+   "bytes": 1000000,
+   "host_seconds": 0.569
+  },
+  "complete": true
+ },
+ "lostrexmit": {
+  "stalls": [],
+  "seconds": 0.16,
+  "data_segments": 703,
+  "retransmissions": 2,
+  "sent_3_or_more": [],
+  "timeouts": 0,
+  "needless_retransmissions": 0,
+  "acks_with_sack": 68,
+  "acks_2plus_sack": 0,
+  "host": {
+   "bytes": 1000000,
+   "host_seconds": 0.161
+  },
+  "complete": true
+ },
+ "reorder": {
+  "stalls": [],
+  "seconds": 1.076,
+  "data_segments": 705,
+  "retransmissions": 1,
+  "sent_3_or_more": [],
+  "timeouts": 0,
+  "needless_retransmissions": 0,
+  "acks_with_sack": 287,
+  "acks_2plus_sack": 8,
+  "host": {
+   "bytes": 1000000,
+   "host_seconds": 1.08
+  },
+  "complete": true
+ },
+ "checks": {
+  "partial_has_multi_sack": true,
+  "lostrexmit_target_3_copies": true,
+  "reorder_host_sacked": true,
+  "random_has_retransmissions": true
+ },
+ "shaping_errors": [],
+ "ifb_stats": "qdisc netem 807f: root refcnt 2 limit 1000 delay 5ms reorder 100% gap 10\n Sent 1065904 bytes 710 pkt (dropped 0, overlimits 0 requeues 71) \n backlog 0b 0p requeues 71\n",
+ "watch": {
+  "target": 2171935878,
+  "add_rc": 0,
+  "add_err": "",
+  "copy_times": [
+   1794249359.7581918,
+   1794249359.7844956
+  ],
+  "released": true
+ },
+ "bench_ok": true
+}
