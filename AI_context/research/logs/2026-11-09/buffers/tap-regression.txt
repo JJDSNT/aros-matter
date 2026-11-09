@@ -1,0 +1,8 @@
+suites: 51, not clean: 0
+rx rtt 1 ms: 174.8 Mbit/s retx 2
+== loss
+random      1.292s segs=715   retx=14   needless=0    3+=0   timeouts=0  multi_sack_acks=1    complete=True
+partial     0.768s segs=721   retx=20   needless=0    3+=1   timeouts=0  multi_sack_acks=161  complete=True
+lostrexmit  0.624s segs=703   retx=2    needless=0    3+=0   timeouts=0  multi_sack_acks=0    complete=True
+reorder     0.568s segs=720   retx=19   needless=0    3+=0   timeouts=0  multi_sack_acks=126  complete=True
+checks={'partial_has_multi_sack': True, 'lostrexmit_target_3_copies': True, 'reorder_host_sacked': True, 'random_has_retransmissions': True} bench_ok=True out=/tmp/claude-1000/-home-jaime-aros-matter/0a6f1726-e248-409a-bd23-3f46961832ea/scratchpad/tap-loss

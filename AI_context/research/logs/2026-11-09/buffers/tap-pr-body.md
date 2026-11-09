@@ -8,7 +8,8 @@ Linux host, AROS receiving 20 MB over IPv4 from the host, with a netem delay on 
 |---|---|---|
 | 20 ms | 8.4 Mbit/s, 139 segments resent by the host | 44.7 Mbit/s, none |
 | 100 ms | 1.8 Mbit/s | 10.0 Mbit/s, none |
+| 1 ms (LAN) | 137 Mbit/s | 175 Mbit/s, 2 resent |
 
-The same as with `IPREQ=128` on the interface's line, so it is the request count: the receive window (128 KB / RTT) is now the limit, as it is for sending. All 51 network socket suites pass with it.
+The same as with `IPREQ=128` on the interface's line, so it is the request count: the receive window (128 KB / RTT) is now the limit, as it is for sending. All 51 network socket suites pass with it, and the loss benches are unchanged.
 
 Not changed here: with a stack that posts fewer requests than a burst, frames are still dropped; holding them in the host's queue until a read request comes (not reading the descriptor meanwhile) would be the complete answer.
