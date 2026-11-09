@@ -1,0 +1,80 @@
+[RX] SYN out now=5600 state=2 timer=1 at=6600
+[RX] fire now=6645 at=6600 late=45
+[RX] rearm shift=1 rxtcur=2000 at=8645
+[RX] SYN out now=6645 state=2 timer=1 at=8645
+[RX] fire now=8645 at=8645 late=0
+[RX] rearm shift=2 rxtcur=4000 at=12645
+[RX] SYN out now=8645 state=2 timer=1 at=12645
+[RX] fire now=12645 at=12645 late=0
+[RX] rearm shift=3 rxtcur=8000 at=20645
+[RX] SYN out now=12645 state=2 timer=1 at=20645
+[RX] SYN out now=12860 state=2 timer=1 at=13860
+[RX] fire now=13895 at=13860 late=35
+[RX] rearm shift=1 rxtcur=2000 at=15895
+[RX] SYN out now=13895 state=2 timer=1 at=15895
+[RX] fire now=15895 at=15895 late=0
+[RX] rearm shift=2 rxtcur=4000 at=19895
+[RX] SYN out now=15895 state=2 timer=1 at=19895
+[RX] fire now=19895 at=19895 late=0
+[RX] rearm shift=3 rxtcur=8000 at=27895
+[RX] SYN out now=19895 state=2 timer=1 at=27895
+[RX] SYN out now=20100 state=2 timer=1 at=21100
+[RX] fire now=21145 at=21100 late=45
+[RX] rearm shift=1 rxtcur=2000 at=23145
+[RX] SYN out now=21145 state=2 timer=1 at=23145
+[RX] fire now=23145 at=23145 late=0
+[RX] rearm shift=2 rxtcur=4000 at=27145
+[RX] SYN out now=23145 state=2 timer=1 at=27145
+[RX] fire now=27145 at=27145 late=0
+[RX] rearm shift=3 rxtcur=8000 at=35145
+[RX] SYN out now=27145 state=2 timer=1 at=35145
+[RX] SYN out now=27360 state=2 timer=1 at=28360
+[RX] fire now=28395 at=28360 late=35
+[RX] rearm shift=1 rxtcur=2000 at=30395
+[RX] SYN out now=28395 state=2 timer=1 at=30395
+[RX] fire now=30395 at=30395 late=0
+[RX] rearm shift=2 rxtcur=4000 at=34395
+[RX] SYN out now=30395 state=2 timer=1 at=34395
+[RX] fire now=34395 at=34395 late=0
+[RX] rearm shift=3 rxtcur=8000 at=42395
+[RX] SYN out now=34395 state=2 timer=1 at=42395
+[RX] SYN out now=34600 state=2 timer=1 at=35600
+[RX] fire now=35645 at=35600 late=45
+[RX] rearm shift=1 rxtcur=2000 at=37645
+[RX] SYN out now=35645 state=2 timer=1 at=37645
+[RX] fire now=37645 at=37645 late=0
+[RX] rearm shift=2 rxtcur=4000 at=41645
+[RX] SYN out now=37645 state=2 timer=1 at=41645
+[RX] fire now=41645 at=41645 late=0
+[RX] rearm shift=3 rxtcur=8000 at=49645
+[RX] SYN out now=41645 state=2 timer=1 at=49645
+[RX] SYN out now=41860 state=2 timer=1 at=42860
+[RX] fire now=42895 at=42860 late=35
+[RX] rearm shift=1 rxtcur=2000 at=44895
+[RX] SYN out now=42900 state=2 timer=1 at=44895
+[RX] fire now=44900 at=44895 late=5
+[RX] rearm shift=2 rxtcur=4000 at=48900
+[RX] SYN out now=44900 state=2 timer=1 at=48900
+[RX] fire now=48900 at=48900 late=0
+[RX] rearm shift=3 rxtcur=8000 at=56900
+[RX] SYN out now=48900 state=2 timer=1 at=56900
+[RX] SYN out now=49100 state=2 timer=1 at=50100
+[RX] fire now=50100 at=50100 late=0
+[RX] rearm shift=1 rxtcur=2000 at=52100
+[RX] SYN out now=50100 state=2 timer=1 at=52100
+[RX] fire now=52100 at=52100 late=0
+[RX] rearm shift=2 rxtcur=4000 at=56100
+[RX] SYN out now=52100 state=2 timer=1 at=56100
+[RX] fire now=56100 at=56100 late=0
+[RX] rearm shift=3 rxtcur=8000 at=64100
+[RX] SYN out now=56100 state=2 timer=1 at=64100
+[RX] SYN out now=56300 state=2 timer=1 at=57300
+[RX] fire now=57300 at=57300 late=0
+[RX] rearm shift=1 rxtcur=2000 at=59300
+[RX] SYN out now=57300 state=2 timer=1 at=59300
+[RX] fire now=59300 at=59300 late=0
+[RX] rearm shift=2 rxtcur=4000 at=63300
+[RX] SYN out now=59300 state=2 timer=1 at=63300
+[RX] fire now=63300 at=63300 late=0
+[RX] rearm shift=3 rxtcur=8000 at=71300
+[RX] SYN out now=63300 state=2 timer=1 at=71300

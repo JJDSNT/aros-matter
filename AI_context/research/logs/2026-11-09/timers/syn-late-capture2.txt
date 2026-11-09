@@ -1,0 +1,102 @@
+1794225458.486125 IP6 fe80::4cfb:c5ff:fec7:855a.53435 > fe80::1.7102: Flags [S], seq 2930212652, win 65535, options [mss 1440,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 4083048798 ecr 0], length 0
+1794225459.522155 IP6 fe80::4cfb:c5ff:fec7:855a.53435 > fe80::1.7102: Flags [S], seq 2930212652, win 65535, options [mss 1440,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 4083049838 ecr 0], length 0
+1794225461.521970 IP6 fe80::4cfb:c5ff:fec7:855a.53435 > fe80::1.7102: Flags [S], seq 2930212652, win 65535, options [mss 1440,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 4083051838 ecr 0], length 0
+1794225465.522029 IP6 fe80::4cfb:c5ff:fec7:855a.53435 > fe80::1.7102: Flags [S], seq 2930212652, win 65535, options [mss 1440,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 4083055838 ecr 0], length 0
+1794225465.522088 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.53435: Flags [S.], seq 473246588, ack 2930212653, win 64260, options [mss 1440,sackOK,TS val 2401883350 ecr 4083055838,nop,wscale 10], length 0
+1794225465.522276 IP6 fe80::4cfb:c5ff:fec7:855a.53435 > fe80::1.7102: Flags [.], ack 1, win 32844, options [nop,nop,TS val 4083055838 ecr 2401883350], length 0
+1794225465.522475 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.53435: Flags [F.], seq 1, ack 1, win 63, options [nop,nop,TS val 2401883350 ecr 4083055838], length 0
+1794225465.522516 IP6 fe80::4cfb:c5ff:fec7:855a.53435 > fe80::1.7102: Flags [P.], seq 1:2, ack 1, win 32844, options [nop,nop,TS val 4083055838 ecr 2401883350], length 1
+1794225465.522529 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.53435: Flags [R], seq 473246589, win 0, length 0
+1794225465.522805 IP6 fe80::4cfb:c5ff:fec7:855a.53435 > fe80::1.7102: Flags [F.], seq 2, ack 1, win 32844, options [nop,nop,TS val 4083055838 ecr 2401883350], length 0
+1794225465.522836 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.53435: Flags [R], seq 473246589, win 0, length 0
+1794225465.523121 IP6 fe80::4cfb:c5ff:fec7:855a.53435 > fe80::1.7102: Flags [F.], seq 2, ack 2, win 32844, options [nop,nop,TS val 4083055838 ecr 2401883350], length 0
+1794225465.523147 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.53435: Flags [R], seq 473246590, win 0, length 0
+1794225465.737027 IP6 fe80::4cfb:c5ff:fec7:855a.56700 > fe80::1.7102: Flags [S], seq 1247136328, win 65535, options [mss 1440,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 459482042 ecr 0], length 0
+1794225466.771966 IP6 fe80::4cfb:c5ff:fec7:855a.56700 > fe80::1.7102: Flags [S], seq 1247136328, win 65535, options [mss 1440,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 459483077 ecr 0], length 0
+1794225468.772197 IP6 fe80::4cfb:c5ff:fec7:855a.56700 > fe80::1.7102: Flags [S], seq 1247136328, win 65535, options [mss 1440,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 459485077 ecr 0], length 0
+1794225472.772515 IP6 fe80::4cfb:c5ff:fec7:855a.56700 > fe80::1.7102: Flags [S], seq 1247136328, win 65535, options [mss 1440,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 459489077 ecr 0], length 0
+1794225472.772573 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.56700: Flags [S.], seq 3564108495, ack 1247136329, win 64260, options [mss 1440,sackOK,TS val 1994618696 ecr 459489077,nop,wscale 10], length 0
+1794225472.772757 IP6 fe80::4cfb:c5ff:fec7:855a.56700 > fe80::1.7102: Flags [.], ack 1, win 32844, options [nop,nop,TS val 459489077 ecr 1994618696], length 0
+1794225472.772930 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.56700: Flags [F.], seq 1, ack 1, win 63, options [nop,nop,TS val 1994618696 ecr 459489077], length 0
+1794225472.773048 IP6 fe80::4cfb:c5ff:fec7:855a.56700 > fe80::1.7102: Flags [P.], seq 1:2, ack 1, win 32844, options [nop,nop,TS val 459489077 ecr 1994618696], length 1
+1794225472.773139 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.56700: Flags [R], seq 3564108496, win 0, length 0
+1794225472.773316 IP6 fe80::4cfb:c5ff:fec7:855a.56700 > fe80::1.7102: Flags [F.], seq 2, ack 1, win 32844, options [nop,nop,TS val 459489077 ecr 1994618696], length 0
+1794225472.773360 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.56700: Flags [R], seq 3564108496, win 0, length 0
+1794225472.773583 IP6 fe80::4cfb:c5ff:fec7:855a.56700 > fe80::1.7102: Flags [F.], seq 2, ack 2, win 32844, options [nop,nop,TS val 459489077 ecr 1994618696], length 0
+1794225472.773610 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.56700: Flags [R], seq 3564108497, win 0, length 0
+1794225472.977259 IP6 fe80::4cfb:c5ff:fec7:855a.56382 > fe80::1.7102: Flags [S], seq 4079779431, win 65535, options [mss 1440,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 3139411934 ecr 0], length 0
+1794225475.190608 IP6 fe80::4cfb:c5ff:fec7:855a.56382 > fe80::1.7102: Flags [S], seq 4079779431, win 65535, options [mss 1440,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 3139412979 ecr 0], length 0
+1794225477.190561 IP6 fe80::4cfb:c5ff:fec7:855a.56382 > fe80::1.7102: Flags [S], seq 4079779431, win 65535, options [mss 1440,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 3139414979 ecr 0], length 0
+1794225481.190183 IP6 fe80::4cfb:c5ff:fec7:855a.56382 > fe80::1.7102: Flags [S], seq 4079779431, win 65535, options [mss 1440,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 3139418979 ecr 0], length 0
+1794225481.190250 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.56382: Flags [S.], seq 383913058, ack 4079779432, win 64260, options [mss 1440,sackOK,TS val 51135173 ecr 3139418979,nop,wscale 10], length 0
+1794225481.190476 IP6 fe80::4cfb:c5ff:fec7:855a.56382 > fe80::1.7102: Flags [.], ack 1, win 32844, options [nop,nop,TS val 3139418979 ecr 51135173], length 0
+1794225481.190626 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.56382: Flags [F.], seq 1, ack 1, win 63, options [nop,nop,TS val 51135174 ecr 3139418979], length 0
+1794225481.190742 IP6 fe80::4cfb:c5ff:fec7:855a.56382 > fe80::1.7102: Flags [P.], seq 1:2, ack 1, win 32844, options [nop,nop,TS val 3139418979 ecr 51135173], length 1
+1794225481.190780 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.56382: Flags [R], seq 383913059, win 0, length 0
+1794225481.190993 IP6 fe80::4cfb:c5ff:fec7:855a.56382 > fe80::1.7102: Flags [F.], seq 2, ack 1, win 32844, options [nop,nop,TS val 3139418979 ecr 51135173], length 0
+1794225481.191032 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.56382: Flags [R], seq 383913059, win 0, length 0
+1794225481.191351 IP6 fe80::4cfb:c5ff:fec7:855a.56382 > fe80::1.7102: Flags [F.], seq 2, ack 2, win 32844, options [nop,nop,TS val 3139418979 ecr 51135174], length 0
+1794225481.191385 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.56382: Flags [R], seq 383913060, win 0, length 0
+1794225481.406028 IP6 fe80::4cfb:c5ff:fec7:855a.59592 > fe80::1.7102: Flags [S], seq 3810221934, win 65535, options [mss 1440,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 3079583149 ecr 0], length 0
+1794225482.440497 IP6 fe80::4cfb:c5ff:fec7:855a.59592 > fe80::1.7102: Flags [S], seq 3810221934, win 65535, options [mss 1440,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 3079584184 ecr 0], length 0
+1794225484.440668 IP6 fe80::4cfb:c5ff:fec7:855a.59592 > fe80::1.7102: Flags [S], seq 3810221934, win 65535, options [mss 1440,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 3079586184 ecr 0], length 0
+1794225488.440254 IP6 fe80::4cfb:c5ff:fec7:855a.59592 > fe80::1.7102: Flags [S], seq 3810221934, win 65535, options [mss 1440,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 3079590184 ecr 0], length 0
+1794225488.440299 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.59592: Flags [S.], seq 438214985, ack 3810221935, win 64260, options [mss 1440,sackOK,TS val 4033911550 ecr 3079590184,nop,wscale 10], length 0
+1794225488.440454 IP6 fe80::4cfb:c5ff:fec7:855a.59592 > fe80::1.7102: Flags [.], ack 1, win 32844, options [nop,nop,TS val 3079590184 ecr 4033911550], length 0
+1794225488.440609 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.59592: Flags [F.], seq 1, ack 1, win 63, options [nop,nop,TS val 4033911551 ecr 3079590184], length 0
+1794225488.440716 IP6 fe80::4cfb:c5ff:fec7:855a.59592 > fe80::1.7102: Flags [P.], seq 1:2, ack 1, win 32844, options [nop,nop,TS val 3079590184 ecr 4033911550], length 1
+1794225488.440743 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.59592: Flags [R], seq 438214986, win 0, length 0
+1794225488.440919 IP6 fe80::4cfb:c5ff:fec7:855a.59592 > fe80::1.7102: Flags [F.], seq 2, ack 1, win 32844, options [nop,nop,TS val 3079590184 ecr 4033911550], length 0
+1794225488.440943 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.59592: Flags [R], seq 438214986, win 0, length 0
+1794225488.441168 IP6 fe80::4cfb:c5ff:fec7:855a.59592 > fe80::1.7102: Flags [F.], seq 2, ack 2, win 32844, options [nop,nop,TS val 3079590184 ecr 4033911551], length 0
+1794225488.441208 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.59592: Flags [R], seq 438214987, win 0, length 0
+1794225488.645691 IP6 fe80::4cfb:c5ff:fec7:855a.55572 > fe80::1.7102: Flags [S], seq 846722683, win 65535, options [mss 1440,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 1750323081 ecr 0], length 0
+1794225489.690240 IP6 fe80::4cfb:c5ff:fec7:855a.55572 > fe80::1.7102: Flags [S], seq 846722683, win 65535, options [mss 1440,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 1750324126 ecr 0], length 0
+1794225491.690179 IP6 fe80::4cfb:c5ff:fec7:855a.55572 > fe80::1.7102: Flags [S], seq 846722683, win 65535, options [mss 1440,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 1750326126 ecr 0], length 0
+1794225495.690213 IP6 fe80::4cfb:c5ff:fec7:855a.55572 > fe80::1.7102: Flags [S], seq 846722683, win 65535, options [mss 1440,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 1750330126 ecr 0], length 0
+1794225495.690260 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.55572: Flags [S.], seq 3408799934, ack 846722684, win 64260, options [mss 1440,sackOK,TS val 1742661076 ecr 1750330126,nop,wscale 10], length 0
+1794225495.690456 IP6 fe80::4cfb:c5ff:fec7:855a.55572 > fe80::1.7102: Flags [.], ack 1, win 32844, options [nop,nop,TS val 1750330126 ecr 1742661076], length 0
+1794225495.690586 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.55572: Flags [F.], seq 1, ack 1, win 63, options [nop,nop,TS val 1742661077 ecr 1750330126], length 0
+1794225495.690773 IP6 fe80::4cfb:c5ff:fec7:855a.55572 > fe80::1.7102: Flags [P.], seq 1:2, ack 1, win 32844, options [nop,nop,TS val 1750330126 ecr 1742661076], length 1
+1794225495.690804 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.55572: Flags [R], seq 3408799935, win 0, length 0
+1794225495.691005 IP6 fe80::4cfb:c5ff:fec7:855a.55572 > fe80::1.7102: Flags [.], ack 2, win 32844, options [nop,nop,TS val 1750330126 ecr 1742661077], length 0
+1794225495.691030 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.55572: Flags [R], seq 3408799936, win 0, length 0
+1794225495.905210 IP6 fe80::4cfb:c5ff:fec7:855a.63655 > fe80::1.7102: Flags [S], seq 2207325792, win 65535, options [mss 1440,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 3242347529 ecr 0], length 0
+1794225496.940462 IP6 fe80::4cfb:c5ff:fec7:855a.63655 > fe80::1.7102: Flags [S], seq 2207325792, win 65535, options [mss 1440,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 3242348564 ecr 0], length 0
+1794225498.940681 IP6 fe80::4cfb:c5ff:fec7:855a.63655 > fe80::1.7102: Flags [S], seq 2207325792, win 65535, options [mss 1440,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 3242350564 ecr 0], length 0
+1794225502.940108 IP6 fe80::4cfb:c5ff:fec7:855a.63655 > fe80::1.7102: Flags [S], seq 2207325792, win 65535, options [mss 1440,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 3242354564 ecr 0], length 0
+1794225502.940172 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.63655: Flags [S.], seq 2638355647, ack 2207325793, win 64260, options [mss 1440,sackOK,TS val 3581727008 ecr 3242354564,nop,wscale 10], length 0
+1794225502.940348 IP6 fe80::4cfb:c5ff:fec7:855a.63655 > fe80::1.7102: Flags [.], ack 1, win 32844, options [nop,nop,TS val 3242354564 ecr 3581727008], length 0
+1794225502.940500 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.63655: Flags [F.], seq 1, ack 1, win 63, options [nop,nop,TS val 3581727009 ecr 3242354564], length 0
+1794225502.940605 IP6 fe80::4cfb:c5ff:fec7:855a.63655 > fe80::1.7102: Flags [P.], seq 1:2, ack 1, win 32844, options [nop,nop,TS val 3242354564 ecr 3581727008], length 1
+1794225502.940633 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.63655: Flags [R], seq 2638355648, win 0, length 0
+1794225502.940782 IP6 fe80::4cfb:c5ff:fec7:855a.63655 > fe80::1.7102: Flags [F.], seq 2, ack 1, win 32844, options [nop,nop,TS val 3242354564 ecr 3581727008], length 0
+1794225502.940804 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.63655: Flags [R], seq 2638355648, win 0, length 0
+1794225502.940988 IP6 fe80::4cfb:c5ff:fec7:855a.63655 > fe80::1.7102: Flags [F.], seq 2, ack 2, win 32844, options [nop,nop,TS val 3242354564 ecr 3581727009], length 0
+1794225502.941014 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.63655: Flags [R], seq 2638355649, win 0, length 0
+1794225503.145448 IP6 fe80::4cfb:c5ff:fec7:855a.54953 > fe80::1.7102: Flags [S], seq 3031095618, win 65535, options [mss 1440,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 2851675184 ecr 0], length 0
+1794225504.190598 IP6 fe80::4cfb:c5ff:fec7:855a.54953 > fe80::1.7102: Flags [S], seq 3031095618, win 65535, options [mss 1440,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 2851676229 ecr 0], length 0
+1794225506.190340 IP6 fe80::4cfb:c5ff:fec7:855a.54953 > fe80::1.7102: Flags [S], seq 3031095618, win 65535, options [mss 1440,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 2851678229 ecr 0], length 0
+1794225511.332934 IP6 fe80::4cfb:c5ff:fec7:855a.54953 > fe80::1.7102: Flags [S], seq 3031095618, win 65535, options [mss 1440,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 2851682229 ecr 0], length 0
+1794225511.332979 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.54953: Flags [S.], seq 2610107139, ack 3031095619, win 64260, options [mss 1440,sackOK,TS val 3953371695 ecr 2851682229,nop,wscale 10], length 0
+1794225511.333182 IP6 fe80::4cfb:c5ff:fec7:855a.54953 > fe80::1.7102: Flags [.], ack 1, win 32844, options [nop,nop,TS val 2851682229 ecr 3953371695], length 0
+1794225511.333362 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.54953: Flags [F.], seq 1, ack 1, win 63, options [nop,nop,TS val 3953371696 ecr 2851682229], length 0
+1794225511.333565 IP6 fe80::4cfb:c5ff:fec7:855a.54953 > fe80::1.7102: Flags [P.], seq 1:2, ack 1, win 32844, options [nop,nop,TS val 2851682229 ecr 3953371695], length 1
+1794225511.333610 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.54953: Flags [R], seq 2610107140, win 0, length 0
+1794225511.333878 IP6 fe80::4cfb:c5ff:fec7:855a.54953 > fe80::1.7102: Flags [F.], seq 2, ack 1, win 32844, options [nop,nop,TS val 2851682229 ecr 3953371695], length 0
+1794225511.333932 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.54953: Flags [R], seq 2610107140, win 0, length 0
+1794225511.334345 IP6 fe80::4cfb:c5ff:fec7:855a.54953 > fe80::1.7102: Flags [F.], seq 2, ack 2, win 32844, options [nop,nop,TS val 2851682229 ecr 3953371696], length 0
+1794225511.334384 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.54953: Flags [R], seq 2610107141, win 0, length 0
+1794225511.548122 IP6 fe80::4cfb:c5ff:fec7:855a.53270 > fe80::1.7102: Flags [S], seq 2047453699, win 65535, options [mss 1440,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 1557856693 ecr 0], length 0
+1794225512.582969 IP6 fe80::4cfb:c5ff:fec7:855a.53270 > fe80::1.7102: Flags [S], seq 2047453699, win 65535, options [mss 1440,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 1557857728 ecr 0], length 0
+1794225514.583356 IP6 fe80::4cfb:c5ff:fec7:855a.53270 > fe80::1.7102: Flags [S], seq 2047453699, win 65535, options [mss 1440,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 1557859728 ecr 0], length 0
+1794225518.583042 IP6 fe80::4cfb:c5ff:fec7:855a.53270 > fe80::1.7102: Flags [S], seq 2047453699, win 65535, options [mss 1440,nop,wscale 2,nop,nop,sackOK,nop,nop,TS val 1557863728 ecr 0], length 0
+1794225518.583187 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.53270: Flags [S.], seq 4180652686, ack 2047453700, win 64260, options [mss 1440,sackOK,TS val 3626234792 ecr 1557863728,nop,wscale 10], length 0
+1794225518.583424 IP6 fe80::4cfb:c5ff:fec7:855a.53270 > fe80::1.7102: Flags [.], ack 1, win 32844, options [nop,nop,TS val 1557863728 ecr 3626234792], length 0
+1794225518.583596 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.53270: Flags [F.], seq 1, ack 1, win 63, options [nop,nop,TS val 3626234792 ecr 1557863728], length 0
+1794225518.583735 IP6 fe80::4cfb:c5ff:fec7:855a.53270 > fe80::1.7102: Flags [P.], seq 1:2, ack 1, win 32844, options [nop,nop,TS val 1557863728 ecr 3626234792], length 1
+1794225518.583790 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.53270: Flags [R], seq 4180652687, win 0, length 0
+1794225518.583993 IP6 fe80::4cfb:c5ff:fec7:855a.53270 > fe80::1.7102: Flags [F.], seq 2, ack 1, win 32844, options [nop,nop,TS val 1557863728 ecr 3626234792], length 0
+1794225518.584015 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.53270: Flags [R], seq 4180652687, win 0, length 0
+1794225518.584360 IP6 fe80::4cfb:c5ff:fec7:855a.53270 > fe80::1.7102: Flags [F.], seq 2, ack 2, win 32844, options [nop,nop,TS val 1557863728 ecr 3626234792], length 0
+1794225518.584385 IP6 fe80::1.7102 > fe80::4cfb:c5ff:fec7:855a.53270: Flags [R], seq 4180652688, win 0, length 0

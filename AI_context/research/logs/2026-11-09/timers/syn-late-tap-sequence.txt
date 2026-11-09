@@ -1,0 +1,413 @@
+9:[TAPW] len=72
+10:[TAPWAKE] sig=10000 wf=0
+11:[TAPPOLL] wf=2 events=2
+12:[TAPS] len=72
+13:[TAPWAKE] sig=40000 wf=0
+14:[TAPWAKE] sig=40000 wf=0
+15:[TAPW] len=32
+16:[TAPWAKE] sig=10000 wf=0
+17:[TAPPOLL] wf=2 events=2
+18:[TAPS] len=32
+19:[TAPW] len=72
+20:[TAPWAKE] sig=10000 wf=0
+21:[TAPPOLL] wf=2 events=2
+22:[TAPS] len=72
+23:[TAPW] len=64
+24:[TAPWAKE] sig=10000 wf=0
+25:[TAPPOLL] wf=2 events=2
+26:[TAPS] len=64
+27:[TAPW] len=64
+28:[TAPWAKE] sig=10000 wf=0
+29:[TAPPOLL] wf=2 events=2
+30:[TAPS] len=64
+31:[TAPW] len=56
+32:[TAPWAKE] sig=10000 wf=0
+33:[TAPPOLL] wf=2 events=2
+34:[TAPS] len=56
+35:[TAPW] len=56
+36:[TAPWAKE] sig=10000 wf=0
+37:[TAPPOLL] wf=2 events=2
+38:[TAPS] len=56
+39:[TAPW] len=129
+40:[TAPWAKE] sig=10000 wf=0
+41:[TAPPOLL] wf=2 events=2
+42:[TAPS] len=129
+43:[TAPW] len=149
+44:[TAPWAKE] sig=10000 wf=0
+45:[TAPPOLL] wf=2 events=2
+46:[TAPS] len=149
+47:[TAPW] len=129
+48:[TAPWAKE] sig=10000 wf=0
+49:[TAPPOLL] wf=2 events=2
+50:[TAPS] len=129
+51:[TAPW] len=149
+52:[TAPWAKE] sig=10000 wf=0
+53:[TAPPOLL] wf=2 events=2
+54:[TAPS] len=149
+55:[TAPW] len=129
+56:[TAPWAKE] sig=10000 wf=0
+57:[TAPPOLL] wf=2 events=2
+58:[TAPS] len=129
+59:[TAPW] len=149
+60:[TAPWAKE] sig=10000 wf=0
+61:[TAPPOLL] wf=2 events=2
+62:[TAPS] len=149
+63:[TAPW] len=32
+64:[TAPWAKE] sig=10000 wf=0
+65:[TAPPOLL] wf=2 events=2
+66:[TAPS] len=32
+67:[TAPW] len=110
+68:[TAPWAKE] sig=10000 wf=0
+69:[TAPPOLL] wf=2 events=2
+70:[TAPS] len=110
+71:[TAPW] len=130
+72:[TAPWAKE] sig=10000 wf=0
+73:[TAPPOLL] wf=2 events=2
+74:[TAPS] len=130
+75:[TAPW] len=110
+76:[TAPWAKE] sig=10000 wf=0
+77:[TAPPOLL] wf=2 events=2
+78:[TAPS] len=110
+79:[TAPW] len=130
+80:[TAPWAKE] sig=10000 wf=0
+81:[TAPPOLL] wf=2 events=2
+82:[TAPS] len=130
+83:[RX] SYN out now=5865 state=2 timer=1 at=6865
+84:[TAPW] len=72
+85:[TAPWAKE] sig=10000 wf=0
+86:[TAPPOLL] wf=2 events=2
+87:[TAPS] len=72
+88:[TAPWAKE] sig=40000 wf=0
+89:[TAPW] len=84
+90:[TAPWAKE] sig=10000 wf=0
+91:[TAPPOLL] wf=2 events=2
+92:[TAPS] len=84
+95:[RX] SYN out now=6905 state=2 timer=1 at=8905
+96:[TAPW] len=84
+97:[TAPWAKE] sig=10000 wf=0
+98:[TAPPOLL] wf=2 events=2
+99:[TAPS] len=84
+102:[RX] SYN out now=8905 state=2 timer=1 at=12905
+103:[TAPW] len=84
+104:[TAPWAKE] sig=10000 wf=0
+105:[TAPPOLL] wf=2 events=2
+106:[TAPS] len=84
+107:[TAPWAKE] sig=40000 wf=0
+108:[TAPW] len=72
+109:[TAPWAKE] sig=10000 wf=0
+110:[TAPPOLL] wf=2 events=2
+111:[TAPS] len=72
+112:[TAPW] len=72
+113:[TAPWAKE] sig=10000 wf=0
+114:[TAPPOLL] wf=2 events=2
+115:[TAPS] len=72
+116:[TAPW] len=72
+117:[TAPWAKE] sig=10000 wf=0
+118:[TAPPOLL] wf=2 events=2
+119:[TAPS] len=72
+122:[RX] SYN out now=12905 state=2 timer=1 at=20905
+123:[TAPW] len=84
+124:[TAPWAKE] sig=10000 wf=0
+125:[TAPPOLL] wf=2 events=2
+126:[TAPS] len=84
+127:[TAPWAKE] sig=40000 wf=0
+128:[TAPW] len=72
+129:[TAPWAKE] sig=10000 wf=0
+130:[TAPPOLL] wf=2 events=2
+131:[TAPS] len=72
+132:[TAPW] len=73
+133:[TAPWAKE] sig=10000 wf=0
+134:[TAPPOLL] wf=2 events=2
+135:[TAPS] len=73
+136:[TAPWAKE] sig=40000 wf=0
+137:[TAPW] len=72
+138:[TAPWAKE] sig=10000 wf=0
+139:[TAPPOLL] wf=2 events=2
+140:[TAPS] len=72
+141:[TAPWAKE] sig=40000 wf=0
+142:[TAPW] len=72
+143:[TAPWAKE] sig=10000 wf=0
+144:[TAPPOLL] wf=2 events=2
+145:[TAPS] len=72
+146:[TAPWAKE] sig=40000 wf=0
+147:[RX] SYN out now=13120 state=2 timer=1 at=14120
+148:[TAPW] len=84
+149:[TAPWAKE] sig=10000 wf=0
+150:[TAPPOLL] wf=2 events=2
+151:[TAPS] len=84
+154:[RX] SYN out now=14155 state=2 timer=1 at=16155
+155:[TAPW] len=84
+156:[TAPWAKE] sig=10000 wf=0
+157:[TAPPOLL] wf=2 events=2
+158:[TAPS] len=84
+161:[RX] SYN out now=16155 state=2 timer=1 at=20155
+162:[TAPW] len=84
+163:[TAPWAKE] sig=10000 wf=0
+164:[TAPPOLL] wf=2 events=2
+165:[TAPS] len=84
+168:[RX] SYN out now=20155 state=2 timer=1 at=28155
+169:[TAPW] len=84
+170:[TAPWAKE] sig=10000 wf=0
+171:[TAPPOLL] wf=2 events=2
+172:[TAPS] len=84
+173:[TAPWAKE] sig=40000 wf=0
+174:[TAPW] len=72
+175:[TAPWAKE] sig=10000 wf=0
+176:[TAPPOLL] wf=2 events=2
+177:[TAPS] len=72
+178:[TAPW] len=73
+179:[TAPWAKE] sig=10000 wf=0
+180:[TAPPOLL] wf=2 events=3
+181:[TAPS] len=73
+182:[TAPWAKE] sig=40000 wf=0
+183:[TAPW] len=72
+184:[TAPWAKE] sig=10000 wf=0
+185:[TAPPOLL] wf=2 events=2
+186:[TAPS] len=72
+187:[TAPWAKE] sig=40000 wf=0
+188:[TAPW] len=72
+189:[TAPWAKE] sig=10000 wf=0
+190:[TAPPOLL] wf=2 events=2
+191:[TAPS] len=72
+192:[TAPWAKE] sig=40000 wf=0
+193:[RX] SYN out now=20360 state=2 timer=1 at=21360
+194:[TAPW] len=84
+195:[TAPWAKE] sig=10000 wf=0
+196:[TAPPOLL] wf=2 events=2
+197:[TAPS] len=84
+200:[RX] SYN out now=21405 state=2 timer=1 at=23405
+201:[TAPW] len=84
+202:[TAPWAKE] sig=10000 wf=0
+203:[TAPPOLL] wf=2 events=2
+204:[TAPS] len=84
+207:[RX] SYN out now=23405 state=2 timer=1 at=27405
+208:[TAPW] len=84
+209:[TAPWAKE] sig=10000 wf=0
+210:[TAPPOLL] wf=2 events=2
+211:[TAPS] len=84
+214:[RX] SYN out now=27405 state=2 timer=1 at=35405
+215:[TAPW] len=84
+216:[TAPWAKE] sig=10000 wf=0
+217:[TAPPOLL] wf=2 events=2
+218:[TAPS] len=84
+219:[TAPWAKE] sig=40000 wf=0
+220:[TAPW] len=72
+221:[TAPWAKE] sig=10000 wf=0
+222:[TAPPOLL] wf=2 events=2
+223:[TAPS] len=72
+224:[TAPW] len=73
+225:[TAPWAKE] sig=10000 wf=0
+226:[TAPPOLL] wf=2 events=3
+227:[TAPS] len=73
+228:[TAPWAKE] sig=40000 wf=0
+229:[TAPW] len=72
+230:[TAPWAKE] sig=10000 wf=0
+231:[TAPPOLL] wf=2 events=2
+232:[TAPS] len=72
+233:[TAPWAKE] sig=40000 wf=0
+234:[TAPW] len=72
+235:[TAPWAKE] sig=10000 wf=0
+236:[TAPPOLL] wf=2 events=2
+237:[TAPS] len=72
+238:[TAPWAKE] sig=40000 wf=0
+239:[RX] SYN out now=27620 state=2 timer=1 at=28620
+240:[TAPW] len=84
+241:[TAPWAKE] sig=10000 wf=0
+242:[TAPPOLL] wf=2 events=2
+243:[TAPS] len=84
+246:[RX] SYN out now=28655 state=2 timer=1 at=30655
+247:[TAPW] len=84
+248:[TAPWAKE] sig=10000 wf=0
+249:[TAPPOLL] wf=2 events=2
+250:[TAPS] len=84
+253:[RX] SYN out now=30655 state=2 timer=1 at=34655
+254:[TAPW] len=84
+255:[TAPWAKE] sig=10000 wf=0
+256:[TAPPOLL] wf=2 events=2
+257:[TAPS] len=84
+260:[RX] SYN out now=34655 state=2 timer=1 at=42655
+261:[TAPW] len=84
+262:[TAPWAKE] sig=10000 wf=0
+263:[TAPPOLL] wf=2 events=2
+264:[TAPS] len=84
+265:[TAPWAKE] sig=40000 wf=0
+266:[TAPW] len=72
+267:[TAPWAKE] sig=10000 wf=0
+268:[TAPPOLL] wf=2 events=2
+269:[TAPS] len=72
+270:[TAPW] len=73
+271:[TAPWAKE] sig=10000 wf=0
+272:[TAPPOLL] wf=2 events=3
+273:[TAPS] len=73
+274:[TAPWAKE] sig=40000 wf=0
+275:[TAPW] len=72
+276:[TAPWAKE] sig=10000 wf=0
+277:[TAPPOLL] wf=2 events=2
+278:[TAPS] len=72
+279:[TAPWAKE] sig=40000 wf=0
+280:[TAPW] len=72
+281:[TAPWAKE] sig=10000 wf=0
+282:[TAPPOLL] wf=2 events=2
+283:[TAPS] len=72
+284:[TAPWAKE] sig=40000 wf=0
+285:[RX] SYN out now=34860 state=2 timer=1 at=35860
+286:[TAPW] len=84
+287:[TAPWAKE] sig=10000 wf=0
+288:[TAPPOLL] wf=2 events=2
+289:[TAPS] len=84
+292:[RX] SYN out now=35905 state=2 timer=1 at=37905
+293:[TAPW] len=84
+294:[TAPWAKE] sig=10000 wf=0
+295:[TAPPOLL] wf=2 events=2
+296:[TAPS] len=84
+299:[RX] SYN out now=37905 state=2 timer=1 at=41905
+300:[TAPW] len=84
+301:[TAPWAKE] sig=10000 wf=0
+302:[TAPPOLL] wf=2 events=2
+303:[TAPS] len=84
+306:[RX] SYN out now=41905 state=2 timer=1 at=49905
+307:[TAPW] len=84
+308:[TAPWAKE] sig=10000 wf=0
+309:[TAPPOLL] wf=2 events=2
+310:[TAPS] len=84
+311:[TAPWAKE] sig=40000 wf=0
+312:[TAPW] len=72
+313:[TAPWAKE] sig=10000 wf=0
+314:[TAPPOLL] wf=2 events=2
+315:[TAPS] len=72
+316:[TAPWAKE] sig=40000 wf=0
+317:[TAPW] len=73
+318:[TAPWAKE] sig=10000 wf=0
+319:[TAPPOLL] wf=2 events=2
+320:[TAPS] len=73
+321:[TAPWAKE] sig=40000 wf=0
+322:[TAPW] len=72
+323:[TAPWAKE] sig=10000 wf=0
+324:[TAPPOLL] wf=2 events=2
+325:[TAPS] len=72
+326:[TAPWAKE] sig=40000 wf=0
+327:[RX] SYN out now=42120 state=2 timer=1 at=43120
+328:[TAPW] len=84
+329:[TAPWAKE] sig=10000 wf=0
+330:[TAPPOLL] wf=2 events=2
+331:[TAPS] len=84
+334:[RX] SYN out now=43155 state=2 timer=1 at=45155
+335:[TAPW] len=84
+336:[TAPWAKE] sig=10000 wf=0
+337:[TAPPOLL] wf=2 events=2
+338:[TAPS] len=84
+339:[TAPW] len=72
+340:[TAPWAKE] sig=10000 wf=0
+341:[TAPPOLL] wf=2 events=2
+342:[TAPS] len=72
+343:[TAPWAKE] sig=40000 wf=0
+346:[RX] SYN out now=45155 state=2 timer=1 at=49155
+347:[TAPW] len=84
+348:[TAPWAKE] sig=10000 wf=0
+349:[TAPPOLL] wf=2 events=2
+350:[TAPS] len=84
+353:[RX] SYN out now=49155 state=2 timer=1 at=57155
+354:[TAPW] len=84
+355:[TAPWAKE] sig=10000 wf=0
+356:[TAPPOLL] wf=2 events=2
+357:[TAPS] len=84
+358:[TAPWAKE] sig=40000 wf=0
+359:[TAPW] len=72
+360:[TAPWAKE] sig=10000 wf=0
+361:[TAPPOLL] wf=2 events=2
+362:[TAPS] len=72
+363:[TAPW] len=73
+364:[TAPWAKE] sig=10000 wf=0
+365:[TAPPOLL] wf=2 events=3
+366:[TAPS] len=73
+367:[TAPWAKE] sig=40000 wf=0
+368:[TAPW] len=72
+369:[TAPWAKE] sig=10000 wf=0
+370:[TAPPOLL] wf=2 events=2
+371:[TAPS] len=72
+372:[TAPWAKE] sig=40000 wf=0
+373:[TAPW] len=72
+374:[TAPWAKE] sig=10000 wf=0
+375:[TAPPOLL] wf=2 events=2
+376:[TAPS] len=72
+377:[TAPWAKE] sig=40000 wf=0
+378:[RX] SYN out now=49360 state=2 timer=1 at=50360
+379:[TAPW] len=84
+380:[TAPWAKE] sig=10000 wf=0
+381:[TAPPOLL] wf=2 events=2
+382:[TAPS] len=84
+385:[RX] SYN out now=50405 state=2 timer=1 at=52405
+386:[TAPW] len=84
+387:[TAPWAKE] sig=10000 wf=0
+388:[TAPPOLL] wf=2 events=2
+389:[TAPS] len=84
+392:[RX] SYN out now=52405 state=2 timer=1 at=56405
+393:[TAPW] len=84
+394:[TAPWAKE] sig=10000 wf=0
+395:[TAPPOLL] wf=2 events=2
+396:[TAPS] len=84
+399:[RX] SYN out now=56405 state=2 timer=1 at=64405
+400:[TAPW] len=84
+401:[TAPWAKE] sig=10000 wf=0
+402:[TAPPOLL] wf=2 events=2
+403:[TAPS] len=84
+404:[TAPWAKE] sig=40000 wf=0
+405:[TAPW] len=72
+406:[TAPWAKE] sig=10000 wf=0
+407:[TAPPOLL] wf=2 events=2
+408:[TAPS] len=72
+409:[TAPW] len=73
+410:[TAPWAKE] sig=10000 wf=0
+411:[TAPPOLL] wf=2 events=3
+412:[TAPS] len=73
+413:[TAPWAKE] sig=40000 wf=0
+414:[TAPW] len=72
+415:[TAPWAKE] sig=10000 wf=0
+416:[TAPPOLL] wf=2 events=2
+417:[TAPS] len=72
+418:[TAPWAKE] sig=40000 wf=0
+419:[TAPW] len=72
+420:[TAPWAKE] sig=10000 wf=0
+421:[TAPPOLL] wf=2 events=2
+422:[TAPS] len=72
+423:[TAPWAKE] sig=40000 wf=0
+424:[RX] SYN out now=56620 state=2 timer=1 at=57620
+425:[TAPW] len=84
+426:[TAPWAKE] sig=10000 wf=0
+427:[TAPPOLL] wf=2 events=2
+428:[TAPS] len=84
+431:[RX] SYN out now=57655 state=2 timer=1 at=59655
+432:[TAPW] len=84
+433:[TAPWAKE] sig=10000 wf=0
+434:[TAPPOLL] wf=2 events=2
+435:[TAPS] len=84
+438:[RX] SYN out now=59655 state=2 timer=1 at=63655
+439:[TAPW] len=84
+440:[TAPWAKE] sig=10000 wf=0
+441:[TAPPOLL] wf=2 events=2
+442:[TAPS] len=84
+445:[RX] SYN out now=63655 state=2 timer=1 at=71655
+446:[TAPW] len=84
+447:[TAPWAKE] sig=10000 wf=0
+448:[TAPPOLL] wf=2 events=2
+449:[TAPS] len=84
+450:[TAPWAKE] sig=40000 wf=0
+451:[TAPW] len=72
+452:[TAPWAKE] sig=10000 wf=0
+453:[TAPPOLL] wf=2 events=2
+454:[TAPS] len=72
+455:[TAPW] len=73
+456:[TAPWAKE] sig=10000 wf=0
+457:[TAPPOLL] wf=2 events=3
+458:[TAPS] len=73
+459:[TAPWAKE] sig=40000 wf=0
+460:[TAPW] len=72
+461:[TAPWAKE] sig=10000 wf=0
+462:[TAPPOLL] wf=2 events=2
+463:[TAPS] len=72
+464:[TAPWAKE] sig=40000 wf=0
+465:[TAPW] len=72
+466:[TAPWAKE] sig=10000 wf=0
+467:[TAPPOLL] wf=2 events=2
+468:[TAPS] len=72
+469:[TAPWAKE] sig=40000 wf=0
