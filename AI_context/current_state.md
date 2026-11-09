@@ -249,3 +249,11 @@ Para mudanças compartilhadas em AROSTCP, IPv6/multicast, mdnsd/Bonami e DNS-SD,
 **P4a TLP (2026-11-09), `review/arostcp-tlp` `60b89bbb88`:** PTO = 2·SRTT (+200 ms com um segmento em voo), nunca depois do RTO (a sonda toma o lugar do primeiro RTO); reenvia o último segmento ignorando o cwnd; ACK além da sonda sem D-SACK → `CC_ON_ECN` uma vez; D-SACK/dupack → sem perda; sysctl `net.inet.tcp.tlp`. `tail_probe.py` (rajadas de 10 KB com TCP_NODELAY, cauda descartada uma vez, 20 ms): recuperação mediana 208 → 134 ms (ACK atrasado do host ~45 + PTO ~58 + tique de 50 ms), 19/19 caudas pela sonda. loss_probe e rto_probe iguais. 51 suítes ok. Evidência `research/logs/2026-11-09/tlp/`.
 - Achados: (1) primeira versão desistia da sonda quando PTO ≥ RTO — o RFC/Linux limitam o PTO ao RTO; (2) sem TCP_NODELAY o Nagle segura a cauda até tudo ser confirmado (sai sozinha); (3) `sosend` manda segmentos menores que o MSS no meio de uma escrita (580 bytes) — FreeBSD usa `PRUS_MORETOCOME`; item para depois; (4) o tique de 50 ms do timer rápido pesa no PTO (até 50 ms).
 - Próximo: P4b RACK (precisa do horário de envio por segmento; desenho à parte), ou itens anotados: guerra de ACKs (`ack_war`), `IPV6_CHECKSUM`, `PRUS_MORETOCOME`.
+
+**Agrupamento dos próximos PRs (2026-11-09, pedido do usuário: coerência):**
+- #2178 (aberto): tap BPS + remontagem (5.40).
+- **G8 "ACKs e timers"** `review/arostcp-ack-timers`: ACK a cada 2º segmento, UNIT_MICROHZ, validação de cwnd, RTT do handshake passivo (`7c96c9679c`). 51 suítes ok sozinho. Bump 5.41 ao abrir.
+- **G9 "buffers"** `review/arostcp-rxbuf`: tap segura quadros (`3d90098213`), `sana_poll` a cada 32 (`7c39ee23fe`), ajuste automático (`d55ab2061f`). 51 suítes ok (AROSTCP e tap da branch).
+- **G10 "recuperação de perdas"** `review/arostcp-tlp`: TLP (`10ef541ebf`); RACK depois. tcpinfo 18/18, sysctl 10/10.
+- À parte: #2175 (timer hosted), #2179 (netstat). Branches antigas `review/arostcp-autobuf` e `review/tap-backpressure` removidas (absorvidas no G9).
+- Lição (memória): bug achado → verificar quais PRs abertos o expõem e corrigir lá (o caso do `tcp_reass()` no #2178).
