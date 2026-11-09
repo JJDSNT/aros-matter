@@ -227,3 +227,14 @@ Para mudanças compartilhadas em AROSTCP, IPv6/multicast, mdnsd/Bonami e DNS-SD,
 - **Validação de cwnd (2026-11-09):** branch `review/arostcp-ack-timers`, commit novo: CC_ON_ACK só se cwnd ≤ janela do par e cwnd < 2 × em voo (RFC 7661, Linux/FreeBSD newcwv). CUnit: 1 KB a cada 40 ms → cwnd 14480 → 54480 antes, 14480 depois. Fio, buffer padrão: cwnd mediano 619 → 254 KB (20 ms), 616 → 255 KB (100 ms), mesma vazão; HyStart++ e loss iguais. Evidência `research/logs/2026-11-09/cwnd-validation/`.
 - `run_tcp.ClockMap.to_mono()` corrigido: pacote entre a amostra anterior e a seguinte a um salto do relógio de parede pegava o desvio antigo (RTT negativo no `ss_probe`).
 - **Grupo 8 (branch `review/arostcp-ack-timers`):** ACK a cada 2 segmentos, timers MICROHZ, validação de cwnd. PR após o merge do #2167 (bump 5.40).
+
+**P3 ajuste automático dos buffers (2026-11-09), branch local `review/arostcp-autobuf` (sobre `review/arostcp-ack-timers`):** nota [research/2026-11-09-socket-buffer-autosize-design.md](research/2026-11-09-socket-buffer-autosize-design.md); evidência `research/logs/2026-11-09/autobuf/`. Commits:
+- `cd43137a74` remontagem: o segmento em `rcv_nxt` sempre entra; limite = janela de segmentos (bug antigo: com >100 fora de ordem a conexão travava para sempre; com buffers maiores, travou após 3,7 MB).
+- `fd4287abbc` RTT do handshake no lado passivo (syncache) via timestamp; CUnit (antes srtt 0, RTO 1 s).
+- `a8f725f909` `sana_poll()` roda os protocolos a cada 32 respostas (orçamento NAPI): o `ipintrq` (1024) transbordava (~800 descartes com 8 conexões).
+- `ce1bdf7d29` buffers crescem (FreeBSD: envio +16 KB, recepção dobra por RTT), sysctls `sendbuf_max`/`recvbuf_max` (1 MB; m68k 48 KB), `SB_MAX` x86 2 MB, `SO_*BUF` desliga; **orçamento global** a 2× (custo no pool) ≤ 3/8 de `maxmem`, devolvido no `tcp_close()`, nada cresce com metade dos clusters em uso. CUnit 17/17.
+- Resultados: recepção 44,8 → 130 (20 ms), 10,1 → 54,6 (100 ms); envio 49,1 → 111, 10,2 → 69,6; 0 retx. 8 conexões a 100 ms: pool não esgota (os dois desenhos anteriores esgotavam), agregado igual (CPU). 51 suítes ok.
+- **tap.device** branch local `review/tap-backpressure` (sobre `review/tap-device-bps`), `15ee9fddae`: segura o quadro sem pedido pendente (tipo lido por algum opener) e não lê o descritor até o próximo CMD_READ; ~450 órfãos/453 retx → 0. PR depois do #2178.
+- Bench: `mem_probe.py` (N conexões recebendo; conta "max amount" no log e lê `netstat -s`), `ack_probe --rate`, `tc_delay` com `limit 10000` (o padrão 1000 do netem descartava janelas grandes a 100 ms).
+- Achado para ferramentas: `netstat -m` falha no AROS ("unexpected change to mbstat").
+- PRs: grupo 8 (ack-timers) depois do #2167; este (P3) depois do grupo 8; tap depois do #2178. Próximo: P4 RACK-TLP.

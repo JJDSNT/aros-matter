@@ -1,0 +1,3 @@
+Execute SYS:System/Network/AROSTCP/S/startnet
+Wait 4
+C:tcpbench eth0 fe80::1 cwnd 7201 20 0 >SYS:out/cwnd.log

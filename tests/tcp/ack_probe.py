@@ -13,7 +13,7 @@ segments it covers: the distribution, and the share of ACKs covering more
 than two. --gap MS has the host send in 16 KB writes MS apart, so that the
 delayed-ACK timer, not the second segment, sends some ACKs.
 
-    ack_probe.py [--arostcp FILE] [--image DIR] [--bytes 2000000] [--gap 0] [--out DIR]
+    ack_probe.py [--arostcp FILE] [--image DIR] [--bytes 2000000] [--gap 0] [--delay MS [--rate R]] [--out DIR]
 Needs sudo -n for tcpdump.
 """
 import argparse, collections, json, os, re, socket, subprocess, sys, time
@@ -33,6 +33,7 @@ def main():
     ap.add_argument("--bytes", type=int, default=2000000)
     ap.add_argument("--gap", type=int, default=0)
     ap.add_argument("--delay", type=int, default=0, help="netem delay (ms) on what the host sends")
+    ap.add_argument("--rate", help="link rate of what the host sends (netem), e.g. 100mbit")
     ap.add_argument("--ifopts", default="", help="extra options for AROS's interfaces line, e.g. IPREQ=128")
     ap.add_argument("--out", default=os.path.join(ROOT, "tests", "tcp", "out", "ack-" + time.strftime("%Y%m%d-%H%M%S")))
     a = ap.parse_args()
@@ -45,7 +46,7 @@ def main():
     run_tcp.kill_strays()
     run_tcp.tc_clear()
     if a.delay:
-        run_tcp.tc_delay(a.delay)
+        run_tcp.tc_delay(a.delay, a.rate)
     offload = subprocess.run(["ethtool", "-k", run_tcp.IFACE], capture_output=True, text=True).stdout
     pcap = os.path.join(a.out, "ack.pcap")
     dump = subprocess.Popen(["sudo", "-n", "tcpdump", "-i", run_tcp.IFACE, "-n", "-s", "96", "-w", pcap,
@@ -143,7 +144,7 @@ def main():
         if m:
             retx += m.group(1) in seen_seq
             seen_seq.add(m.group(1))
-    res = {"host_retransmissions": retx, "mbit": round(sent * 8 / span / 1e6, 1) if span else None, "delay_ms": a.delay,
+    res = {"host_retransmissions": retx, "mbit": round(sent * 8 / span / 1e6, 1) if span else None, "delay_ms": a.delay, "rate": a.rate,
            "bytes_sent": sent, "error": err, "mss_option": mss, "segment_sizes": dict(sizes.most_common(6)),
            "full_segment": full, "acks": total, "segments_per_ack": dict(sorted(per_ack.items())),
            "acks_over_2_segments": over2, "share_over_2": round(over2 / total, 3) if total else None,

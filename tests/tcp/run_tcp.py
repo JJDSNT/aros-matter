@@ -59,8 +59,13 @@ def tc_drop(every):
     tc("filter", "add", "dev", IFACE, "parent", "ffff:", "protocol", "ipv6", "matchall", *act)
 
 
-def tc_delay(ms):
-    tc("qdisc", "add", "dev", IFACE, "root", "netem", "delay", "%dms" % ms)
+def tc_delay(ms, rate=None):
+    """netem delay on what the host sends; with RATE (e.g. "100mbit") also a
+    link rate, so that a window goes out paced as on a real link, not as one
+    burst. The delay line holds 10000 packets: netem's default, 1000, drops
+    what is in flight beyond it (several large windows at 100 ms)."""
+    extra = ["rate", rate] if rate else []
+    tc("qdisc", "add", "dev", IFACE, "root", "netem", "delay", "%dms" % ms, "limit", "10000", *extra)
 
 
 class Listeners(threading.Thread):

@@ -1,0 +1,12 @@
+{
+ "mss": 1428,
+ "sndbuf": 131376,
+ "mbit": 49.1,
+ "delay_ms": 20,
+ "every": 0,
+ "samples": 334,
+ "epochs": [],
+ "bytes": 122763320,
+ "boot": "ok",
+ "ok": true
+}

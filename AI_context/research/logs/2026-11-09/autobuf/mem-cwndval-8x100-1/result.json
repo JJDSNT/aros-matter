@@ -1,0 +1,27 @@
+{
+ "conns": 8,
+ "bytes_each": 8000000,
+ "delay_ms": 100,
+ "rate": null,
+ "error": null,
+ "aggregate_mbit": 61.6,
+ "per_conn_mbit": [
+  7.7,
+  7.7,
+  7.7,
+  7.7,
+  7.7,
+  7.7,
+  7.7,
+  7.7
+ ],
+ "host_retransmissions": 0,
+ "netstat_before": {
+  "text": []
+ },
+ "netstat_after": {
+  "text": []
+ },
+ "boot": "ok",
+ "ok": true
+}
