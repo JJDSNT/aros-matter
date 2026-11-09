@@ -105,7 +105,8 @@ def main():
     ap.add_argument("--arostcp")
     ap.add_argument("--secs", type=int, default=30)
     ap.add_argument("--delay", type=int, default=20)
-    ap.add_argument("--every", type=int, default=3000)
+    ap.add_argument("--every", type=int, default=3000, help="drop 1 in EVERY segments; 0: no drops")
+    ap.add_argument("--sndbuf", type=int, default=400 * 1024, help="AROS's SO_SNDBUF; 0: the stack's default")
     ap.add_argument("--out", default=os.path.join(ROOT, "tests", "tcp", "out", "cwnd-" + time.strftime("%Y%m%d-%H%M%S")))
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
@@ -129,11 +130,12 @@ def main():
     threading.Thread(target=sink, args=(lsock, log), daemon=True).start()
     run_tcp.tc_clear()
     run_tcp.tc_delay(a.delay)
-    run_tcp.tc_drop(a.every)
+    if a.every:
+        run_tcp.tc_drop(a.every)
     script = os.path.join(a.out, "cwnd.script")
     with open(script, "w") as f:
         f.write("Execute SYS:System/Network/AROSTCP/S/startnet\nWait 4\n")
-        f.write("C:tcpbench eth0 %s cwnd %d %d >SYS:out/cwnd.log\n" % (host_ll, PORT, a.secs))
+        f.write("C:tcpbench eth0 %s cwnd %d %d %d >SYS:out/cwnd.log\n" % (host_ll, PORT, a.secs, a.sndbuf))
     env = dict(os.environ, AROS_HOSTED_IMAGE=a.image, AROS_TAP_IP=run_tcp.AROS_IP,
                AROS_RUN_TIMEOUT=str(a.secs + 120))
     if a.arostcp:
@@ -153,10 +155,18 @@ def main():
     except OSError:
         pass
     ep = analyse(samples, mss)
-    res = {"mss": mss, "delay_ms": a.delay, "every": a.every, "samples": len(samples), "epochs": ep,
+    sndbuf = None
+    try:
+        for line in open(os.path.join(a.out, "aros", "out", "cwnd.log")):
+            if line.startswith("sndbuf "):
+                sndbuf = int(line.split()[1])
+    except OSError:
+        pass
+    res = {"mss": mss, "sndbuf": sndbuf, "mbit": round(sum(log) * 8 / a.secs / 1e6, 1), "delay_ms": a.delay, "every": a.every, "samples": len(samples), "epochs": ep,
            "bytes": sum(log), "boot": "ok" if "finished" in r.stdout else "did not finish",
            # the bench's own check: losses happened, so there are epochs to look at
-           "ok": len(ep) >= 2}
+           # with drops, the losses made epochs; without, data went through
+           "ok": len(ep) >= 2 if a.every else (len(samples) > 0 and sum(log) > 0)}
     json.dump(res, open(os.path.join(a.out, "result.json"), "w"), indent=1)
     with open(os.path.join(a.out, "cwnd.csv"), "w") as f:
         f.write("ms,cwnd,ssthresh,rtt_us\n")

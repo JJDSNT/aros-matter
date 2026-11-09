@@ -18,6 +18,7 @@
 #                      (host side: tap 'aros0', see tools/tap-up.sh) with this IPv4
 #   AROS_TAP2_IP       if set, adds eth1 on tap.device unit 1 (host tap 'aros1',
 #                      tools/tap-up.sh 1) with this IPv4
+#   AROS_TAP_OPTS      extra options for eth0's interfaces line (e.g. IPREQ=128)
 set -eu
 [ $# -ge 2 ] || { echo "usage: $0 WORKDIR SCRIPT [FILE...]" >&2; exit 2; }
 img=${AROS_HOSTED_IMAGE:-$HOME/aros-midihub/build-aros-linux/bin/linux-x86_64/AROS}
@@ -35,7 +36,7 @@ if [ -n "${AROS_TAP_MTU:-}" ]; then
     printf '%s' "$AROS_TAP_MTU" > "$sys/Prefs/Env-Archive/SYS/Net/tap/unit0/MTU"
 fi
 if [ -n "${AROS_TAP_IP:-}" ]; then
-    echo "eth0 DEV=DEVS:Networks/tap.device UNIT=0 IP=$AROS_TAP_IP NETMASK=255.255.255.0 UP" \
+    echo "eth0 DEV=DEVS:Networks/tap.device UNIT=0 IP=$AROS_TAP_IP NETMASK=255.255.255.0 ${AROS_TAP_OPTS:-}UP" \
         >> "$sys/System/Network/AROSTCP/db/interfaces"
 fi
 # a second interface, eth1 on tap.device unit 1 (host tap aros1: tap-up.sh 1)

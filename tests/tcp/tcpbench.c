@@ -20,7 +20,8 @@
  *                      of 100 bytes each way (RTT samples), 0.5 s idle,
  *                      then a 77-byte tail the host drops once (the RTO,
  *                      tests/tcp/rto_probe.py); wait for the host's 1 byte
- *   cwnd PORT SECS     send for SECS seconds, without blocking; every 50 ms
+ *   cwnd PORT SECS [SNDBUF]
+ *                      send for SECS seconds, without blocking; every 50 ms
  *                      print "cwnd <ms> <snd_cwnd> <ssthresh> <rtt us> <mss>" from
  *                      TCP_INFO (the CUBIC curve, tests/tcp/cwnd_probe.py)
  *   hold PORT N        N connections, one after the other; on each, wait
@@ -251,11 +252,14 @@ int main(int argc, char **argv)
         int on = 1;
 
         if ((s = tcp_connect(port)) >= 0) {
-            int sb = 400 * 1024;       /* under sb_max (512 KB) with its mbuf overhead */
+            /* SNDBUF: 0 keeps the stack's default; by default 400 KB, under
+             * sb_max (512 KB) with its mbuf overhead, which never holds the
+             * window back on the benches' paths */
+            int sb = argc > 6 ? atoi(argv[6]) : 400 * 1024;
             socklen_t sl = sizeof(sb);
 
-            /* a send buffer that never holds the window back */
-            setsockopt(s, SOL_SOCKET, SO_SNDBUF, &sb, sizeof(sb));
+            if (sb > 0)
+                setsockopt(s, SOL_SOCKET, SO_SNDBUF, &sb, sizeof(sb));
             getsockopt(s, SOL_SOCKET, SO_SNDBUF, &sb, &sl);
             printf("sndbuf %d\n", sb);
             IoctlSocket(s, FIONBIO, (char *)&on);

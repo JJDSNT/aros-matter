@@ -1,0 +1,9 @@
+rtt   1 ms  sndbuf 32768   -> actual 32768   117.1 Mbit/s  median cwnd 103 KB  bdp-limit 262.1 Mbit/s ok=True
+rtt   1 ms  sndbuf 0       -> actual 131376   116.1 Mbit/s  median cwnd 101 KB  bdp-limit 1051.0 Mbit/s ok=True
+rtt   1 ms  sndbuf 409600  -> actual 409600   114.7 Mbit/s  median cwnd 141 KB  bdp-limit 3276.8 Mbit/s ok=True
+rtt  20 ms  sndbuf 32768   -> actual 32768    12.2 Mbit/s  median cwnd 148 KB  bdp-limit 13.1 Mbit/s ok=True
+rtt  20 ms  sndbuf 0       -> actual 131376    49.5 Mbit/s  median cwnd 664 KB  bdp-limit 52.6 Mbit/s ok=True
+rtt  20 ms  sndbuf 409600  -> actual 409600   114.9 Mbit/s  median cwnd 1080 KB  bdp-limit 163.8 Mbit/s ok=True
+rtt 100 ms  sndbuf 32768   -> actual 32768     2.5 Mbit/s  median cwnd 148 KB  bdp-limit 2.6 Mbit/s ok=True
+rtt 100 ms  sndbuf 0       -> actual 131376    10.1 Mbit/s  median cwnd 597 KB  bdp-limit 10.5 Mbit/s ok=True
+rtt 100 ms  sndbuf 409600  -> actual 409600    31.5 Mbit/s  median cwnd 1577 KB  bdp-limit 32.8 Mbit/s ok=True

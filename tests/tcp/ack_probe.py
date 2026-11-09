@@ -32,6 +32,8 @@ def main():
     ap.add_argument("--arostcp")
     ap.add_argument("--bytes", type=int, default=2000000)
     ap.add_argument("--gap", type=int, default=0)
+    ap.add_argument("--delay", type=int, default=0, help="netem delay (ms) on what the host sends")
+    ap.add_argument("--ifopts", default="", help="extra options for AROS's interfaces line, e.g. IPREQ=128")
     ap.add_argument("--out", default=os.path.join(ROOT, "tests", "tcp", "out", "ack-" + time.strftime("%Y%m%d-%H%M%S")))
     a = ap.parse_args()
     run_tcp.clock()                     # sampled from now; the capture's times made monotonic
@@ -42,6 +44,8 @@ def main():
     subprocess.run([os.path.join(ROOT, "tools", "tap-up.sh")], check=True, stdout=subprocess.DEVNULL)
     run_tcp.kill_strays()
     run_tcp.tc_clear()
+    if a.delay:
+        run_tcp.tc_delay(a.delay)
     offload = subprocess.run(["ethtool", "-k", run_tcp.IFACE], capture_output=True, text=True).stdout
     pcap = os.path.join(a.out, "ack.pcap")
     dump = subprocess.Popen(["sudo", "-n", "tcpdump", "-i", run_tcp.IFACE, "-n", "-s", "96", "-w", pcap,
@@ -50,7 +54,8 @@ def main():
     with open(script, "w") as f:
         f.write("Execute SYS:System/Network/AROSTCP/S/startnet\nWait 4\n")
         f.write("C:tcpserve 4 %d recv 0 >SYS:out/serve.log\n" % PORT)
-    env = dict(os.environ, AROS_HOSTED_IMAGE=a.image, AROS_TAP_IP=run_tcp.AROS_IP, AROS_RUN_TIMEOUT="180")
+    env = dict(os.environ, AROS_HOSTED_IMAGE=a.image, AROS_TAP_IP=run_tcp.AROS_IP, AROS_RUN_TIMEOUT="180",
+               AROS_TAP_OPTS=(a.ifopts + " ") if a.ifopts else "")
     if a.arostcp:
         env["AROS_AROSTCP"] = os.path.abspath(a.arostcp)
     boot = subprocess.Popen([os.path.join(ROOT, "tools", "hosted-run.sh"), os.path.join(a.out, "aros"), script, exe],
@@ -81,6 +86,7 @@ def main():
             err = str(e)
         c.close()
     out_text = boot.communicate()[0]
+    run_tcp.tc_clear()
     time.sleep(1)
     for pid in subprocess.run(["pgrep", "-P", str(dump.pid)], capture_output=True, text=True).stdout.split():
         subprocess.run(["sudo", "-n", "kill", "-INT", pid])
@@ -130,7 +136,15 @@ def main():
             last = ack
     total = sum(per_ack.values())
     over2 = sum(v for k, v in per_ack.items() if k > 2)
-    res = {"bytes_sent": sent, "error": err, "mss_option": mss, "segment_sizes": dict(sizes.most_common(6)),
+    span = (data[-1][0] - data[0][0]) if len(data) > 1 else 0
+    seen_seq, retx = set(), 0
+    for line in text.splitlines():
+        m = re.search(r"> \S+\.%d: Flags \[[^\]]*\], seq (\d+):" % PORT, line)
+        if m:
+            retx += m.group(1) in seen_seq
+            seen_seq.add(m.group(1))
+    res = {"host_retransmissions": retx, "mbit": round(sent * 8 / span / 1e6, 1) if span else None, "delay_ms": a.delay,
+           "bytes_sent": sent, "error": err, "mss_option": mss, "segment_sizes": dict(sizes.most_common(6)),
            "full_segment": full, "acks": total, "segments_per_ack": dict(sorted(per_ack.items())),
            "acks_over_2_segments": over2, "share_over_2": round(over2 / total, 3) if total else None,
            "max_ack_delay_ms": round(max(delays) * 1000, 1) if delays else None,
