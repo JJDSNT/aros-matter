@@ -10,7 +10,6 @@ Estados: **aberto** (sem correção), **corrigido (branch)** (commit local/fork,
 
 | # | Onde | Bug | Como aparece | Achado em |
 |---|---|---|---|---|
-| B2 | `sosend()` | Segmentos menores que o MSS no meio de uma escrita (o `send()` chega ao TCP em pedaços; FreeBSD usa `PRUS_MORETOCOME`) | segmento de 580 bytes no meio de rajadas de 10 KB | 2026-11-09 (TLP) |
 | B3 | `tcp_drain()` | Vazio: com o pool de mbufs esgotado nada libera as filas de remontagem | leitura do código (`m_clalloc` falhando no teste de pressão) | 2026-11-09 (buffers) |
 | B4 | `netinet/in.h` | `IPV6_CHECKSUM` vale 26, o mesmo número de `IPV6_V6ONLY`; e não está implementado para raw IPv6 não-ICMPv6 (RFC 3542 §3.1) | teste da remontagem (raw6 sem checksum) | 2026-11-09 |
 | B5 | rotas IPv6 | Rotas link-local com zona 0: uma `fe80::/64` para todas as interfaces (limitação do G1) | `rtssthresh.c` precisou da zona 0 | 2026-11-08 |
@@ -26,6 +25,7 @@ Estados: **aberto** (sem correção), **corrigido (branch)** (commit local/fork,
 | tap.device descartava quadro sem pedido pendente (órfão) | segura o quadro até o próximo CMD_READ | corrigido (G9, `review/arostcp-rxbuf`) |
 | `sana_poll()` esvaziava a porta antes de rodar o IP → `ipintrq` transbordava | protocolos a cada 32 respostas | corrigido (G9) |
 | Conexão aceita (syncache) sem RTT até enviar dados (RTO 1 s em receptor) | amostra do timestamp no ACK final | corrigido (G8, `review/arostcp-ack-timers`) |
+| B2 Segmentos parciais no meio de uma escrita (10 KB em 10 segmentos) | `SB_MORETOCOME` (FreeBSD `PRUS_MORETOCOME`), teste CUnit (7 segmentos; antes 10) | corrigido (`review/arostcp-robust`) |
 | B1 Guerra de ACKs (dropafterack sem limite; AROS travava) | 5/s por conexão (`tcp_ackwar_ok()`, FreeBSD `ack_war`), teste CUnit (11 ACKs/s; antes travava) | corrigido (`review/arostcp-robust`) |
 | Recuperação falsa (reordenação) nunca desfeita | anulação por D-SACK | corrigido (G10, `review/arostcp-tlp`) |
 | `netstat -m` falhava sempre ("unexpected change to mbstat") | `MTCOUNT` + `m_memused` | **em PR** #2179 |
