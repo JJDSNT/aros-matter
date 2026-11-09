@@ -10,7 +10,6 @@ Estados: **aberto** (sem correção), **corrigido (branch)** (commit local/fork,
 
 | # | Onde | Bug | Como aparece | Achado em |
 |---|---|---|---|---|
-| B1 | `tcp_input()` | **Guerra de ACKs**: dois lados dessincronizados respondem ao ACK fora da janela um do outro sem limite (dropafterack), o AROS trava em laço | teste CUnit que injetava dados à frente do cliente | 2026-11-09 (#2178) |
 | B2 | `sosend()` | Segmentos menores que o MSS no meio de uma escrita (o `send()` chega ao TCP em pedaços; FreeBSD usa `PRUS_MORETOCOME`) | segmento de 580 bytes no meio de rajadas de 10 KB | 2026-11-09 (TLP) |
 | B3 | `tcp_drain()` | Vazio: com o pool de mbufs esgotado nada libera as filas de remontagem | leitura do código (`m_clalloc` falhando no teste de pressão) | 2026-11-09 (buffers) |
 | B4 | `netinet/in.h` | `IPV6_CHECKSUM` vale 26, o mesmo número de `IPV6_V6ONLY`; e não está implementado para raw IPv6 não-ICMPv6 (RFC 3542 §3.1) | teste da remontagem (raw6 sem checksum) | 2026-11-09 |
@@ -27,6 +26,7 @@ Estados: **aberto** (sem correção), **corrigido (branch)** (commit local/fork,
 | tap.device descartava quadro sem pedido pendente (órfão) | segura o quadro até o próximo CMD_READ | corrigido (G9, `review/arostcp-rxbuf`) |
 | `sana_poll()` esvaziava a porta antes de rodar o IP → `ipintrq` transbordava | protocolos a cada 32 respostas | corrigido (G9) |
 | Conexão aceita (syncache) sem RTT até enviar dados (RTO 1 s em receptor) | amostra do timestamp no ACK final | corrigido (G8, `review/arostcp-ack-timers`) |
+| B1 Guerra de ACKs (dropafterack sem limite; AROS travava) | 5/s por conexão (`tcp_ackwar_ok()`, FreeBSD `ack_war`), teste CUnit (11 ACKs/s; antes travava) | corrigido (`review/arostcp-robust`) |
 | Recuperação falsa (reordenação) nunca desfeita | anulação por D-SACK | corrigido (G10, `review/arostcp-tlp`) |
 | `netstat -m` falhava sempre ("unexpected change to mbstat") | `MTCOUNT` + `m_memused` | **em PR** #2179 |
 | timer.device hosted contava tiques de SIGALRM (perdidos) | relógio monotônico do host | **em PR** #2175 |
