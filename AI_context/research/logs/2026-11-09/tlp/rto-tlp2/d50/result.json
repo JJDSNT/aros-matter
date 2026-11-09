@@ -1,0 +1,119 @@
+{
+ "delay_ms": 50,
+ "connections": [
+  {
+   "port": 50037,
+   "tail_copies": 2,
+   "rtt_ms": 50.7,
+   "rto_s": 0.215,
+   "tsval_step": 215,
+   "spurious": 0
+  },
+  {
+   "port": 51114,
+   "tail_copies": 2,
+   "rtt_ms": 50.3,
+   "rto_s": 0.205,
+   "tsval_step": 205,
+   "spurious": 0
+  },
+  {
+   "port": 51260,
+   "tail_copies": 2,
+   "rtt_ms": 50.3,
+   "rto_s": 0.215,
+   "tsval_step": 215,
+   "spurious": 0
+  },
+  {
+   "port": 53910,
+   "tail_copies": 2,
+   "rtt_ms": 50.3,
+   "rto_s": 0.204,
+   "tsval_step": 205,
+   "spurious": 0
+  },
+  {
+   "port": 54145,
+   "tail_copies": 2,
+   "rtt_ms": 50.6,
+   "rto_s": 0.205,
+   "tsval_step": 205,
+   "spurious": 0
+  },
+  {
+   "port": 54249,
+   "tail_copies": 2,
+   "rtt_ms": 50.3,
+   "rto_s": 0.215,
+   "tsval_step": 215,
+   "spurious": 0
+  },
+  {
+   "port": 57291,
+   "tail_copies": 2,
+   "rtt_ms": 50.3,
+   "rto_s": 0.205,
+   "tsval_step": 205,
+   "spurious": 0
+  },
+  {
+   "port": 58671,
+   "tail_copies": 2,
+   "rtt_ms": 50.2,
+   "rto_s": 0.215,
+   "tsval_step": 215,
+   "spurious": 0
+  }
+ ],
+ "rto_s": {
+  "min": 0.204,
+  "median": 0.21,
+  "max": 0.215
+ },
+ "rtt_s": 0.05,
+ "spurious": 0,
+ "rfc6298_fine_clock_s": 1.0,
+ "linux_s": 0.25,
+ "ok": true,
+ "jitter_ms": 0,
+ "boot": "ok",
+ "tails_seen_by_watcher": 16,
+ "host": [
+  {
+   "bytes": 2077
+  },
+  {
+   "bytes": 2077
+  },
+  {
+   "bytes": 2077
+  },
+  {
+   "bytes": 2077
+  },
+  {
+   "bytes": 2077
+  },
+  {
+   "bytes": 2077
+  },
+  {
+   "bytes": 2077
+  },
+  {
+   "bytes": 2077
+  }
+ ],
+ "aros": [
+  "rto 0 ok=1 exchanges=20 errno=0",
+  "rto 1 ok=1 exchanges=20 errno=0",
+  "rto 2 ok=1 exchanges=20 errno=0",
+  "rto 3 ok=1 exchanges=20 errno=0",
+  "rto 4 ok=1 exchanges=20 errno=0",
+  "rto 5 ok=1 exchanges=20 errno=0",
+  "rto 6 ok=1 exchanges=20 errno=0",
+  "rto 7 ok=1 exchanges=20 errno=0",
+  ""
+ ]
+}

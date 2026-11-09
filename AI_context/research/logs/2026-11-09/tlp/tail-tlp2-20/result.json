@@ -1,0 +1,41 @@
+{
+ "bursts": 20,
+ "size": 10000,
+ "gap_ms": 300,
+ "delay_ms": 20,
+ "watch_errors": null,
+ "watch_dropped": 19,
+ "tails_resent": 19,
+ "other_resent": 0,
+ "recovery_ms": [
+  83.8,
+  133.7,
+  133.6,
+  133.7,
+  114.4,
+  134.1,
+  133.8,
+  133.8,
+  133.4,
+  114.2,
+  133.9,
+  133.8,
+  133.8,
+  134.1,
+  114.5,
+  134.1,
+  133.7,
+  134.1,
+  133.7
+ ],
+ "recovery_median_ms": 133.7,
+ "recovery_max_ms": 134.1,
+ "rtt_median_ms": 20.1,
+ "sent_3_or_more": 0,
+ "seconds": 5.833,
+ "host_bytes": [
+  200000
+ ],
+ "boot": "ok",
+ "ok": true
+}

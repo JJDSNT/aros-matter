@@ -26,8 +26,9 @@
  *                      TCP_INFO (the CUBIC curve, tests/tcp/cwnd_probe.py)
  *   bursts PORT N SIZE GAPMS
  *                      N bursts of SIZE bytes, GAPMS apart (an application's
- *                      replies; tail loss, tests/tcp/tail_probe.py), then
- *                      close and wait for the host's FIN
+ *                      replies, with TCP_NODELAY as such servers set it;
+ *                      tail loss, tests/tcp/tail_probe.py), then close and
+ *                      wait for the host's FIN
  *   hold PORT N        N connections, one after the other; on each, wait
  *                      up to 10 s for one byte: "hold <i> rc=<n> c=<byte>
  *                      errno=<e>" (rc -2: nothing came)
@@ -155,8 +156,9 @@ int main(int argc, char **argv)
         }
         printf("send done %ld\n", sent);
     } else if (!strcmp(mode, "bursts") && argc > 7) {
-        int n = atoi(argv[5]), size = atoi(argv[6]), gap = atoi(argv[7]), done = 0;
+        int n = atoi(argv[5]), size = atoi(argv[6]), gap = atoi(argv[7]), done = 0, on = 1;
         if ((s = tcp_connect(port)) >= 0) {
+            setsockopt(s, IPPROTO_TCP, TCP_NODELAY, &on, sizeof(on));
             for (i = 0; i < n; i++) {
                 int left = size;
                 while (left > 0) {

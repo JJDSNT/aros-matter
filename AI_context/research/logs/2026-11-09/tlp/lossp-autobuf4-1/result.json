@@ -1,0 +1,43 @@
+{
+ "boot": "ok",
+ "host_tcp_sack": "1",
+ "partial": {
+  "stalls": [],
+  "seconds": 0.394,
+  "data_segments": 721,
+  "retransmissions": 20,
+  "sent_3_or_more": [],
+  "timeouts": 0,
+  "needless_retransmissions": 0,
+  "acks_with_sack": 266,
+  "acks_2plus_sack": 205,
+  "host": {
+   "bytes": 1000000,
+   "host_seconds": 0.394
+  },
+  "complete": true
+ },
+ "random": {
+  "stalls": [],
+  "seconds": 1.283,
+  "data_segments": 715,
+  "retransmissions": 14,
+  "sent_3_or_more": [],
+  "timeouts": 0,
+  "needless_retransmissions": 0,
+  "acks_with_sack": 90,
+  "acks_2plus_sack": 0,
+  "host": {
+   "bytes": 1000000,
+   "host_seconds": 1.283
+  },
+  "complete": true
+ },
+ "checks": {
+  "partial_has_multi_sack": true,
+  "random_has_retransmissions": true
+ },
+ "shaping_errors": [],
+ "ifb_stats": "",
+ "bench_ok": true
+}
