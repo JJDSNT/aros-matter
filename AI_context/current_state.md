@@ -257,3 +257,16 @@ Para mudanças compartilhadas em AROSTCP, IPv6/multicast, mdnsd/Bonami e DNS-SD,
 - **G10 "recuperação de perdas"** `review/arostcp-tlp`: TLP (`10ef541ebf`); RACK depois. tcpinfo 18/18, sysctl 10/10.
 - À parte: #2175 (timer hosted), #2179 (netstat). Branches antigas `review/arostcp-autobuf` e `review/tap-backpressure` removidas (absorvidas no G9).
 - Lição (memória): bug achado → verificar quais PRs abertos o expõem e corrigir lá (o caso do `tcp_reass()` no #2178).
+
+**Readme (2026-11-09):** faltava atualizar `bsdsocket/Readme.md` (regra do backlog2 §7) em 5 commits; corrigido em cada um (remontagem no #2178 com force-push; RTT passivo no G8; `sana_poll` e buffers no G9, nota no README do tap; TLP no G10). Código das pontas inalterado (só docs).
+
+**Backlog AROSTCP além do G10 (prioridade sugerida):**
+1. RACK (P4b) — nota [research/2026-11-09-rack-design.md](research/2026-11-09-rack-design.md); motivação medida: 28-47 retransmissões espúrias/MB com reordenação.
+2. Timer por deadline em vez do tique de 50 ms (pesa no PTO/RTO: até 50 ms de atraso).
+3. Prevenção de guerra de ACKs (FreeBSD `ack_war_*`).
+4. `PRUS_MORETOCOME` no `sosend` (segmentos menores que o MSS no meio de uma escrita).
+5. `tcp_drain()` vazio: liberar filas de remontagem quando o pool esgota.
+6. `IPV6_CHECKSUM` (RFC 3542 §3.1) + número que não colida com `IPV6_V6ONLY`.
+7. Rotas link-local com zona 0 (uma `fe80::/64` para todas as interfaces; G1).
+8. P5 pacing; F-RTO/TFO só se houver ganho medido (B2-D).
+Ferramentas: `route` (zonas IPv6, `-prefixlen`), acoplamento libkvm/release.
