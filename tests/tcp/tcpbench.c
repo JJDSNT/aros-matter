@@ -24,6 +24,10 @@
  *                      send for SECS seconds, without blocking; every 50 ms
  *                      print "cwnd <ms> <snd_cwnd> <ssthresh> <rtt us> <mss>" from
  *                      TCP_INFO (the CUBIC curve, tests/tcp/cwnd_probe.py)
+ *   bursts PORT N SIZE GAPMS
+ *                      N bursts of SIZE bytes, GAPMS apart (an application's
+ *                      replies; tail loss, tests/tcp/tail_probe.py), then
+ *                      close and wait for the host's FIN
  *   hold PORT N        N connections, one after the other; on each, wait
  *                      up to 10 s for one byte: "hold <i> rc=<n> c=<byte>
  *                      errno=<e>" (rc -2: nothing came)
@@ -150,6 +154,30 @@ int main(int argc, char **argv)
             CloseSocket(s);
         }
         printf("send done %ld\n", sent);
+    } else if (!strcmp(mode, "bursts") && argc > 7) {
+        int n = atoi(argv[5]), size = atoi(argv[6]), gap = atoi(argv[7]), done = 0;
+        if ((s = tcp_connect(port)) >= 0) {
+            for (i = 0; i < n; i++) {
+                int left = size;
+                while (left > 0) {
+                    int k = send(s, buf, left < (int)sizeof(buf) ? left : (int)sizeof(buf), 0);
+                    if (k <= 0)
+                        break;
+                    left -= k;
+                }
+                if (left > 0) {
+                    printf("send failed in burst %d: errno %d\n", i, errno);
+                    break;
+                }
+                done++;
+                Delay(gap / 20 > 0 ? gap / 20 : 1);
+            }
+            shutdown(s, 1);
+            while (recv(s, buf, sizeof(buf), 0) > 0)
+                ;
+            CloseSocket(s);
+        }
+        printf("bursts done %d\n", done);
     } else if (!strcmp(mode, "unread")) {
         if ((s = tcp_connect(port)) >= 0) {
             Delay(2 * 50);          /* the host's data arrives and stays unread */
