@@ -1,0 +1,9 @@
+{
+ "samples": 720,
+ "load": 8,
+ "timer": "/tmp/claude-1000/-home-jaime-aros-matter/0a6f1726-e248-409a-bd23-3f46961832ea/scratchpad/tm/timer.device.old",
+ "drift_ms": 25.0,
+ "max_offset_ms": 26.2,
+ "steps_over_50ms": [],
+ "ok": true
+}
