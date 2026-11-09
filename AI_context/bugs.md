@@ -26,6 +26,7 @@ Estados: **aberto** (sem correção), **corrigido (branch)** (commit local/fork,
 | Conexão aceita (syncache) sem RTT até enviar dados (RTO 1 s em receptor) | amostra do timestamp no ACK final | corrigido (G8, `review/arostcp-ack-timers`) |
 | B8 Rota com gateway link-local ignorava a zona (tráfego saía pela 1ª interface) | `ifa_ifwithroute()` usa a interface da zona; teste em `cunit-net-prefix6if` | corrigido (`review/arostcp-ipv6-fixes`) |
 | B6 `route` sem zonas IPv6 nem prefixos | `ADDR%ZONE`, `ADDR/LEN`, `-prefixlen` | **em PR** #2179 |
+| (meu, no #2179) `K_PREFIXLEN` com 41, o valor do `K_SHOW`: `route prefixlen` rodava show e `-show` virava `-prefixlen` (Kal) | `K_PREFIXLEN` 42, depois do `K_SHOW`; testado no AROS | corrigido no #2179 |
 | B9 `route` imprimia gateway de enlace em bytes crus | `link#N` / `link_ntoa()` (netlib, que já existia; corrigido o `:` sobrando e o limite do buffer) | **em PR** #2179 |
 | B4 `IPV6_CHECKSUM` ausente e com o número do `IPV6_V6ONLY` | número 7 (Linux), saída/entrada no raw6 com o `m_copyback()` que já existia em `net/rtsock.c` (agora declarado em `<sys/mbuf.h>`); testes no `cunit-net-raw6` | corrigido (`review/arostcp-ipv6-fixes`) |
 | B7 RTO/PTO esperavam o tique de 50 ms | pedido próprio ao timer.device no prazo mais cedo (`tcp_timer_want()`/`tcp_rexmt_due()`): RTO 0,200 s exato, cauda 134 → 59 ms | corrigido (`review/arostcp-robust`) |
