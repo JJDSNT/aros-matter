@@ -1,0 +1,53 @@
+{
+ "boot": "ok",
+ "host_tcp_sack": "1",
+ "partial": {
+  "stalls": [],
+  "seconds": 0.55,
+  "data_segments": 721,
+  "retransmissions": 20,
+  "sent_3_or_more": [],
+  "timeouts": 0,
+  "needless_retransmissions": 0,
+  "acks_with_sack": 188,
+  "acks_2plus_sack": 133,
+  "host": {
+   "bytes": 1000000,
+   "host_seconds": 0.551
+  },
+  "complete": true
+ },
+ "lostrexmit": {
+  "stalls": [],
+  "seconds": 0.169,
+  "data_segments": 703,
+  "retransmissions": 2,
+  "sent_3_or_more": [],
+  "timeouts": 0,
+  "needless_retransmissions": 0,
+  "acks_with_sack": 64,
+  "acks_2plus_sack": 0,
+  "host": {
+   "bytes": 1000000,
+   "host_seconds": 0.169
+  },
+  "complete": true
+ },
+ "checks": {
+  "partial_has_multi_sack": true,
+  "lostrexmit_target_3_copies": true
+ },
+ "shaping_errors": [],
+ "ifb_stats": "",
+ "watch": {
+  "target": 835067759,
+  "add_rc": 0,
+  "add_err": "",
+  "copy_times": [
+   1794252678.7842185,
+   1794252678.8058696
+  ],
+  "released": true
+ },
+ "bench_ok": true
+}
