@@ -5,6 +5,10 @@
 #  2. flawfinder hits TIP adds in each C/H file it changes (same diff);
 #     without flawfinder, a grep of the calls it flags in the added lines.
 # Run in the AROS tree (default ~/AROS-ipv6). Prints nothing when clean.
+# Calibration (2026-11-09): Codacy failed #2179 on flawfinder strncpy and
+# strlen and on cppcheck variableScope, and passed #2178 and #2179 with new
+# level-2 char (static arrays), memcpy and bcopy hits: those are counted
+# apart as "info", not shown as what would fail the gate.
 cd "${AROS_SRC:-$HOME/AROS-ipv6}" || exit 1
 T=$(mktemp -d)
 for f in $(git diff --name-only "$1" "$2" -- '*.c'); do
@@ -28,12 +32,16 @@ if command -v flawfinder >/dev/null; then
         | sed -E 's/^[^:]*:[0-9]+:([0-9]+:)? *//' | sort > "$T/$v.ff"
     done
     n=$(diff "$T/base.ff" "$T/tip.ff" | sed -n 's/^> //p')
-    [ -n "$n" ] && { echo "== flawfinder $f"; echo "$n"; }
+    # what Codacy fails on, and level-2 char/memcpy/bcopy, which it passed
+    gate=$(printf '%s\n' "$n" | grep -vE '^\[2\] \(buffer\) (char|memcpy|bcopy):' | grep .)
+    info=$(printf '%s\n' "$n" | grep -cE '^\[2\] \(buffer\) (char|memcpy|bcopy):')
+    [ -n "$gate" ] && { echo "== flawfinder $f"; echo "$gate"; }
+    [ "$info" -gt 0 ] && echo "-- info $f: $info level-2 char/memcpy/bcopy hits (Codacy passes these)"
   done
   rm -rf "$T"
   exit 0
 fi
- rm -rf "$T"
+rm -rf "$T"
 git diff "$1" "$2" -- '*.c' '*.h' | grep -nE '^\+.*\b(strcpy|strncpy|strlen|strcat|strncat|sprintf|vsprintf|gets|scanf)[[:space:]]*\(' \
   | sed 's/^/== flawfinder /'
 exit 0
