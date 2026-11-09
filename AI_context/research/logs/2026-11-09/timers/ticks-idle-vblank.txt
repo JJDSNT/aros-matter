@@ -1,0 +1,5 @@
+[TICK] slow: n=20 mean=500.0 ms min=500 max=500
+[TICK] fast: n=200 mean=60.0 ms min=60 max=60
+[TICK] slow: n=20 mean=500.0 ms min=500 max=500
+[TICK] fast: n=200 mean=60.0 ms min=60 max=60
+[TICK] slow: n=20 mean=500.0 ms min=500 max=500
