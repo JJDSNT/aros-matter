@@ -11,7 +11,6 @@ Estados: **aberto** (sem correção), **corrigido (branch)** (commit local/fork,
 | # | Onde | Bug | Como aparece | Achado em |
 |---|---|---|---|---|
 | B3 | `tcp_drain()` / `MCLALLOC` | `tcp_drain()` vazio, e a falta de **cluster** nem chama `m_reclaim()` (só a de mbuf, `m_retry()`). **Baixa prioridade**: no esgotamento medido, os clusters estavam em buffers de recepção não lidos, não em filas fora de ordem (0 segmentos), então não teria ajudado; testar exige esgotar o pool dentro das suítes | leitura do código + instrumentação do teste de pressão | 2026-11-09 (buffers) |
-| B4 | `netinet/in.h` | `IPV6_CHECKSUM` vale 26, o mesmo número de `IPV6_V6ONLY`; e não está implementado para raw IPv6 não-ICMPv6 (RFC 3542 §3.1) | teste da remontagem (raw6 sem checksum) | 2026-11-09 |
 | B5 | rotas IPv6 | Rotas link-local com zona 0: uma `fe80::/64` para todas as interfaces (limitação do G1) | `rtssthresh.c` precisou da zona 0 | 2026-11-08 |
 | B6 | `route` (C:) | Sem zonas IPv6 nem `-prefixlen` | métricas de rota (P1) | 2026-11-08 |
 
@@ -24,6 +23,7 @@ Estados: **aberto** (sem correção), **corrigido (branch)** (commit local/fork,
 | tap.device descartava quadro sem pedido pendente (órfão) | segura o quadro até o próximo CMD_READ | corrigido (G9, `review/arostcp-rxbuf`) |
 | `sana_poll()` esvaziava a porta antes de rodar o IP → `ipintrq` transbordava | protocolos a cada 32 respostas | corrigido (G9) |
 | Conexão aceita (syncache) sem RTT até enviar dados (RTO 1 s em receptor) | amostra do timestamp no ACK final | corrigido (G8, `review/arostcp-ack-timers`) |
+| B4 `IPV6_CHECKSUM` ausente e com o número do `IPV6_V6ONLY` | número 7 (Linux), saída/entrada no raw6, `m_copyback()` (4.4BSD-Lite) trazido ao AROSTCP; testes no `cunit-net-raw6` | corrigido (`review/arostcp-ipv6-fixes`) |
 | B7 RTO/PTO esperavam o tique de 50 ms | pedido próprio ao timer.device no prazo mais cedo (`tcp_timer_want()`/`tcp_rexmt_due()`): RTO 0,200 s exato, cauda 134 → 59 ms | corrigido (`review/arostcp-robust`) |
 | B2 Segmentos parciais no meio de uma escrita (10 KB em 10 segmentos) | `SB_MORETOCOME` (FreeBSD `PRUS_MORETOCOME`), teste CUnit (7 segmentos; antes 10) | corrigido (`review/arostcp-robust`) |
 | B1 Guerra de ACKs (dropafterack sem limite; AROS travava) | 5/s por conexão (`tcp_ackwar_ok()`, FreeBSD `ack_war`), teste CUnit (11 ACKs/s; antes travava) | corrigido (`review/arostcp-robust`) |
