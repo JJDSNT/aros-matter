@@ -59,8 +59,8 @@ com teto e pressão de memória global (`tcp_mem`): sob pressão, não cresce e 
   na fila do tap do host (qlen 1000), como no anel de uma placa real.
 - **Bench:** o netem tinha limite padrão de 1000 pacotes na linha de atraso; várias janelas grandes a 100 ms passavam
   disso. `run_tcp.tc_delay()` agora usa `limit 10000` (e `--rate` opcional).
-- **`netstat -m` quebrado no AROS:** "unexpected change to mbstat; check source" (o `mbstat` do AROSTCP tem
-  `m_memused`). Frente de ferramentas.
+- **`netstat -m` quebrado no AROS:** "unexpected change to mbstat; check source": o `mbpr()` do 4.4BSD exige
+  256 tipos de mbuf, o AROSTCP tem 16 (`MTCOUNT`). Corrigido em `review/netstat-mbuf` (`18b3ca3227`).
 
 ## 4b. Resultados (padrões, antes → depois)
 

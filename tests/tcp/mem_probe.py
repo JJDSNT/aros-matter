@@ -9,8 +9,9 @@ the host connects to all of them, then sends BYTES on each at once, with
 netem DELAY ms (and an optional link RATE) on what it sends. The pool
 running out shows in AROS's log ("m_clalloc: max amount of memory already
 used"; packets are then lost for every connection), counted here; AROS runs
-"netstat -s" after, for where segments were dropped ("netstat -m" fails on
-AROS: netstat's struct mbstat is not the stack's). It reports the
+"netstat -s" after, for where segments were dropped, and "netstat -m"
+(needs netstat with AROS commit 18b3ca3227; the pool is never given back,
+so "taken from the system" is the peak). It reports the
 aggregate and per-connection throughput and the host's retransmissions.
 
     mem_probe.py [--arostcp FILE] [--image DIR] [--conns 8] [--bytes 8000000]
@@ -47,6 +48,14 @@ def netstat_s(path):
     return keep
 
 
+def netstat_m(path):
+    """AROS's netstat -m, as lines (None if it did not run)."""
+    try:
+        return [l.strip() for l in open(path, errors="replace") if l.strip()] or None
+    except OSError:
+        return None
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--image", default=os.path.expanduser("~/aros-build-ipv6-hosted-claude/bin/linux-x86_64/AROS"))
@@ -71,7 +80,7 @@ def main():
         for i in range(a.conns - 1):
             f.write("Run >NIL: C:tcpserve 4 %d recv 0 >SYS:out/serve%d.log\n" % (PORT + i, i))
         f.write("C:tcpserve 4 %d recv 0 >SYS:out/serve%d.log\n" % (PORT + a.conns - 1, a.conns - 1))
-        f.write("Wait 5\nC:netstat -s >SYS:out/netstat-s.log\n")
+        f.write("Wait 5\nC:netstat -s >SYS:out/netstat-s.log\nC:netstat -m >SYS:out/netstat-m.log\n")
     env = dict(os.environ, AROS_HOSTED_IMAGE=a.image, AROS_TAP_IP=run_tcp.AROS_IP, AROS_RUN_TIMEOUT="300")
     if a.arostcp:
         env["AROS_AROSTCP"] = os.path.abspath(a.arostcp)
@@ -128,6 +137,7 @@ def main():
            "aggregate_mbit": round(a.bytes * len(socks) * 8 / span / 1e6, 1) if socks else None,
            "per_conn_mbit": per, "host_retransmissions": retx, "pool_full_msgs": pool_full,
            "aros_drops": netstat_s(os.path.join(a.out, "aros", "out", "netstat-s.log")),
+           "netstat_m": netstat_m(os.path.join(a.out, "aros", "out", "netstat-m.log")),
            "boot": "ok" if "finished" in out_text else "did not finish"}
     # the bench's own checks: every connection finished, and AROS reported its counters
     res["ok"] = err is None and all(per) and res["aros_drops"] is not None

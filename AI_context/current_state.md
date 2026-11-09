@@ -236,5 +236,5 @@ Para mudanças compartilhadas em AROSTCP, IPv6/multicast, mdnsd/Bonami e DNS-SD,
 - Resultados: recepção 44,8 → 130 (20 ms), 10,1 → 54,6 (100 ms); envio 49,1 → 111, 10,2 → 69,6; 0 retx. 8 conexões a 100 ms: pool não esgota (os dois desenhos anteriores esgotavam), agregado igual (CPU). 51 suítes ok.
 - **tap.device** branch local `review/tap-backpressure` (sobre `review/tap-device-bps`), `15ee9fddae`: segura o quadro sem pedido pendente (tipo lido por algum opener) e não lê o descritor até o próximo CMD_READ; ~450 órfãos/453 retx → 0. PR depois do #2178.
 - Bench: `mem_probe.py` (N conexões recebendo; conta "max amount" no log e lê `netstat -s`), `ack_probe --rate`, `tc_delay` com `limit 10000` (o padrão 1000 do netem descartava janelas grandes a 100 ms).
-- Achado para ferramentas: `netstat -m` falha no AROS ("unexpected change to mbstat").
+- `netstat -m` falhava sempre no AROS: o `mbpr()` do 4.4BSD exige 256 tipos de mbuf e o AROSTCP tem `MTCOUNT` 16. Corrigido na branch local `review/netstat-mbuf` (sobre upstream/master), `18b3ca3227`: checa `MTCOUNT` e mostra `m_memused`. `mem_probe` agora grava `netstat -m`. PR quando a frente de ferramentas abrir (não é AROSTCP).
 - PRs: grupo 8 (ack-timers) depois do #2167; este (P3) depois do grupo 8; tap depois do #2178. Próximo: P4 RACK-TLP.
