@@ -18,7 +18,8 @@ Estados: **aberto** (sem correção), **corrigido (branch)** (commit local/fork,
 
 | Bug | Correção | Estado |
 |---|---|---|
-| `tcp_reass()` recusava o segmento em `rcv_nxt` com 100 na fila: conexão travava para sempre | segmento em `rcv_nxt` sempre entra; limite = janela de segmentos; teste CUnit | **em PR** #2178 |
+| `tcp_reass()` recusava o segmento em `rcv_nxt` com 100 na fila: conexão travava para sempre | segmento em `rcv_nxt` sempre entra; limite = janela de segmentos de pelo menos o MSS padrão (Kal: `MAX(t_maxseg, tcp_mssdflt)`); teste CUnit | **em PR** #2178 |
+| B10 `TCP_MINMSS` declarado e não aplicado: MSS do par até 64, MTU de rota/PMTU sem piso (achado pelo Kal no #2178) | `tcp_minmss` 216 (sysctl `net.inet.tcp.minmss`) para oferta, rota e PMTU; IPv4 sem DF abaixo do piso; `TCP_MAXSEG` respeita; testes tcpinfo (MTU de rota 128: 204, master 76) e sysctl | **em PR** #2178 (3º commit, 5.40) |
 | tap.device informava 10 Mbit/s → poucos pedidos de leitura → rajadas descartadas | BPS 1 Gbit/s | **em PR** #2178 |
 | tap.device descartava quadro sem pedido pendente (órfão) | segura o quadro até o próximo CMD_READ | corrigido (G9, `review/arostcp-rxbuf`) |
 | `sana_poll()` esvaziava a porta antes de rodar o IP → `ipintrq` transbordava | protocolos a cada 32 respostas | corrigido (G9) |
