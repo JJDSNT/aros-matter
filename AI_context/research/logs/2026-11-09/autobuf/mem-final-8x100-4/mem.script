@@ -1,0 +1,12 @@
+Execute SYS:System/Network/AROSTCP/S/startnet
+Wait 4
+Run >NIL: C:tcpserve 4 7500 recv 0 >SYS:out/serve0.log
+Run >NIL: C:tcpserve 4 7501 recv 0 >SYS:out/serve1.log
+Run >NIL: C:tcpserve 4 7502 recv 0 >SYS:out/serve2.log
+Run >NIL: C:tcpserve 4 7503 recv 0 >SYS:out/serve3.log
+Run >NIL: C:tcpserve 4 7504 recv 0 >SYS:out/serve4.log
+Run >NIL: C:tcpserve 4 7505 recv 0 >SYS:out/serve5.log
+Run >NIL: C:tcpserve 4 7506 recv 0 >SYS:out/serve6.log
+C:tcpserve 4 7507 recv 0 >SYS:out/serve7.log
+Wait 5
+C:netstat -s >SYS:out/netstat-s.log

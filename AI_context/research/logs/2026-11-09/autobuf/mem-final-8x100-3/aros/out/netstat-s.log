@@ -1,0 +1,126 @@
+ip:
+	44687 total packets received
+	0 bad header checksums
+	0 with size smaller than minimum
+	0 with data size < data length
+	0 with header length < data size
+	0 with data length < header length
+	0 with bad options
+	0 with incorrect version number
+	0 fragments received
+	0 fragments dropped (dup or out of space)
+	0 fragments dropped after timeout
+	0 packets reassembled ok
+	44687 packets for this host
+	0 packets for unknown/unsupported protocol
+	0 packets forwarded
+	0 packets not forwardable
+	0 redirects sent
+	26866 packets sent from this host
+	0 packets sent with fabricated ip header
+	0 output packets dropped due to no bufs, etc.
+	3 output packets discarded due to no route
+	0 output datagrams fragmented
+	0 fragments created
+	0 datagrams that can't be fragmented
+icmp:
+	0 calls to icmp_error
+	0 errors not generated 'cuz old message was icmp
+	0 messages with bad code fields
+	0 messages < minimum length
+	0 bad checksums
+	0 messages with bad length
+	0 message responses generated
+tcp:
+	26840 packets sent
+		0 data packets (0 bytes)
+		0 data packets (0 bytes) retransmitted
+		22649 ack-only packets (150 delayed)
+		0 URG only packets
+		0 window probe packets
+		4183 window update packets
+		8 control packets
+	44687 packets received
+		8 acks (for 8 bytes)
+		0 duplicate acks
+		0 acks for unsent data
+		44073 packets (63645168 bytes) received in-sequence
+		0 completely duplicate packets (0 bytes)
+		0 old duplicate packets
+		0 packets with some dup. data (0 bytes duped)
+		582 out-of-order packets (842256 bytes)
+		0 packets (0 bytes) of data after window
+		0 window probes
+		0 window update packets
+		0 packets received after close
+		0 discarded for bad checksums
+		0 discarded for bad header offset fields
+		0 discarded because packet too short
+	0 connection requests
+	8 connection accepts
+	8 connections established (including accepts)
+	16 connections closed (including 0 drops)
+	0 embryonic connections dropped
+	16 segments updated rtt (of 8 attempts)
+	0 retransmit timeouts
+		0 connections dropped by rexmit timeout
+	0 persist timeouts
+	0 keepalive timeouts
+		0 keepalive probes sent
+		0 connections dropped by keepalive
+	0 correct ACK header predictions
+	44065 correct data packet header predictions
+	0 PCB cache misses
+udp:
+	0 datagrams received
+	0 with incomplete header
+	0 with bad data length field
+	0 with bad checksum
+	0 dropped due to no socket
+	0 broadcast/multicast datagrams dropped due to no socket
+	0 dropped due to full socket buffers
+	0 delivered
+	8 datagrams output
+ip6:
+	2 total packets received
+	0 with data size < data length
+	0 with size smaller than minimum
+	0 with incorrect version number
+	0 with bad scope
+	0 with bad options
+	0 fragments received
+	0 fragments dropped (dup or out of space)
+	0 fragments dropped after timeout
+	0 fragments that exceeded limit
+	0 packets reassembled ok
+	0 packets for this host
+	0 packets forwarded
+	0 packets not forwardable
+	0 redirects sent
+	11 packets sent from this host
+	0 packets sent with fabricated ip header
+	0 output packets dropped due to no bufs, etc.
+	0 output packets discarded due to no route
+	0 output datagrams fragmented
+	0 fragments created
+	0 datagrams that can't be fragmented
+	2 multicast packets dropped (not a member)
+	0 packets with ext headers too long
+	0 packets discarded due to too many headers
+icmp6:
+	0 calls to icmp6_error
+	0 errors not generated because old message was icmp6
+	0 errors not generated due to rate limitation
+	0 messages with bad code fields
+	0 messages < minimum length
+	0 bad checksums
+	0 messages with bad length
+	0 messages dropped waiting for resolution
+	0 message responses generated
+	0 messages with too many ND options
+	0 messages with bad ND options
+	0 bad neighbor solicitations
+	0 bad neighbor advertisements
+	0 bad router solicitations
+	0 bad router advertisements
+	0 bad redirect messages

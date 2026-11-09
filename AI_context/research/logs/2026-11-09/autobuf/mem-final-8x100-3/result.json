@@ -1,0 +1,28 @@
+{
+ "conns": 8,
+ "bytes_each": 8000000,
+ "delay_ms": 100,
+ "rate": null,
+ "error": null,
+ "aggregate_mbit": 57.8,
+ "per_conn_mbit": [
+  12.3,
+  12.3,
+  12.3,
+  12.3,
+  12.3,
+  12.1,
+  7.2,
+  7.3
+ ],
+ "host_retransmissions": 161,
+ "pool_full_msgs": 0,
+ "aros_drops": {
+  "output packets discarded due to no route": 3,
+  "out-of-order packets (842256 bytes)": 582,
+  "connections closed (including 0 drops)": 16,
+  "multicast packets dropped (not a member)": 2
+ },
+ "boot": "ok",
+ "ok": true
+}

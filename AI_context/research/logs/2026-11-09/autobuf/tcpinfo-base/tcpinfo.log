@@ -1,0 +1,101 @@
+
+
+     CUnit - A unit testing framework for C - Version 3.5.5-cunity
+     http://cunit.sourceforge.net/
+
+
+Suite: TCPINFO_Suite
+  Test: an established connection (IPv4) ...
+    rto 200000 us, rtt 1000 us, rttvar 375 us, mss 1448, options 0x7
+passed
+  Test: an established connection (IPv6) ...
+    rto 200000 us, rtt 1000 us, rttvar 375 us, mss 1464, options 0x7
+passed
+  Test: the initial window, to a local destination (IPv4) ...
+    snd_cwnd 14480, mss 1448, initial window 14480
+passed
+  Test: the initial window, to a local destination (IPv6) ...
+    snd_cwnd 14600, mss 1464, initial window 14600
+passed
+  Test: slow start counts the bytes acknowledged ...
+    acked 17376: abc_l 2 grows cwnd 7800, abc_l 1 4344
+passed
+  Test: HyStart++ does not end slow start without a delay ...
+    ssthresh 1073725440 -> 1073725440, cwnd 14480 -> 65376
+passed
+  Test: a route's ssthresh reaches a new connection (IPv4) ...
+    route ssthresh 50000: connection's ssthresh 50000
+passed
+  Test: a route's ssthresh reaches a new connection (IPv6) ...
+    route ssthresh 50000: connection's ssthresh 50000
+passed
+  Test: a receiver ACKs at least every second segment ...
+    20 segments: 10 pure ACKs
+passed
+  Test: an application-limited sender does not grow cwnd ...
+    40 KB sent 1 KB at a time: cwnd 14480 -> 14480
+passed
+  Test: data moves the sequence numbers ...passed
+  Test: over the loopback the RTO is the floor ...
+    after 20 exchanges: rto 200000 us, rtt 1000 us, rttvar 187 us
+passed
+  Test: an unanswered SYN backs off from 1 s ...
+    SYN unanswered: RTO 2000000 us after one timeout, 4000000 us after two
+passed
+  Test: a short buffer gets the start ...passed
+  Test: the accepted side has an RTT from the handshake ...
+    accepted side: rtt 0 us, rto 1000000 us
+FAILED
+    1. testTCPINFO_PASSIVE_RTT:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-tcpinfo.c:443  - ti.tcpi_rtt > 0
+  Test: socket buffers grow unless the application sized them ...
+    4 MB over the loopback: send buffer 131768 -> 131768, receive buffer 132076 -> 132076 (ceilings 0, 0)
+    with SO_SNDBUF 98304: 98304 -> 98304
+FAILED
+    1. testTCPINFO_AUTOSIZE:/home/jaime/AROS-ipv6/developer/debug/test/net/socket/./cunit-net-tcpinfo.c:479  - r1 >= r0 && r1 <= rcv
+  Test: a listening socket reports LISTEN ...passed
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :      256         6       n/a       n/a
+     Tests        :       17         2         0         0
+
+Elapsed Time: 8.280(s)
+
+
+    rto 200000 us, rtt 1000 us, rttvar 375 us, mss 1448, options 0x7
+
+    rto 200000 us, rtt 1000 us, rttvar 375 us, mss 1464, options 0x7
+
+    snd_cwnd 14480, mss 1448, initial window 14480
+
+    snd_cwnd 14600, mss 1464, initial window 14600
+
+    acked 17376: abc_l 2 grows cwnd 7800, abc_l 1 4344
+
+    ssthresh 1073725440 -> 1073725440, cwnd 14480 -> 65376
+
+    route ssthresh 50000: connection's ssthresh 50000
+
+    route ssthresh 50000: connection's ssthresh 50000
+
+    20 segments: 10 pure ACKs
+
+    40 KB sent 1 KB at a time: cwnd 14480 -> 14480
+
+    after 20 exchanges: rto 200000 us, rtt 1000 us, rttvar 187 us
+
+    SYN unanswered: RTO 2000000 us after one timeout, 4000000 us after two
+
+    accepted side: rtt 0 us, rto 1000000 us
+
+    4 MB over the loopback: send buffer 131768 -> 131768, receive buffer 132076 -> 132076 (ceilings 0, 0)
+    with SO_SNDBUF 98304: 98304 -> 98304
+
+
+Run Summary       -      Run    Failed  Inactive   Skipped
+     Suites       :        1         0         0         0
+     Asserts      :      256         6       n/a       n/a
+     Tests        :       17         2         0         0
+
+Elapsed Time: 8.160(s)
+
