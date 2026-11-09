@@ -1,6 +1,8 @@
 # Estado atual — aros-matter
 
-Atualizado: 2026-11-07
+Atualizado: 2026-11-09
+
+**Mapa dos grupos (onde estamos e o que falta): [research/2026-11-09-roadmap.md](research/2026-11-09-roadmap.md).**
 
 ## Foco atual (desde 2026-10-28)
 
