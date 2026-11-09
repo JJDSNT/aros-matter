@@ -1,0 +1,57 @@
+{
+ "sent": 8,
+ "seen": [
+  {
+   "tap": "aros0",
+   "dst_mac": "e2:90:2a:98:97:bd",
+   "msg": "eth0 0"
+  },
+  {
+   "tap": "aros1",
+   "dst_mac": "0e:d9:98:ae:58:b0",
+   "msg": "eth1 0"
+  },
+  {
+   "tap": "aros0",
+   "dst_mac": "e2:90:2a:98:97:bd",
+   "msg": "eth0 1"
+  },
+  {
+   "tap": "aros1",
+   "dst_mac": "0e:d9:98:ae:58:b0",
+   "msg": "eth1 1"
+  },
+  {
+   "tap": "aros0",
+   "dst_mac": "e2:90:2a:98:97:bd",
+   "msg": "eth0 2"
+  },
+  {
+   "tap": "aros1",
+   "dst_mac": "0e:d9:98:ae:58:b0",
+   "msg": "eth1 2"
+  },
+  {
+   "tap": "aros0",
+   "dst_mac": "e2:90:2a:98:97:bd",
+   "msg": "eth0 3"
+  },
+  {
+   "tap": "aros1",
+   "dst_mac": "0e:d9:98:ae:58:b0",
+   "msg": "eth1 3"
+  }
+ ],
+ "right": 8,
+ "zonesend": [
+  "send eth0 0 zone 2: 6 errno 0",
+  "send eth1 0 zone 3: 6 errno 0",
+  "send eth0 1 zone 2: 6 errno 0",
+  "send eth1 1 zone 3: 6 errno 0",
+  "send eth0 2 zone 2: 6 errno 0",
+  "send eth1 2 zone 3: 6 errno 0",
+  "send eth0 3 zone 2: 6 errno 0",
+  "send eth1 3 zone 3: 6 errno 0"
+ ],
+ "ok": true
+}

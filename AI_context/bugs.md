@@ -11,7 +11,7 @@ Estados: **aberto** (sem correção), **corrigido (branch)** (commit local/fork,
 | # | Onde | Bug | Como aparece | Achado em |
 |---|---|---|---|---|
 | B3 | `tcp_drain()` / `MCLALLOC` | `tcp_drain()` vazio, e a falta de **cluster** nem chama `m_reclaim()` (só a de mbuf, `m_retry()`). **Baixa prioridade**: no esgotamento medido, os clusters estavam em buffers de recepção não lidos, não em filas fora de ordem (0 segmentos), então não teria ajudado; testar exige esgotar o pool dentro das suítes | leitura do código + instrumentação do teste de pressão | 2026-11-09 (buffers) |
-| B5 | rotas IPv6 | Rotas link-local com zona 0: uma `fe80::/64` para todas as interfaces (limitação do G1) | `rtssthresh.c` precisou da zona 0 | 2026-11-08 |
+| B5 | rotas IPv6 | **Rebaixado (não reproduz como defeito de tráfego):** `fe80::1` em dois links (`tests/ipv6/zone_probe.py`): UDP e TCP saem 8/8 pela interface da zona, para o MAC certo. Sobra só gerência: a tabela tem um `fe80::/64` (o da 1ª interface; o da 2ª dá `EEXIST` engolido em `in6_ifinit()`), então métricas/`route get` de link-local não distinguem a interface. Junto com o B6 | `rtssthresh.c` precisou da zona 0 | 2026-11-08; reavaliado 2026-11-09 |
 | B6 | `route` (C:) | Sem zonas IPv6 nem `-prefixlen` | métricas de rota (P1) | 2026-11-08 |
 
 ## Corrigidos
