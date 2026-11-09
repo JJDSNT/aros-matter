@@ -1,4 +1,4 @@
-Group 7, congestion: how slow start grows and ends, and where CUBIC starts after it. Three commits and a test; each change with its test. Bump to come with the last commit when this is opened (after #2155).
+Group 7, congestion: how slow start grows and ends, and where CUBIC starts after it. Three commits and a test; each change with its test; bsdsocket.library 5.39, kernel v0.78.
 
 ## 1. Slow start counts the bytes acknowledged
 
@@ -34,4 +34,4 @@ At the start of an epoch with cwnd at or above W_max, CUBIC set K = 0 but kept W
 
 ## Validation
 
-linux-x86_64 hosted. `cunit-net-tcpinfo`: byte counting (12 segments over the loopback, in two ACKs: 2 segments of growth with L = 1, 4 with L = 2), no HyStart++ exit without an RTT rise, the route metric; `cunit-net-sysctl`: `abc_l`, `hystart`. All 51 socket suites pass in both runs; loss and RTO benches as before (no needless retransmission). Each commit builds on its own without warnings; cppcheck: no new findings. Benches in aros-matter: `tests/tcp/ss_probe.py`, `rtssthresh.c`, `cwnd_probe.py`.
+linux-x86_64 hosted. `cunit-net-tcpinfo` (now takes IFNAME, for #2155's SYN backoff test): byte counting (12 segments over the loopback, in two ACKs: 2 segments of growth with L = 1, 4 with L = 2), no HyStart++ exit without an RTT rise, the route metric; `cunit-net-sysctl`: `abc_l`, `hystart`. All 51 socket suites pass in both runs; loss and RTO benches as before (no needless retransmission). Each commit builds on its own without warnings; cppcheck: no new findings. Benches in aros-matter: `tests/tcp/ss_probe.py`, `rtssthresh.c`, `cwnd_probe.py`.

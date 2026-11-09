@@ -1,0 +1,66 @@
+suites: 51
+addr6 
+addrflags6 
+addrsig 
+arpqueue 
+bindtodev6 
+canforward 
+clockstep 
+cmsg 
+dontwait 
+frag6 
+icmp6err 
+iflist 
+inet6 
+keepalive 
+localhost 
+mcast6 
+mcast6if 
+mld6 
+naflags6 
+narouter6 
+ndqueue6 
+netdb 
+nud6 
+pmtu4 
+pmtu6 
+ports 
+prefix6if 
+raw6 
+rdnss 
+redirect6 
+resolver 
+rio6 
+route6 
+sblock 
+scope6 
+sendto6 
+slaac6 
+slaaclife 
+socket 
+srcaddr6 
+sysctl 
+tcp 
+tcpinfo 
+tcpmss6 
+tcpsyn6 
+timestamp 
+udp 
+udpio 
+udppmtu 
+unreach6 
+uto 
+== loss
+random      1.286s segs=715   retx=14   needless=0    3+=0   timeouts=0  multi_sack_acks=0    complete=True
+partial     0.757s segs=721   retx=20   needless=0    3+=1   timeouts=0  multi_sack_acks=188  complete=True
+lostrexmit   1.77s segs=703   retx=2    needless=0    3+=0   timeouts=0  multi_sack_acks=0    complete=True STALL [1.156]
+reorder     0.439s segs=737   retx=36   needless=0    3+=0   timeouts=0  multi_sack_acks=198  complete=True
+checks={'partial_has_multi_sack': True, 'lostrexmit_target_3_copies': True, 'reorder_host_sacked': True, 'random_has_retransmissions': True} bench_ok=True out=/tmp/claude-1000/-home-jaime-aros-matter/0a6f1726-e248-409a-bd23-3f46961832ea/scratchpad/g7cf-loss
+== rto
+delay    0 ms jitter   0  rtt  0.000 s  rto min/med/max 0.22/0.24/0.24 s  rfc6298 1.000  linux 0.200  spurious 0  tsval [240, 240, 240, 240, 220, 240, 240, 240]  ok=True boot=ok
+delay  200 ms jitter   0  rtt  0.200 s  rto min/med/max 0.26/0.26/0.38 s  rfc6298 1.000  linux 0.400  spurious 0  tsval [260, 260, 260, 380, 260, 260, 260, 260]  ok=True boot=ok
+  SYN intervals [0.998, 2.04, 5.056] s
+  SYN intervals [1.0, 2.04, 4.02] s
+== ss 100KB
+base:15=1;16=0 exit=0.18 s by loss cwnd=173 ssthresh=108 max_cwnd=286 drops=131 retx=161 minrtt=20.0 maxrtt_ss=61.0 rtt_exit=53.9 steady=0.8 s ca_growth_5s=-84 bytes=23043900
+hystart:15=1;16=1 exit=0.18 s by loss cwnd=172 ssthresh=109 max_cwnd=210 drops=76 retx=78 minrtt=20.0 maxrtt_ss=61.0 rtt_exit=55.5 steady=0.2 s ca_growth_5s=-75 bytes=23538304

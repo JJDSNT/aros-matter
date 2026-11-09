@@ -1,0 +1,7 @@
+[Bootstrap] RAM memory block allocated: 0x416bf000 - 0x516bf000 (268435456 bytes)
+[Bootstrap] Entering kernel at 0x4028b000...
+[KRN] Protecting host process stack (0x00007fff008ef0a0 - 0x00007fff008f90a0)
+Xlib:  extension "XFree86-VidModeExtension" missing on display ":99".
+[tap] couldn't perform TUNSETIFF on TAP device (1)
+[AROSTCP] OpenDevice: Device or unit failed to open
+
