@@ -35,6 +35,7 @@ def main():
     ap.add_argument("--rounds", type=int, default=4)
     ap.add_argument("--tcp", action="store_true", help="TCP connections (a host listener on [::]:9999) instead of UDP")
     ap.add_argument("--out", default=os.path.join(HERE, "out", "zone-" + time.strftime("%Y%m%d-%H%M%S")))
+    ap.add_argument("--links", default="eth0 eth1", help="the two zones zonesend alternates over; \"eth0 eth0\" for one link (control)")
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
     exe = os.path.join(a.out, "zonesend")
@@ -71,7 +72,7 @@ def main():
     script = os.path.join(a.out, "zone.script")
     with open(script, "w") as f:
         f.write("Execute SYS:System/Network/AROSTCP/S/startnet\nWait 6\n")
-        f.write("C:zonesend %s eth0 eth1 %d%s >SYS:out/zonesend.log\n" % (ADDR, a.rounds, " tcp" if a.tcp else ""))
+        f.write("C:zonesend %s %s %d%s >SYS:out/zonesend.log\n" % (ADDR, a.links, a.rounds, " tcp" if a.tcp else ""))
     env = dict(os.environ, AROS_HOSTED_IMAGE=a.image, AROS_TAP_IP="192.168.166.2", AROS_TAP2_IP="192.168.167.2",
                AROS_RUN_TIMEOUT="120")
     if a.arostcp:
