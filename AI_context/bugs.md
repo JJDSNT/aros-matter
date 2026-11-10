@@ -18,6 +18,8 @@ Estados: **aberto** (sem correção), **corrigido (branch)** (commit local/fork,
 
 | Bug | Correção | Estado |
 |---|---|---|
+| B14 autosizing (nosso, mesclado no #2194): conexão em TIME_WAIT (2 MSL, 1 min) segurava sua parte do orçamento com os buffers vazios — servidor enviando arquivos em sequência a 100 ms: 59 → 20 → 10 Mbit/s | `tcp_autobuf_release()` na entrada em TIME_WAIT (como o FreeBSD libera o socket ali); `cwnd_probe --repeat 3`: 59/59/59 Mbit/s | corrigido (B, `review/arostcp-recovery`) |
+| B15 `cunit-net-tcpinfo` AUTOSIZE (nosso, #2194): uma transferência de 4 MB no loopback às vezes não enche o buffer (2 em 24 no master) — falhava 1× em 51 suítes | até três transferências antes de olhar | corrigido (B, `review/arostcp-recovery`) |
 | B11 `cunit-net-sblock` (nosso, #2078): `BLOCKING_WAITS` exigia ≥ 2 s com os dados chegando ~2 s depois de `t0` (margem zero; falhou 1× na suíte, execução básica) | asserção: esperou ≥ metade disso; commit próprio no A | **mesclado** #2194 |
 | B12 tap.device (nosso, A): frame retido para sempre — um opener que lê um tipo uma vez e para, aberto, trava a recepção da unidade (Kal no #2194) | prazo de 50 ms (`TAP_HOLD_MS`), depois descarta e esquece o tipo até o próximo `CMD_READ`; `tests/tap/hold_probe.py` | **mesclado** #2206 |
 | B13 autosizing (nosso, A): `SB_MAX` 2 MB deixava `SO_SNDBUF`/`SO_RCVBUF` pegarem ~1,8 MB fora do orçamento; tetos de 1 MB e orçamento de 3/8 de um teto configurado, não da memória existente (o pool nunca devolve) — Kal no #2194 | `SB_MAX` 512 KB, `sbreserve_max()`; tetos pela memória livre (off < 16 MB, 1/64, ≤ 1 MB e ≤ orçamento), pool pelo que o sistema pode ceder a cada crescimento | **mesclado** #2194 |

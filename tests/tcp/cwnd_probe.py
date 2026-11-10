@@ -32,11 +32,11 @@ PORT = 7201
 C, BETA = 0.4, 0.7
 
 
-def sink(lsock, log):
+def sink(lsock, log, per=None):
     """Read every connection to the end, each in its own thread: one from
     an earlier boot never gets its FIN (the machine is stopped), and a
     single reader stuck on it would shut the window of the next one."""
-    def drain(c):
+    def drain(c, i):
         try:
             c.settimeout(5)
             while True:
@@ -44,13 +44,17 @@ def sink(lsock, log):
                 if not d:
                     break
                 log.append(len(d))
+                if per is not None:
+                    per[i] = per.get(i, 0) + len(d)
         except OSError:
             pass
         c.close()
 
+    i = 0
     while True:
         c, _ = lsock.accept()
-        threading.Thread(target=drain, args=(c,), daemon=True).start()
+        threading.Thread(target=drain, args=(c, i), daemon=True).start()
+        i += 1
 
 
 def epochs(samples, mss):
@@ -107,6 +111,8 @@ def main():
     ap.add_argument("--delay", type=int, default=20)
     ap.add_argument("--every", type=int, default=3000, help="drop 1 in EVERY segments; 0: no drops")
     ap.add_argument("--sndbuf", type=int, default=400 * 1024, help="AROS's SO_SNDBUF; 0: the stack's default")
+    ap.add_argument("--repeat", type=int, default=1, help="connections one after the other in one boot (AROS closes "
+                    "first: each waits in TIME_WAIT while the next runs); mbit per connection in per_conn_mbit")
     ap.add_argument("--out", default=os.path.join(ROOT, "tests", "tcp", "out", "cwnd-" + time.strftime("%Y%m%d-%H%M%S")))
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
@@ -126,8 +132,8 @@ def main():
     lsock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     lsock.bind(("::", PORT))
     lsock.listen(2)
-    log = []
-    threading.Thread(target=sink, args=(lsock, log), daemon=True).start()
+    log, per = [], {}
+    threading.Thread(target=sink, args=(lsock, log, per), daemon=True).start()
     run_tcp.tc_clear()
     run_tcp.tc_delay(a.delay)
     if a.every:
@@ -135,9 +141,10 @@ def main():
     script = os.path.join(a.out, "cwnd.script")
     with open(script, "w") as f:
         f.write("Execute SYS:System/Network/AROSTCP/S/startnet\nWait 4\n")
-        f.write("C:tcpbench eth0 %s cwnd %d %d %d >SYS:out/cwnd.log\n" % (host_ll, PORT, a.secs, a.sndbuf))
+        for i in range(a.repeat):
+            f.write("C:tcpbench eth0 %s cwnd %d %d %d >%sSYS:out/cwnd.log\n" % (host_ll, PORT, a.secs, a.sndbuf, ">" if i else ""))
     env = dict(os.environ, AROS_HOSTED_IMAGE=a.image, AROS_TAP_IP=run_tcp.AROS_IP,
-               AROS_RUN_TIMEOUT=str(a.secs + 120))
+               AROS_RUN_TIMEOUT=str(a.secs * a.repeat + 120))
     if a.arostcp:
         env["AROS_AROSTCP"] = os.path.abspath(a.arostcp)
     try:
@@ -155,14 +162,18 @@ def main():
     except OSError:
         pass
     ep = analyse(samples, mss)
-    sndbuf = None
+    sndbuf, sndbuf_end = None, []
     try:
         for line in open(os.path.join(a.out, "aros", "out", "cwnd.log")):
             if line.startswith("sndbuf "):
                 sndbuf = int(line.split()[1])
+            if line.startswith("sndbuf_end "):
+                sndbuf_end.append(int(line.split()[1]))
     except OSError:
         pass
-    res = {"mss": mss, "sndbuf": sndbuf, "mbit": round(sum(log) * 8 / a.secs / 1e6, 1), "delay_ms": a.delay, "every": a.every, "samples": len(samples), "epochs": ep,
+    res = {"mss": mss, "sndbuf": sndbuf, "mbit": round(sum(log) * 8 / a.secs / a.repeat / 1e6, 1),
+           "sndbuf_end": sndbuf_end,
+           "per_conn_mbit": [round(per[i] * 8 / a.secs / 1e6, 1) for i in sorted(per)], "delay_ms": a.delay, "every": a.every, "samples": len(samples), "epochs": ep,
            "bytes": sum(log), "boot": "ok" if "finished" in r.stdout else "did not finish",
            # the bench's own check: losses happened, so there are epochs to look at
            # with drops, the losses made epochs; without, data went through
@@ -175,7 +186,7 @@ def main():
     for e in ep:
         print("epoch t0=%6.2fs wmax=%6.1f K=%5.2fs samples=%3d still_below_curve=%s median_err=%s mss back_to_wmax=%s s" % (
             e["t0_s"], e["wmax_mss"], e["k_s"], e["samples"], e["still_below_curve"], e["median_err_mss"], e["back_to_wmax_s"]))
-    print("samples=%d bytes=%d ok=%s boot=%s out=%s" % (len(samples), res["bytes"], res["ok"], res["boot"], a.out))
+    print("samples=%d bytes=%d per_conn_mbit=%s sndbuf_end=%s ok=%s boot=%s out=%s" % (len(samples), res["bytes"], res["per_conn_mbit"], res["sndbuf_end"], res["ok"], res["boot"], a.out))
 
 
 if __name__ == "__main__":

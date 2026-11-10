@@ -321,6 +321,9 @@ int main(int argc, char **argv)
                     last = t;
                 }
             }
+            sl = sizeof(sb);
+            getsockopt(s, SOL_SOCKET, SO_SNDBUF, &sb, &sl);
+            printf("sndbuf_end %d\n", sb);
             CloseSocket(s);
         }
         printf("cwnd done\n");
