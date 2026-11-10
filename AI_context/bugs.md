@@ -19,7 +19,7 @@ Estados: **aberto** (sem correção), **corrigido (branch)** (commit local/fork,
 | Bug | Correção | Estado |
 |---|---|---|
 | B20 ARP: entrada completa nunca reverificada e nunca envelhece enquanto usada (`arpresolve()` zera `at_timer`) — vizinho que troca de MAC sem anunciar recebe no MAC velho indefinidamente | NUD para ARP (RFC 4861 §7.3, RFC 1122 unicast poll) + dica do TCP; `arp_stale_probe.py`: master nunca volta, agora 21,4 s | corrigido (grupo 11) |
-| B21 IPv6: `nd6_nud_hint()` existe mas ninguém chama — o TCP não confirma alcançabilidade (sondas NS desnecessárias) | a medir e ligar (commit próprio) | **aberto** |
+| B21 IPv6: `nd6_nud_hint()` existe mas ninguém chama — o TCP não confirma alcançabilidade (sondas NS desnecessárias) | ligado com `nd6_nud_hint_dst()` (próximo salto, zona pelo rcvif); `tests/ipv6/nd_hint_probe.py`: 2 → 0 NS em 90 s | corrigido (grupo 11) |
 | B16 autoip (RFC 3927 §2.5 b): no estado DEFEND um segundo conflito era ignorado (só BOUND reagia) — o endereço nunca era abandonado | autoip passa pela ACD (defesa única, depois duplicado → outro endereço) | corrigido (grupo 11, `review/arostcp-ipv4-iface`) |
 | B17 autoip: a queda do link parava o autoip para sempre (`sana_connect()` só reiniciava se não estivesse parado) | `ss_autoip.wanted` (IP=AUTO) | corrigido (grupo 11) |
 | B18 autoip: sondas e anúncios desde o início, com ou sem link — no boot hosted nenhum frame ARP dele chegou ao fio antes de assumir o endereço | sondas esperam a interface subir (ACD) | corrigido (grupo 11) |
