@@ -292,3 +292,6 @@ Codacy no #2194: falhou com 2 achados no `tap/iotask.c` (escopo de `i`, `!accept
 Medido (30 MB a 100 ms, `netstat -m`): 245 MB livres 1219 → 2054 KB (antes 2311), 33 Mbit/s; AROS com 32 MB: 1476 KB, 16,4 Mbit/s; com 20 MB: off, igual ao master. Commit novo no A: `cunit-net-sblock` com margem zero (B11). 51 suítes ok.
 Ferramentas: `tools/aros-bld.sh`, `tools/cunit-suite.sh`, `AROS_MEMORY` no `hosted-run.sh`, `mem_probe --netstat` (o `netstat -m` exige a mesma `STACK_RELEASE` da pilha), cppcheck 2.22 em `~/tools-src`.
 Próximo: merge do #2194 → B (rebase, bump 5.44); P3 do grupo 11 (ACD).
+
+**2026-11-10 (tarde):** #2194 (fa93417c95, 5.43) e #2206 (18c2cf93b1, tap.device 1.4) **mesclados**. B rebaseado sobre o master (conflitos só nos testes e no protótipo do `tcp_var.h`), 5.44 / v0.83, e **[#2208](https://github.com/aros-development-team/AROS/pull/2208) aberto** com 8 commits: os 6 do B + dois achados ao validá-lo: **B14** (orçamento do autosizing preso em TIME_WAIT: 59 → 20 → 10 Mbit/s em envios seguidos; `tcp_autobuf_release()`, 59/59/59) e **B15** (teste AUTOSIZE: até 3 transferências; falhava 2 em 24 também no master). 51 suítes ok; `tcpinfo` 12× seguidas ok; benches no topo: cauda 63,6 ms, RTO 0,200–0,205 s, perdas 0,56/0,34/0,17/0,21 s.
+Próximo: revisão do #2208; P3 do grupo 11 (ACD).
