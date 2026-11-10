@@ -18,6 +18,12 @@ cd "${AROS_SRC:-$HOME/AROS-ipv6}" || exit 1
 CC22=$HOME/tools-src/cppcheck-2.22.0/build/bin/cppcheck
 [ -z "$CPPCHECK" ] && [ -x "$CC22" ] && CPPCHECK=$CC22
 T=$(mktemp -d)
+# a submodule pointer in the diff is never meant to be there (#2194 carried
+# workbench/tools/InstallAROS/catalogs by accident; Kal caught it)
+for c in $(git rev-list "$1..$2"); do
+  git diff-tree -r --no-commit-id "$c" | awk -v c="$(git rev-parse --short=10 "$c")" \
+    '$2 == "160000" || $1 == ":160000" { print "== submodule " $6 " changed in " c }'
+done
 for f in $(git diff --name-only "$1" "$2" -- '*.c'); do
   for v in base tip; do
     rev=$1; [ $v = tip ] && rev=$2
