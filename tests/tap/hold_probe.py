@@ -14,7 +14,7 @@ answered.
     hold_probe.py [--tap FILE] [--image DIR] [--secs 15] [--out DIR]
 --tap boots with that tap.device. Needs sudo -n (raw frames).
 """
-import argparse, json, os, re, subprocess, sys, time
+import argparse, json, os, re, shutil, subprocess, sys, time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
@@ -56,11 +56,16 @@ def main():
     with open(script, "w") as f:
         if a.tap:
             f.write("Copy C:tap.device DEVS:Networks/tap.device\n")
+            f.write("List DEVS:Networks/tap.device LFORMAT \"%L\" >SYS:out/tap.size\n")
         f.write("Execute SYS:System/Network/AROSTCP/S/startnet\nWait 2\n")
         f.write("Run >SYS:out/holdstall.log C:holdstall 0 %s %d\n" % (ETYPE, a.secs + 40))
         f.write("Wait %d\n" % (a.secs + 45))
     if a.tap:
-        files.append(a.tap)
+        # hosted-run.sh copies a file into C: under its own name
+        tapdir = os.path.join(a.out, "tap")
+        os.makedirs(tapdir, exist_ok=True)
+        shutil.copy(a.tap, os.path.join(tapdir, "tap.device"))
+        files.append(os.path.join(tapdir, "tap.device"))
     env = dict(os.environ, AROS_HOSTED_IMAGE=a.image, AROS_TAP_IP=run_tcp.AROS_IP,
                AROS_RUN_TIMEOUT=str(a.secs + 150))
     if a.arostcp:
@@ -88,6 +93,10 @@ def main():
     # holdstall read its one frame and stayed open through them
     res["sanity"] = {"answered_before": res["before"]["loss_pct"] == 0,
                      "holdstall_read_one": any(l.startswith("got ") for l in res["holdstall"])}
+    if a.tap:
+        size = os.path.join(a.out, "aros", "out", "tap.size")
+        loaded = open(size).read().strip() if os.path.exists(size) else ""
+        res["sanity"]["tap_loaded"] = loaded == str(os.path.getsize(a.tap))
     res["sanity"]["ok"] = all(res["sanity"].values())
     json.dump(res, open(os.path.join(a.out, "result.json"), "w"), indent=1)
     print(json.dumps(res, indent=1))
