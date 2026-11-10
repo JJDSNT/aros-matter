@@ -24,7 +24,7 @@ um socket IPv4 por interface com `SO_BINDTODEVICE` + `IP_ADD_MEMBERSHIP` (por en
 | M2 | mdnsd | IPv4 com um socket por interface (`SO_BINDTODEVICE`) e inscrição por endereço, enquanto o IPv6 usa um socket só + PKTINFO | `IP_RECVIF` + `ip_mreqn` por índice (#2218) permitem o mesmo desenho no IPv4 (opcional) |
 | M3 | mdnsd | Varredura de 3 s como reserva | com o sinal também ao fim da ACD IPv4 (#2218), avaliar se ainda é necessária |
 | M4 | bonami | Eventos de descoberta só IPv4 (`de_Address`) | DISCOVERY.md; dual-stack na API pública |
-| M5 | bonami | Sem consulta genérica de host (README: "Generic host lookup ... remain separate") | interface natural para S1 usar o daemon quando ele roda |
+| ~~M5~~ | bonami | **Errado:** `LookupHostA()` já existe (#1836, com `QueryRecordA()`); o README só diz que é chamada separada | — |
 | C1 | terceiro | IPP (`devs/ipp/dnssd.c`) tem cliente mDNS próprio (one-shot), não usa o bonami | consolidar descoberta de impressoras |
 | C2 | servidores | Só o `netmidid` publica serviço pelo bonami; o `sshd` do tree poderia publicar `_ssh._tcp`/`_sftp-ssh._tcp` | RFC 6763 |
 
@@ -34,3 +34,24 @@ um socket IPv4 por interface com `SO_BINDTODEVICE` + `IP_ADD_MEMBERSHIP` (por en
   conhecimento de conflitos) — depende de M5. Modelo de referência: nss-mdns (glibc) fala com o daemon (Avahi);
   macOS/mDNSResponder também.
 - Quais itens M* o usuário quer que eu faça no código dele, e quais ele faz.
+
+## Fontes do usuário (aros-midihub/docs, lidas 2026-11-10)
+
+- `mdns-arostcp.md` — **princípio de arquitetura do usuário: o mDNS fica acima da pilha**; a `bsdsocket.library` só
+  oferece mecanismos (sockets, reuse, `SO_BINDTODEVICE`, opções multicast, `SIOCGIFCONF`/`FLAGS`, `gethostname()`);
+  política (registros, sondagem, renome, cache, browse) é do mdnsd, para não amarrá-lo ao AROSTCP. mdnsd é serviço
+  gerenciado (`db/services.d/mdns`, `netservices.library`), um por host; clientes falam com ele pela porta "BonAmi".
+- `mdns-backlog.md` — pendências do mdnsd já acompanhadas pelo usuário: MD01 (hook do cliente roda no processo do
+  mdnsd, P0), MD03 (cliente não sabe do renome), MD05/06 (m68k, interop Bonjour/Windows), MD13 (≤ 8 interfaces),
+  MD14 ("IPv4 only" — desatualizado desde #1980). **Nada sobre o resolver da pilha (`.local` em
+  `gethostbyname`/`getaddrinfo`)**: S1 não está planejado em lugar nenhum.
+
+## Consequência para S1 (resolver `.local`)
+
+A opção "a pilha faz a consulta mDNS sozinha" contraria o princípio acima. Opções coerentes com ele:
+- (b) o resolver da `bsdsocket.library` vira **cliente** do mdnsd: para nomes `.local` (e o reverso de 169.254/16,
+  fe80::/10) abre o `bonami.library` sob demanda e chama `LookupHostA()` com prazo; sem mdnsd, falha como hoje
+  (como o nss-mdns da glibc fala com o Avahi). Dependência opcional, em tempo de execução.
+- (c) a resolução `.local` fica fora da pilha (cada programa usa o bonami) — documentar; `ping x.local` continua sem
+  funcionar.
+Decisão do usuário.
