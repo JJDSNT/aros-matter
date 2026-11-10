@@ -1,7 +1,8 @@
 #!/bin/sh
 # precodacy.sh BASE TIP - before pushing an AROS PR, what Codacy would add:
 #  1. cppcheck findings TIP adds in each C file it changes (base and tip
-#     lists compared with diff, duplicates counted; line numbers ignored);
+#     lists compared with diff, duplicates counted; each keyed by the text
+#     of its line, not its number);
 #  2. flawfinder hits TIP adds in each C/H file it changes (same diff);
 #     without flawfinder, a grep of the calls it flags in the added lines.
 # Run in the AROS tree (default ~/AROS-ipv6). Prints nothing when clean.
@@ -9,20 +10,28 @@
 # strlen and on cppcheck variableScope, and passed #2178 and #2179 with new
 # level-2 char (static arrays), memcpy and bcopy hits: those are counted
 # apart as "info", not shown as what would fail the gate.
-# Limit (2026-11-10): Codacy's cppcheck is newer than Ubuntu's 2.13, which
-# missed on #2194 a variableScope and a knownConditionTrueFalse ("Condition
-# '!accepted' is always true") that Codacy failed; with
-# CPPCHECK=/path/to/newer/cppcheck this script uses that one. Until then,
-# read the new declarations and conditions by hand.
+# cppcheck (2026-11-10): Ubuntu's 2.13 missed a variableScope that Codacy
+# failed on #2194; 2.22, built in ~/tools-src, finds it and the
+# knownConditionTrueFalse there too, and is used when present
+# (CPPCHECK=... picks another).
 cd "${AROS_SRC:-$HOME/AROS-ipv6}" || exit 1
+CC22=$HOME/tools-src/cppcheck-2.22.0/build/bin/cppcheck
+[ -z "$CPPCHECK" ] && [ -x "$CC22" ] && CPPCHECK=$CC22
 T=$(mktemp -d)
 for f in $(git diff --name-only "$1" "$2" -- '*.c'); do
   for v in base tip; do
     rev=$1; [ $v = tip ] && rev=$2
     mkdir -p "$T/$v/$(dirname "$f")"
     git show "$rev:$f" > "$T/$v/$f" 2>/dev/null || : > "$T/$v/$f"
+    # each finding keyed by the text of its line, not the line number:
+    # without a line in its template cppcheck folds equal messages into one
+    # (a second "Condition '!accepted' is always true" was hidden on #2194)
     ${CPPCHECK:-cppcheck} -q --enable=style,warning,performance,portability --std=c99 \
-      --template='{id}|{message}' "$T/$v/$f" 2>&1 | sed "s#$T/$v/##" | sort > "$T/$v.list"
+      --template='{line}|{id}|{message}' "$T/$v/$f" 2>&1 | grep -E '^[0-9]+\|' |
+      awk 'NR==FNR { src[FNR] = $0; next }
+           { i = index($0, "|"); l = src[substr($0, 1, i - 1)]
+             gsub(/^[ \t]+|[ \t]+$/, "", l); print substr($0, i + 1) "  @ " l }' "$T/$v/$f" - |
+      sort > "$T/$v.list"
   done
   n=$(diff "$T/base.list" "$T/tip.list" | sed -n 's/^> //p')
   [ -n "$n" ] && { echo "== cppcheck $f"; echo "$n"; }
