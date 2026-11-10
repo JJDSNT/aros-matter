@@ -54,3 +54,19 @@ calcular as mudanças a reportar, e um limite de fontes por inscrição (`net.in
 5. **Filtragem na entrega** (achado: hoje nenhuma, nas duas famílias): filtro por socket (grupo + interface + fonte)
    em `udp_input`/`udp6_input` e nos raw; avaliar a mudança de comportamento para sockets na porta que não se
    inscreveram (o FreeBSD passou a filtrá-los) — decidir com teste de regressão e nota no PR.
+
+## Apurado na pesquisa (2026-11-10)
+
+- **FreeBSD** (código lido): `ip_moptions` com `STAILQ` de `in_mfilter` (alocação sob demanda; sem o vetor fixo de 20);
+  `in_mfilter` = árvore RB de `in_msource` + modo t0/t1; `in_multi` ganhou árvore de `ip_msource` com contadores
+  ex/in em t0/t1 (os deltas viram relatórios de mudança de estado), fila de relatórios pendentes, timers de
+  retransmissão. `imo_multi_filter()` decide por socket: `MCAST_NOTGMEMBER` / `NOTSMEMBER` / `PASS`.
+  Limites: `net.inet.ip.mcast.maxgrpsrc` 512, `maxsocksrc` 128. Tamanho: igmp.c 3732, in_mcast.c 2994, mld6.c 3296,
+  in6_mcast.c 3051 linhas (~13 mil; VNET/locks somam boa parte).
+- **Política de entrega para socket não inscrito** — as referências divergem:
+  FreeBSD estrito (sem `ip_moptions` → não recebe multicast); **Linux permissivo** (`IP_MULTICAST_ALL` padrão 1: recebe
+  os grupos em que o host está inscrito; o filtro de fontes só vale para sockets inscritos). O AROS hoje = Linux com
+  `IP_MULTICAST_ALL` ligado.
+- AROS tem `sys/tree.h` (RB) e `sys/queue.h` (STAILQ).
+- IGMP do AROS: só host IGMPv2, sem o modo de compatibilidade com querier v1 (RFC 2236 §4 pede) — o port resolve.
+- Raw sockets (`raw_ip`, `raw_ip6`): entregam multicast sem filtro por inscrição, como o UDP.
