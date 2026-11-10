@@ -128,3 +128,4 @@ calcular as mudanças a reportar, e um limite de fontes por inscrição (`net.in
 
 O usuário prefere ouvir o Kal antes de implementar este grupo (escopo e mudança de comportamento grandes). Rascunho de
 issue preparado; publicação só com aprovação do usuário.
+Publicada como [issue #2220](https://github.com/aros-development-team/AROS/issues/2220) (2026-11-10), com a aprovação do usuário. Implementação aguarda a resposta do Kal.
