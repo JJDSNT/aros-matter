@@ -19,6 +19,7 @@
 #   AROS_TAP2_IP       if set, adds eth1 on tap.device unit 1 (host tap 'aros1',
 #                      tools/tap-up.sh 1) with this IPv4
 #   AROS_TAP_OPTS      extra options for eth0's interfaces line (e.g. IPREQ=128)
+#   AROS_MEMORY        if set, MB of RAM for AROS (AROSBootstrap.conf 'memory')
 set -eu
 [ $# -ge 2 ] || { echo "usage: $0 WORKDIR SCRIPT [FILE...]" >&2; exit 2; }
 img=${AROS_HOSTED_IMAGE:-$HOME/aros-midihub/build-aros-linux/bin/linux-x86_64/AROS}
@@ -31,6 +32,7 @@ cp -a --reflink=auto "$img" "$sys"
 for f in "$@"; do cp "$f" "$sys/C/"; done
 mkdir -p "$sys/out"
 [ -n "${AROS_AROSTCP:-}" ] && cp "$AROS_AROSTCP" "$sys/System/Network/AROSTCP/C/AROSTCP"
+[ -n "${AROS_MEMORY:-}" ] && echo "memory $AROS_MEMORY" >> "$sys/boot/linux/AROSBootstrap.conf"
 if [ -n "${AROS_TAP_MTU:-}" ]; then
     mkdir -p "$sys/Prefs/Env-Archive/SYS/Net/tap/unit0"
     printf '%s' "$AROS_TAP_MTU" > "$sys/Prefs/Env-Archive/SYS/Net/tap/unit0/MTU"

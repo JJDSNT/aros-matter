@@ -15,7 +15,7 @@ so "taken from the system" is the peak). It reports the
 aggregate and per-connection throughput and the host's retransmissions.
 
     mem_probe.py [--arostcp FILE] [--image DIR] [--conns 8] [--bytes 8000000]
-                 [--delay 100] [--rate R] [--out DIR]
+                 [--delay 100] [--rate R] [--netstat FILE] [--out DIR]
 Needs sudo -n for tc.
 """
 import argparse, json, os, re, socket, subprocess, sys, threading, time
@@ -64,6 +64,7 @@ def main():
     ap.add_argument("--bytes", type=int, default=8000000)
     ap.add_argument("--delay", type=int, default=100)
     ap.add_argument("--rate")
+    ap.add_argument("--netstat", help="a netstat built with this AROSTCP's kvm (its STACK_RELEASE must match, or netstat -m refuses)")
     ap.add_argument("--out", default=os.path.join(ROOT, "tests", "tcp", "out", "mem-" + time.strftime("%Y%m%d-%H%M%S")))
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
@@ -84,7 +85,7 @@ def main():
     env = dict(os.environ, AROS_HOSTED_IMAGE=a.image, AROS_TAP_IP=run_tcp.AROS_IP, AROS_RUN_TIMEOUT="300")
     if a.arostcp:
         env["AROS_AROSTCP"] = os.path.abspath(a.arostcp)
-    boot = subprocess.Popen([os.path.join(ROOT, "tools", "hosted-run.sh"), os.path.join(a.out, "aros"), script, exe],
+    boot = subprocess.Popen([os.path.join(ROOT, "tools", "hosted-run.sh"), os.path.join(a.out, "aros"), script, exe] + ([a.netstat] if a.netstat else []),
                             env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
     socks, err = [], None
     deadline = time.time() + 90
