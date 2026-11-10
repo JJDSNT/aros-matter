@@ -113,3 +113,18 @@ calcular as mudanças a reportar, e um limite de fontes por inscrição (`net.in
 - **Testes**: regressão do multicast comum em cada commit (`cmsg`, `mcast6`, `mcast6if`, `mld6` + 52 suítes); CUnit
   novos (API, limites, erros, entrega filtrada com duas fontes, socket não inscrito não recebe); bench com querier
   IGMPv3/MLDv2 no host (consultas geral/grupo/grupo-e-fonte, relatórios na captura, compatibilidade v2/MLDv1).
+
+## Requisitos acrescentados (texto do ChatGPT trazido pelo usuário, aceitos)
+
+- A entrega filtra pela combinação **interface de entrada + grupo + fonte + inscrições/filtros do socket**, preservando
+  sockets ligados a endereço específico. Teste: duas interfaces, mesmo grupo — inscrição na A não autoriza entrega do
+  que chega pela B.
+- O limite de fontes por grupo vale sobre o **estado agregado por interface** (todos os sockets); exceder falha de forma
+  atômica (sem mudar o estado anterior nem gerar relatório IGMP/MLD inconsistente). Sysctl reduzido abaixo do consumo
+  atual vale só para operações futuras.
+- Sincronização: respeitar a ordem de travas (Readme §3.2) e nenhuma espera bloqueante dentro de `spl`.
+
+## Consulta ao Kal (decisão do usuário, 2026-11-10)
+
+O usuário prefere ouvir o Kal antes de implementar este grupo (escopo e mudança de comportamento grandes). Rascunho de
+issue preparado; publicação só com aprovação do usuário.
