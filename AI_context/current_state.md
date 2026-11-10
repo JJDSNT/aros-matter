@@ -305,3 +305,5 @@ Próximo: revisão do #2208; P3 do grupo 11 (ACD).
 Falta no G11: B21 (ligar `nd6_nud_hint()`, medido), P5 (gateway morto, RFC 1122 §3.3.1.4) só com caso demonstrado; depois bump 5.45 e PR.
 
 **2026-11-10 (noite, 3) — grupo 11 completo**, 6 commits em `review/arostcp-ipv4-iface` (fork, tip 4a0cb92362), 5.45 / v0.84: P1 IP_RECVIF/IP_SENDSRCADDR, P2 ip_mreqn, P3 ACD + IPv4LL pela ACD (B16–B19, B22), DHCPDECLINE, P4 NUD do ARP (B20), dica do TCP para IPv6 (B21). P5 (gateway morto) fora: sem caso demonstrado (um só gateway padrão; com o NUD um gateway que some deixa de prender o MAC velho). 52 suítes ok; precodacy limpo; cada commit compila. Corpo do PR pronto em scratchpad (`pr-g11.md`). **[#2218](https://github.com/aros-development-team/AROS/pull/2218) aberto** com a autorização do usuário.
+
+**2026-11-10 (noite, 4) — próximo: grupo multicast dual-stack (SSM)**, antes do G12 (decisão do usuário; RFC 1256 no backlog). Desenho em andamento: `research/2026-11-10-multicast-ssm-design.md` (modelo FreeBSD, verificado: o único com SSM no kernel; achado: a entrega UDP multicast não filtra por inscrição do socket, nas duas famílias).
