@@ -9,6 +9,11 @@
 # strlen and on cppcheck variableScope, and passed #2178 and #2179 with new
 # level-2 char (static arrays), memcpy and bcopy hits: those are counted
 # apart as "info", not shown as what would fail the gate.
+# Limit (2026-11-10): Codacy's cppcheck is newer than Ubuntu's 2.13, which
+# missed on #2194 a variableScope and a knownConditionTrueFalse ("Condition
+# '!accepted' is always true") that Codacy failed; with
+# CPPCHECK=/path/to/newer/cppcheck this script uses that one. Until then,
+# read the new declarations and conditions by hand.
 cd "${AROS_SRC:-$HOME/AROS-ipv6}" || exit 1
 T=$(mktemp -d)
 for f in $(git diff --name-only "$1" "$2" -- '*.c'); do
@@ -16,7 +21,7 @@ for f in $(git diff --name-only "$1" "$2" -- '*.c'); do
     rev=$1; [ $v = tip ] && rev=$2
     mkdir -p "$T/$v/$(dirname "$f")"
     git show "$rev:$f" > "$T/$v/$f" 2>/dev/null || : > "$T/$v/$f"
-    cppcheck -q --enable=style,warning,performance,portability --std=c99 \
+    ${CPPCHECK:-cppcheck} -q --enable=style,warning,performance,portability --std=c99 \
       --template='{id}|{message}' "$T/$v/$f" 2>&1 | sed "s#$T/$v/##" | sort > "$T/$v.list"
   done
   n=$(diff "$T/base.list" "$T/tip.list" | sed -n 's/^> //p')
