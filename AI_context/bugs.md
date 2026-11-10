@@ -18,15 +18,15 @@ Estados: **aberto** (sem correção), **corrigido (branch)** (commit local/fork,
 
 | Bug | Correção | Estado |
 |---|---|---|
-| B11 `cunit-net-sblock` (nosso, #2078): `BLOCKING_WAITS` exigia ≥ 2 s com os dados chegando ~2 s depois de `t0` (margem zero; falhou 1× na suíte, execução básica) | asserção: esperou ≥ metade disso; commit próprio no A | **em PR** #2194 |
-| B12 tap.device (nosso, A): frame retido para sempre — um opener que lê um tipo uma vez e para, aberto, trava a recepção da unidade (Kal no #2194) | prazo de 50 ms (`TAP_HOLD_MS`), depois descarta e esquece o tipo até o próximo `CMD_READ`; `tests/tap/hold_probe.py` | **em PR** #2206 |
-| B13 autosizing (nosso, A): `SB_MAX` 2 MB deixava `SO_SNDBUF`/`SO_RCVBUF` pegarem ~1,8 MB fora do orçamento; tetos de 1 MB e orçamento de 3/8 de um teto configurado, não da memória existente (o pool nunca devolve) — Kal no #2194 | `SB_MAX` 512 KB, `sbreserve_max()`; tetos pela memória livre (off < 16 MB, 1/64, ≤ 1 MB e ≤ orçamento), pool pelo que o sistema pode ceder a cada crescimento | **em PR** #2194 |
+| B11 `cunit-net-sblock` (nosso, #2078): `BLOCKING_WAITS` exigia ≥ 2 s com os dados chegando ~2 s depois de `t0` (margem zero; falhou 1× na suíte, execução básica) | asserção: esperou ≥ metade disso; commit próprio no A | **mesclado** #2194 |
+| B12 tap.device (nosso, A): frame retido para sempre — um opener que lê um tipo uma vez e para, aberto, trava a recepção da unidade (Kal no #2194) | prazo de 50 ms (`TAP_HOLD_MS`), depois descarta e esquece o tipo até o próximo `CMD_READ`; `tests/tap/hold_probe.py` | **mesclado** #2206 |
+| B13 autosizing (nosso, A): `SB_MAX` 2 MB deixava `SO_SNDBUF`/`SO_RCVBUF` pegarem ~1,8 MB fora do orçamento; tetos de 1 MB e orçamento de 3/8 de um teto configurado, não da memória existente (o pool nunca devolve) — Kal no #2194 | `SB_MAX` 512 KB, `sbreserve_max()`; tetos pela memória livre (off < 16 MB, 1/64, ≤ 1 MB e ≤ orçamento), pool pelo que o sistema pode ceder a cada crescimento | **mesclado** #2194 |
 | `tcp_reass()` recusava o segmento em `rcv_nxt` com 100 na fila: conexão travava para sempre | segmento em `rcv_nxt` sempre entra; limite = janela de segmentos de pelo menos o MSS padrão (Kal: `MAX(t_maxseg, tcp_mssdflt)`); teste CUnit | **mesclado** #2178 |
 | B10 `TCP_MINMSS` declarado e não aplicado: MSS do par até 64, MTU de rota/PMTU sem piso (achado pelo Kal no #2178) | `tcp_minmss` 216 (sysctl `net.inet.tcp.minmss`) para oferta, rota e PMTU; IPv4 sem DF abaixo do piso; `TCP_MAXSEG` respeita; testes tcpinfo (MTU de rota 128: 204, master 76) e sysctl | **mesclado** #2178 (3º commit, 5.40) |
 | tap.device informava 10 Mbit/s → poucos pedidos de leitura → rajadas descartadas | BPS 1 Gbit/s | **mesclado** #2178 |
-| tap.device descartava quadro sem pedido pendente (órfão) | segura o quadro até o próximo CMD_READ | **em PR** #2206 |
-| `sana_poll()` esvaziava a porta antes de rodar o IP → `ipintrq` transbordava | protocolos a cada 32 respostas | **em PR** #2194 |
-| Conexão aceita (syncache) sem RTT até enviar dados (RTO 1 s em receptor) | amostra do timestamp no ACK final | **em PR** #2194 |
+| tap.device descartava quadro sem pedido pendente (órfão) | segura o quadro até o próximo CMD_READ | **mesclado** #2206 |
+| `sana_poll()` esvaziava a porta antes de rodar o IP → `ipintrq` transbordava | protocolos a cada 32 respostas | **mesclado** #2194 |
+| Conexão aceita (syncache) sem RTT até enviar dados (RTO 1 s em receptor) | amostra do timestamp no ACK final | **mesclado** #2194 |
 | B8 Rota com gateway link-local ignorava a zona (tráfego saía pela 1ª interface) | `ifa_ifwithroute()` usa a interface da zona; teste em `cunit-net-prefix6if` | **mesclado** #2193 |
 | B6 `route` sem zonas IPv6 nem prefixos | `ADDR%ZONE`, `ADDR/LEN`, `-prefixlen` | **mesclado** #2179 |
 | (meu, no #2179) `K_PREFIXLEN` com 41, o valor do `K_SHOW`: `route prefixlen` rodava show e `-show` virava `-prefixlen` (Kal) | `K_PREFIXLEN` 42, depois do `K_SHOW`; testado no AROS | **mesclado** #2179 |
