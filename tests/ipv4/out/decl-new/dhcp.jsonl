@@ -1,0 +1,9 @@
+{"got": "DISCOVER", "mac": "96:4b:2d:cb:21:ed", "requested": null, "t": 1794334974.886}
+{"sent": "OFFER", "yiaddr": "192.168.166.50", "t": 1794334974.886}
+{"got": "REQUEST", "mac": "96:4b:2d:cb:21:ed", "requested": "192.168.166.50", "t": 1794334974.887}
+{"sent": "ACK", "yiaddr": "192.168.166.50", "t": 1794334974.887}
+{"got": "DECLINE", "mac": "96:4b:2d:cb:21:ed", "requested": "192.168.166.50", "t": 1794334975.397}
+{"got": "DISCOVER", "mac": "96:4b:2d:cb:21:ed", "requested": null, "t": 1794334985.407}
+{"sent": "OFFER", "yiaddr": "192.168.166.51", "t": 1794334985.408}
+{"got": "REQUEST", "mac": "96:4b:2d:cb:21:ed", "requested": "192.168.166.51", "t": 1794334985.409}
+{"sent": "ACK", "yiaddr": "192.168.166.51", "t": 1794334985.412}

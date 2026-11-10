@@ -1,0 +1,2 @@
+eth0: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+	inet 192.168.166.50 netmask 0xffffff00 broadcast 192.168.166.255

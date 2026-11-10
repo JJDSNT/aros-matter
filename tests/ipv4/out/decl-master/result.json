@@ -1,0 +1,21 @@
+{
+ "boot": "ok",
+ "dhcp": [
+  "DISCOVER",
+  "> OFFER",
+  "REQUEST",
+  "> ACK"
+ ],
+ "declined": [],
+ "acked": [
+  "192.168.166.50"
+ ],
+ "ifconfig_eth0": [
+  "inet 192.168.166.50 netmask 0xffffff00 broadcast 192.168.166.255"
+ ],
+ "sanity": {
+  "server_heard_aros": true,
+  "offered_inuse_first": true,
+  "ok": true
+ }
+}

@@ -1,0 +1,3 @@
+Execute SYS:System/Network/AROSTCP/S/startnet
+Wait 60
+C:ifconfig eth0 >SYS:out/if0.log
