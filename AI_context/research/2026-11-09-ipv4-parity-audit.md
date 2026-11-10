@@ -10,7 +10,7 @@ master antes de virar commit; "ok" não muda nada.
 |---|---|---|---|---|
 | P1 | Interface de chegada e origem por datagrama | `IPV6_PKTINFO` (recebe interface + destino; envia origem + interface), `IPV6_RECVPKTINFO` | só `IP_RECVDSTADDR` (destino); nada da interface; nada para escolher origem/interface por datagrama | **lacuna** — FreeBSD: `IP_RECVIF` (sockaddr_dl) e `IP_SENDSRCADDR`; Linux/macOS: `IP_PKTINFO` |
 | P2 | Interface de multicast por índice | `IPV6_MULTICAST_IF` e `ipv6_mreq` por índice | `IP_MULTICAST_IF`/`IP_ADD_MEMBERSHIP` só por endereço (`in_addr`); sem `struct ip_mreqn` | **lacuna** — FreeBSD e Linux aceitam `ip_mreqn` (`imr_ifindex`) |
-| P3 | Conflito de endereço | DAD (RFC 4862) com estado `IN6_IFF_TENTATIVE/DUPLICATED`, `SIOCGIFAFLAG_IN6` e sinal ao fim do DAD | só no IPv4 link-local automático (autoip, RFC 3927); endereço estático/DHCP: só log "duplicate IP address", sem sonda, sem defesa, sem estado para aplicações; o `dhclient` delega o ARPCHECK a script (no-op) | **lacuna** — RFC 5227 (ACD): sonda antes de usar, defesa, estado e sinal |
+| P3 | Conflito de endereço | DAD (RFC 4862) com estado `IN6_IFF_TENTATIVE/DUPLICATED`, `SIOCGIFAFLAG_IN6` e sinal ao fim do DAD | só no IPv4 link-local automático (autoip, RFC 3927); endereço estático/DHCP: só log "duplicate IP address", sem sonda, sem defesa, sem estado para aplicações; o `dhclient` delega o ARPCHECK a script (no-op) | **lacuna** — RFC 5227 (ACD): sonda antes de usar, defesa, estado e sinal (modelo: **NetBSD**, não FreeBSD — ver 2026-11-10-acd-design.md) |
 | P4 | Alcançabilidade do vizinho | NUD (RFC 4861 §7.3): REACHABLE/STALE/PROBE, sonda unicast | ARP: entrada completa vive 20 min (`ARPT_KILLC`) sem confirmação; MAC trocado fica errado até expirar ou chegar ARP | **lacuna (média)** — RFC 1122 §2.3.2.1 só exige expirar; Linux faz NUD também para ARP |
 | P5 | Roteador padrão por alcançabilidade | G18a (round robin, sonda RFC 4191 §3.5) | um gateway padrão; sem detecção de gateway morto (RFC 1122 §3.3.1.4) | **lacuna (baixa)** — raro ter vários gateways IPv4 no AROS |
 | P6 | Validação de Redirect | G18b | `rtredirect()`: só do gateway atual, novo gateway no link (RFC 1122 §3.2.2.2) | ok |
@@ -32,7 +32,7 @@ MLDv2 é parcial (só relatórios MODE_IS_EXCLUDE). Item próprio, grande.
    Avaliar também `IP_PKTINFO` (Linux/macOS; o mDNSResponder usa um ou outro). Interessa ao grupo 12 (mdnsd).
    Testes CUnit no loopback e na tap.
 2. **P3** — ACD (RFC 5227) para endereços configurados: estado tentativo/duplicado por endereço IPv4 (como o
-   FreeBSD `IN_IFF_TENTATIVE/DUPLICATED`), sonda, defesa, sinal; bench com um "intruso" na tap.
+   **NetBSD** `IN_IFF_TENTATIVE/DUPLICATED`; o FreeBSD não tem — correção de 2026-11-10), sonda, defesa, sinal; bench com um "intruso" na tap.
 3. **P4** — confirmação de alcançabilidade no ARP (como o NUD), se o bench mostrar MAC velho sendo usado.
 4. **P5** — só com caso real.
 
