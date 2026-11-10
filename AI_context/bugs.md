@@ -18,6 +18,10 @@ Estados: **aberto** (sem correção), **corrigido (branch)** (commit local/fork,
 
 | Bug | Correção | Estado |
 |---|---|---|
+| B16 autoip (RFC 3927 §2.5 b): no estado DEFEND um segundo conflito era ignorado (só BOUND reagia) — o endereço nunca era abandonado | autoip passa pela ACD (defesa única, depois duplicado → outro endereço) | corrigido (grupo 11, `review/arostcp-ipv4-iface`) |
+| B17 autoip: a queda do link parava o autoip para sempre (`sana_connect()` só reiniciava se não estivesse parado) | `ss_autoip.wanted` (IP=AUTO) | corrigido (grupo 11) |
+| B18 autoip: sondas e anúncios desde o início, com ou sem link — no boot hosted nenhum frame ARP dele chegou ao fio antes de assumir o endereço | sondas esperam a interface subir (ACD) | corrigido (grupo 11) |
+| B19 endereço IPv4 configurado usado na hora mesmo em uso por outro host (só log "duplicate IP address") | ACD RFC 5227 (modelo NetBSD) | corrigido (grupo 11) |
 | B14 autosizing (nosso, mesclado no #2194): conexão em TIME_WAIT (2 MSL, 1 min) segurava sua parte do orçamento com os buffers vazios — servidor enviando arquivos em sequência a 100 ms: 59 → 20 → 10 Mbit/s | `tcp_autobuf_release()` na entrada em TIME_WAIT (como o FreeBSD libera o socket ali); `cwnd_probe --repeat 3`: 59/59/59 Mbit/s | **em PR** #2208 |
 | B15 `cunit-net-tcpinfo` AUTOSIZE (nosso, #2194): uma transferência de 4 MB no loopback às vezes não enche o buffer (2 em 24 no master) — falhava 1× em 51 suítes | até três transferências antes de olhar | **em PR** #2208 |
 | B11 `cunit-net-sblock` (nosso, #2078): `BLOCKING_WAITS` exigia ≥ 2 s com os dados chegando ~2 s depois de `t0` (margem zero; falhou 1× na suíte, execução básica) | asserção: esperou ≥ metade disso; commit próprio no A | **mesclado** #2194 |

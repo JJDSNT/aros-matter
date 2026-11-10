@@ -1,0 +1,23 @@
+{
+ "pings_before": 3,
+ "pings_after_claim1": 3,
+ "pings_after_claim2": 3,
+ "autoip_addr": null,
+ "boot": "ok",
+ "eth0_defended_after_claim1": false,
+ "eth0_announced_after_claim2": false,
+ "ifconfig_eth0": [
+  "eth0: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500",
+  "\tinet 192.168.166.2 netmask 0xffffff00 broadcast 192.168.166.255"
+ ],
+ "ifconfig_eth1": [
+  "eth1: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500",
+  "\tinet 169.254.172.245 netmask 0xffff0000 broadcast 169.254.255.255"
+ ],
+ "sanity": {
+  "answered_before": true,
+  "claims_captured": true,
+  "autoip_seen": false,
+  "ok": false
+ }
+}
