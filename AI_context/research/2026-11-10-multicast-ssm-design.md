@@ -70,3 +70,46 @@ calcular as mudanças a reportar, e um limite de fontes por inscrição (`net.in
 - AROS tem `sys/tree.h` (RB) e `sys/queue.h` (STAILQ).
 - IGMP do AROS: só host IGMPv2, sem o modo de compatibilidade com querier v1 (RFC 2236 §4 pede) — o port resolve.
 - Raw sockets (`raw_ip`, `raw_ip6`): entregam multicast sem filtro por inscrição, como o UDP.
+
+## As quatro verificações (2026-11-10) — evidências
+
+1. **Consumidores de multicast sem inscrição no AROS: nenhum.** `mdns/mdns_net.c`, `dhcp/common/socket.c` (grupos de
+   servidor/relay DHCPv6) e o WirelessManager (IAPP, SSDP/WPS) se inscrevem; `devs/ipp/dnssd.c` faz a consulta
+   one-shot da RFC 6762 §6.7 em porta efêmera (respostas unicast, o próprio código diz que não precisa de inscrição);
+   `ping`/`traceroute` recebem ICMP unicast; `ip maddr` só lê. Nenhum receptor de ICMPv6 em espaço de usuário (RA/ND
+   são do kernel).
+2. **Sockets raw de controle:** a pilha não usa nenhum internamente (IGMP e MLD são tratados no kernel,
+   `igmp_input()`, `mld6_input()`). Política do FreeBSD (lida em `raw_ip.c`/`raw_ip6.c`): um socket raw só é filtrado
+   se tiver estado multicast (`inp_moptions`), e a exceção é **por protocolo**, não por tipo de socket — IGMP sempre
+   passa (v4), MLD sempre passa (v6, pela opção Router Alert, `M_RTALERT_MLD`); o resto é filtrado. Sem exceção
+   genérica para raw.
+3. **Concorrência (Readme §3.2):** a API roda na task de quem chama, sob o `syscall_semaphore` global (uma chamada por
+   vez); o daemon (entrada, timers) nunca o pega e só se exclui da API pelo `spl`. Mapeamento das travas do FreeBSD:
+   `IN_MULTI_LOCK` (sx, operações de setsockopt) → `syscall_semaphore` (já tido pela API);
+   `IN_MULTI_LIST_LOCK`, `IGMP_LOCK`/`MLD_LOCK` e o `INP` lock → **`splnet`** — todo estado que o daemon lê ou muda
+   (filtros do socket lidos na entrega, árvore de fontes do grupo, fila de relatórios, timers) muda em `splnet`, mesmo
+   com o semáforo; alocação `M_NOWAIT` sob `spl` (o `malloc_semaphore` é folha na ordem de travas). A liberação
+   adiada do FreeBSD (epoch, `inm_release_deferred`) não é necessária: o `spl` já serializa o daemon contra a API.
+   O fechamento do socket libera os filtros em `splnet`.
+4. **Limites:** no FreeBSD, `maxsocksrc` (128) é **por inscrição**, `maxgrpsrc` (512) por grupo×interface (todos os
+   sockets), e `IP_MAX_MEMBERSHIPS` 4095 por socket — sem teto por socket somado (4095×128 fontes ≈ 20 MB). Linux:
+   `igmp_max_memberships` 20, `igmp_max_msf` 10. Atomicidade: o FreeBSD já faz as mudanças de filtro em duas fases
+   (`imf_commit()`/`imf_rollback()`, `inm_commit()`): uma falha de alocação desfaz tudo — mantido no porte.
+
+## Plano final (para aprovação do usuário)
+
+- **Entrega estrita por inscrição (como o FreeBSD)**: UDP só entrega multicast a socket inscrito no grupo naquela
+  interface e cuja lista de fontes permite; raw filtrado só com estado multicast, IGMP/MLD sempre passam. Sem
+  `IP_MULTICAST_ALL`. Nota explícita no PR (mudança de comportamento; nenhum consumidor do AROS afetado).
+- **Porte do FreeBSD com critério**: modelo de estado por socket e por interface, máquinas IGMPv3/MLDv2, agregação
+  INCLUDE/EXCLUDE (t0/t1), relatórios de mudança de estado e timers, commit/rollback; fora VNET, epoch, sysctls de
+  debug, roteamento multicast. Atribuição: cabeçalhos de copyright do FreeBSD preservados nos arquivos portados.
+- **Limites AROS** (sysctls `net.inet.ip.mcast.*` e `net.inet6.ip6.mcast.*`): inscrições por socket 20 (o atual);
+  fontes por inscrição 64; fontes por grupo×interface 256; **teto por socket somado** de fontes 256 (novo, para
+  máquinas pequenas). Valores a confirmar no commit, com teste de cada limite.
+- **Sete commits**: (1) estruturas dinâmicas de inscrição, comportamento preservado; (2) filtragem estrita na entrega
+  para multicast comum, v4 e v6; (3) RFC 3678 + filtros por fonte IPv4; (4) IGMPv3 completo; (5) RFC 3678 + filtros
+  IPv6; (6) MLDv2 completo; (7) documentação, sysctls, versão.
+- **Testes**: regressão do multicast comum em cada commit (`cmsg`, `mcast6`, `mcast6if`, `mld6` + 52 suítes); CUnit
+  novos (API, limites, erros, entrega filtrada com duas fontes, socket não inscrito não recebe); bench com querier
+  IGMPv3/MLDv2 no host (consultas geral/grupo/grupo-e-fonte, relatórios na captura, compatibilidade v2/MLDv1).
