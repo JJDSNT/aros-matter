@@ -55,3 +55,23 @@ A opção "a pilha faz a consulta mDNS sozinha" contraria o princípio acima. Op
 - (c) a resolução `.local` fica fora da pilha (cada programa usa o bonami) — documentar; `ping x.local` continua sem
   funcionar.
 Decisão do usuário.
+
+## Trabalho do Codex (achado 2026-11-10)
+
+`~/aros-midihub-mdns-codex`, branch `review/mdns-modernization-plan` (16 commits sobre o main do midihub, último
+2026-11-09; não mesclado no main do midihub, sem PR upstream). Documento central:
+`docs/dnssd-native-architecture-decision.md` (ADR "accepted", 2026-11-09), mais roadmap, auditorias de reuso/núcleo/
+proveniência, validação, um protótipo de coordenador (`prototypes/dnssd/`) e o patch do núcleo IPv6.
+
+**ADR:** um serviço DNS-SD nativo do AROS: `dnssd.library` (fachada fina, API nova, assíncrona, por message port) →
+`mdnsd` (dono de sockets, cache, sondagem, conflitos, registros, interfaces; pode ser redesenhado por inteiro) →
+`bsdsocket.library`. **Substitui o `bonami.library`**, sem compatibilidade de API/ABI nem adaptador (proveniência e
+licenças preservadas). Eventos dual-stack com interface/escopo (resolve o M4 e o MD01). "AROSTCP dependency rule":
+capacidade genérica que falte à pilha é corrigida na pilha, numa proposta própria, e consumida depois; polling só como
+proteção contra notificação perdida.
+
+**Alinhamento com a proposta de três camadas:** igual no limite mdnsd/pilha e na regra de dependência (casa com o G11).
+Falta no ADR: (1) o **resolver do sistema** como cliente (`.local` em `gethostbyname`/`getaddrinfo`) — não aparece;
+(2) o contrato da pilha está genérico e não lista o que o G11 trouxe (estado de endereço IPv4 `SIOCGIFAFLAG_IN`,
+`IP_RECVIF`/`ip_mreqn`) — falta separar contrato funcional e binding AROSTCP; (3) snapshot + eventos + reconciliação
+está implícito (polling como proteção), não definido.
