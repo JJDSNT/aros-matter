@@ -75,3 +75,20 @@ Falta no ADR: (1) o **resolver do sistema** como cliente (`.local` em `gethostby
 (2) o contrato da pilha está genérico e não lista o que o G11 trouxe (estado de endereço IPv4 `SIOCGIFAFLAG_IN`,
 `IP_RECVIF`/`ip_mreqn`) — falta separar contrato funcional e binding AROSTCP; (3) snapshot + eventos + reconciliação
 está implícito (polling como proteção), não definido.
+
+## Decisões do usuário (2026-11-10)
+
+1. Base do G12: o ADR do Codex (`dnssd.library` substitui o `bonami.library`; mdnsd redesenhável).
+2. Divisão: **Codex** = mdnsd + `dnssd.library` + migração de consumidores; **eu** = pilha (contrato/binding, o que
+   faltar) + resolver do sistema. Ninguém mexe na área do outro.
+3. Resolver `.local` como **cliente da `dnssd.library`**, aberta sob demanda (precedente: `miami.library` abre a
+   `usergroup.library` só quando precisa); sem dependência de build/link; sem mdnsd, `.local` falha e nada mais muda.
+   `localhost` continua resolvido pela própria pilha (RFC 6761, #2023). Sem ciclo: o mdnsd nunca resolve `.local` pelo
+   resolver. Requisito para a `dnssd.library`: consulta de endereço síncrona de qualquer task, com prazo e cancelamento,
+   IPv4+IPv6 com índice de interface.
+4. Acordos escritos "em todo lugar relevante", por área com dono: **`aros-midihub/docs/mdns-integration-agreements.md`**
+   (main, `56fde52c5e`, lido pelo Codex) — contrato funcional F1–F10 e binding AROSTCP, modelo snapshot/eventos/
+   reconciliação, contrato do resolver; o `mdns-arostcp.md` ganhou aviso apontando para ele.
+
+Pendências da minha área: o contrato F1–F10 já existe no AROSTCP quando o #2218 entrar; o resolver depende da API da
+`dnssd.library` (nomes/ABI ainda abertos no ADR) — implementar quando ela existir.

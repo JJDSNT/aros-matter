@@ -309,3 +309,5 @@ Falta no G11: B21 (ligar `nd6_nud_hint()`, medido), P5 (gateway morto, RFC 1122 
 **2026-11-10 (noite, 4) — próximo: grupo multicast dual-stack (SSM)**, antes do G12 (decisão do usuário; RFC 1256 no backlog). Desenho em andamento: `research/2026-11-10-multicast-ssm-design.md` (modelo FreeBSD, verificado: o único com SSM no kernel; achado: a entrega UDP multicast não filtra por inscrição do socket, nas duas famílias).
 
 **2026-11-10 (noite, 5):** plano SSM aprovado pelo usuário (entrega estrita, porte seletivo do FreeBSD, 7 commits, limites com teto por socket); consulta ao Kal na [issue #2220](https://github.com/aros-development-team/AROS/issues/2220) antes de implementar. #2218 (G11) em revisão, Codacy ok.
+
+**2026-11-10 (noite, 6) — G12 acordado:** base = ADR do Codex; Codex faz mdnsd/`dnssd.library`, eu faço pilha + resolver `.local` (cliente da `dnssd.library`, aberta sob demanda). Acordos em `aros-midihub/docs/mdns-integration-agreements.md`. Aguardando: Kal no #2218 (G11) e na issue #2220 (SSM); o resolver espera a API da `dnssd.library`.
