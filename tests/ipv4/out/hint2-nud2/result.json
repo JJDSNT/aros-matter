@@ -1,0 +1,12 @@
+{
+ "boot": "ok",
+ "bytes": 450000000,
+ "seconds": 56.6,
+ "arp_requests_during": 0,
+ "unicast_during": 0,
+ "sanity": {
+  "sent_all": true,
+  "long_enough": true,
+  "ok": true
+ }
+}

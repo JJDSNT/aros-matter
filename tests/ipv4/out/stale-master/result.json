@@ -1,0 +1,11 @@
+{
+ "boot": "ok",
+ "received": 97,
+ "last_before_change_s": 0.17,
+ "first_after_change_s": null,
+ "after_change": 0,
+ "sanity": {
+  "datagrams_before": true,
+  "ok": true
+ }
+}
