@@ -84,3 +84,26 @@ listagem da API ficar separável. Bump no último. PR próprio depois do #2218 (
   `route6`, `prefix6if`, `slaac6`, `slaaclife`, `pmtu6`, `scope6`, `srcaddr6`, `sendto6`, `tcpmss6`, `mld6`,
   `bindtodev6`, `addrflags6`, `unreach6`, `frag6`, `icmp6err`. Benches: `zone_probe.py` (aceitação),
   `defrouter.py` (alcançabilidade do roteador), `nd_hint_probe.py` (dica do TCP), `remloop.py` (remoção de interface).
+
+## Condições acrescentadas (texto do ChatGPT trazido pelo usuário, 2026-11-11, aceitas)
+
+1. **Escopo:** a zona nunca é embutida (§6.6); o par (interface, endereço) é o vizinho com escopo — a zona de um
+   link-local é a interface. Regra do código novo: nenhum caminho guarda/compara o endereço com índice embutido;
+   uma só representação por vizinho. Teste dos dois `fe80::1`.
+2. **Cache cheio** (limite por interface): reaproveitar primeiro um STALE sem fila (o mais antigo); nunca descartar
+   INCOMPLETE com pacotes à espera; sem candidato, a resolução nova falha (`ENOBUFS`); contadores de despejo e de
+   falha de alocação visíveis.
+3. **Ponteiros na remoção de interface:** auditoria explícita — tabela, filas das entradas e referências guardadas
+   (timer, dica do TCP, roteador padrão `dr->ifp`, notificações) liberadas/limpas no `nd6_ifdetach()`;
+   `remloop.py` cobre remoção repetida.
+4. **Gerência preservada:** listagem (`GetRouteInfo(AF_INET6, RTF_LLINFO)` da API Roadshow, usada pelo
+   `ip -6 neigh show`) passa a vir das tabelas; **socket de rotas com `RTF_LLINFO`** (`RTM_GET`/`RTM_DELETE`/
+   `RTM_ADD`) desviado para o cache, como o `lla_rt_output()` do FreeBSD (`ndp -d`/`-s`), para não perder apagar/
+   consultar/entrada estática. `netstat -r` sem clones: aceito.
+
+- **Aceitação:** duas entradas independentes, cada uma com o MAC do seu enlace, nenhuma troca de interface; os 2 NS
+  (contra 16) confirmam. `icmp6stat` exposta (`amiga_kernvars.c`, como o `netstat -s` lê) — o CUnit confere a
+  contagem de NS enviados e a listagem.
+- **Tamanho e memória:** `.text`/`.data`/`.bss` do AROSTCP antes e depois; bytes por entrada; custo fixo por
+  interface; comportamento com o cache cheio. m68k também, se o build m68k daqui servir.
+- Sem `lltable` genérico nem unificação com o ARP.
