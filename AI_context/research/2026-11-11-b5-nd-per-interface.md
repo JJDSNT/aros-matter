@@ -107,3 +107,34 @@ listagem da API ficar separável. Bump no último. PR próprio depois do #2218 (
 - **Tamanho e memória:** `.text`/`.data`/`.bss` do AROSTCP antes e depois; bytes por entrada; custo fixo por
   interface; comportamento com o cache cheio. m68k também, se o build m68k daqui servir.
 - Sem `lltable` genérico nem unificação com o ARP.
+
+## Resultado (2026-11-11) — branch `review/arostcp-nd6-ifcache`, commit local `c11fa0d45b` (sem push, sem PR: aguardando o usuário)
+
+Base: upstream/master `994fc8c9df`. Um commit (código + `cunit-net-nd6cache` + ajuste do `ndqueue6` + Readme §6.1/§6.3). Bump de versão no PR (depende de o #2218 entrar antes).
+
+**Funcional**
+- Aceitação (`zone_probe.py --rounds 8`, agora conta NS): master **16 NS** (8+8), B5 **2 NS** (1+1); 16/16 datagramas no enlace e MAC certos nos dois; controle de um enlace: 1 NS.
+- `cunit-net-nd6cache` 5/5 nas duas execuções: o mesmo endereço estático em dois enlaces = duas entradas com MACs próprios (RTM_GET e listagem); envio alternado sem NS; RTM_GET sem `RTF_LLINFO` devolve a rota do prefixo; apagar um deixa o outro; cache cheio: 256 entradas esperando, nenhuma descartada, 44 `ENOBUFS`, depois da falha de resolução as entradas somem e o cache aceita de novo.
+- 52 suítes ok (duas execuções). `ndqueue6` passou a apagar o vizinho com `RTF_LLINFO` + `rtm_index` (senão se pularia em silêncio).
+- Benches: `defrouter.py` 5/5 (troca aos 9 s, volta aos 68; master 10/69); `remloop.py` 3 boots × 30 recargas sem crash.
+- Achado durante a validação: `narouter6`/`rio6` usam endereços nossos como roteadores; o KAME fazia de cada endereço nosso um vizinho permanente (o FreeBSD também: `LLE_IFADDR`). Mantido: entrada permanente com o nosso MAC, apagada com o endereço (`nd6_ifaddr_gone()` no `in6_purgeaddr()`); entrada fixa (estática ou nossa) só obedece à flag Router de um NA.
+- Benches consertados: `zone_probe.py` (contagem de NS; datagramas lidos com filtro próprio), `defrouter.py` (garante `fe80::1` na tap; o `zone_probe` o remove).
+
+**Mudanças de comportamento a avaliar**
+- Entrada apagada quando a resolução ou o NUD falham (RFC 4861 §7.2.2/§7.3.3; antes ficava NOSTATE); STALE sem uso por 1 dia é coletada.
+- Packet Too Big sobre destino no próprio enlace não é mais registrado (vale o MTU do enlace; antes ia para o clone).
+- `netstat -r` sem clones `L`; `ip -6 neigh` igual (listagem sintetizada, uma linha por (interface, endereço)).
+- Desvio do plano: uma tabela hash global de 64 baldes com chave (interface, endereço) em vez de uma tabela por interface (custo fixo menor); limite e contagem por interface no `nd_ifinfo`.
+
+**Tamanho (AROSTCP, `size`)**
+
+| alvo | text | data | bss | total |
+|---|---|---|---|---|
+| m68k master | 268906 | 3796 | 89300 | 362002 |
+| m68k B5 | 269634 (+728) | 3800 (+4) | 89660 (+360) | 363094 (+1092) |
+| x86_64 master | 493913 | 7104 | 117220 | 618237 |
+| x86_64 B5 | 496053 (+2140) | 7104 | 117892 (+672) | 621049 (+2812) |
+
+**Memória por vizinho:** m68k 62 B (uma alocação) contra ~230 B antes (estado 34 + `rtentry` 148 + chave e gateway da rota clonada, duas alocações); x86_64 96 contra ~430. Custo fixo: tabela hash 256 B (m68k) / 512 B (x86_64) + 4 B por interface. Teto: 256 vizinhos por interface (~16 KB no m68k); antes sem teto (NS de qualquer origem criava clones).
+
+Build m68k da nossa árvore: `~/aros-build-ipv6-m68k-claude` (configure `--target=amiga-m68k` com o toolchain de `~/aros-build-emu68-m68k`; precisou de `make workbench-libs-fd` antes do AROSTCP). Serve à tarefa separada de tamanho/memória da pilha atual contra a legada.

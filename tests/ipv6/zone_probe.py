@@ -5,7 +5,11 @@ The host has fe80::1 on both of its taps (aros0, aros1: two links, two
 neighbours with the same address and different MACs). AROS (zonesend) sends
 UDP datagrams to fe80::1%eth0 and fe80::1%eth1 by turns. From captures of
 both taps it reports, for each datagram, the tap it left by and the MAC it
-was sent to: each must leave by its own link, to that tap's MAC.
+was sent to: each must leave by its own link, to that tap's MAC. It also
+counts the Neighbor Solicitations AROS sends for fe80::1 on each tap: with a
+neighbour cache entry per (interface, address) one per link resolves both
+(2 for any number of rounds); one entry shared by the two links is resolved
+again at each change of link (one per datagram).
 
     zone_probe.py [--arostcp FILE] [--image DIR] [--rounds 4] [--out DIR]
 Needs sudo -n for ip and tcpdump, and the second tap (tools/tap-up.sh 1).
@@ -48,7 +52,7 @@ def main():
     for t in TAPS:
         pcap = os.path.join(a.out, t + ".pcap")
         dumps[t] = (pcap, subprocess.Popen(["sudo", "-n", "tcpdump", "-i", t, "-n", "-e", "-w", pcap,
-                                            "ip6 and port 9999"],
+                                            "ip6 and (port 9999 or icmp6)"],
                                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL))
     got = []
     if a.tcp:
@@ -98,15 +102,21 @@ def main():
         right = [s for s in seen if s["msg"] and want[s["msg"].split()[0]][0] == s["tap"]]
     else:
         for t in TAPS:
-            txt = subprocess.run(["sudo", "-n", "tcpdump", "-n", "-e", "-A", "-r", dumps[t][0]], capture_output=True, text=True).stdout
+            txt = subprocess.run(["sudo", "-n", "tcpdump", "-n", "-e", "-A", "-r", dumps[t][0], "udp and dst port 9999"],
+                                 capture_output=True, text=True).stdout
             for m in re.finditer(r"> ([0-9a-f:]{17}),.*?\n.*?(eth[01] \d+)", txt, re.S):
                 seen.append({"tap": t, "dst_mac": m.group(1), "msg": m.group(2)})
         right = [s for s in seen if want[s["msg"].split()[0]] == (s["tap"], s["dst_mac"])]
+    ns = {}
+    for t in TAPS:
+        txt = subprocess.run(["sudo", "-n", "tcpdump", "-n", "-r", dumps[t][0], "icmp6 and ip6[40] == 135"],
+                             capture_output=True, text=True).stdout
+        ns[t] = len([l for l in txt.splitlines() if "who has %s" % ADDR in l and not l.split()[2].startswith(ADDR)])
     try:
         log = open(os.path.join(a.out, "aros", "out", "zonesend.log")).read().splitlines()
     except OSError:
         log = []
-    res = {"sent": a.rounds * 2, "seen": seen, "right": len(right), "zonesend": log,
+    res = {"sent": a.rounds * 2, "seen": seen, "right": len(right), "ns_from_aros": ns, "zonesend": log,
            "ok": len(seen) == a.rounds * 2 and len(right) == a.rounds * 2}
     json.dump(res, open(os.path.join(a.out, "result.json"), "w"), indent=1)
     print(json.dumps(res, indent=1))

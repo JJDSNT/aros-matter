@@ -50,7 +50,9 @@ def main():
     fwd_key = "net.ipv6.conf.%s.forwarding" % IFACE
     fwd_was = subprocess.run(["sysctl", "-n", fwd_key], capture_output=True, text=True).stdout.strip() or "0"
     subprocess.run(["sudo", "-n", "sysctl", "-qw", fwd_key + "=1"], check=True)
-    live = "fe80::1"            # the host's link-local, which tools/tap-up.sh gives the tap
+    live = "fe80::1"            # LIVE, the host's: ensured here, since tap-up.sh adds it only
+    subprocess.run(["sudo", "-n", "ip", "-6", "addr", "add", live + "/64", "dev", IFACE, "nodad"],
+                   stderr=subprocess.DEVNULL)   # to a tap with no link-local (zone_probe removes it)
 
     idx = socket.if_nametoindex(IFACE)
     lst = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM)
