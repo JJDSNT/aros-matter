@@ -2,7 +2,7 @@
 
 Atualizado: 2026-11-09
 
-**Mapa dos grupos (onde estamos e o que falta): [research/2026-11-09-roadmap.md](research/2026-11-09-roadmap.md). Bugs: [bugs.md](bugs.md).**
+**Mapa dos grupos (onde estamos e o que falta): [research/2026-11-09-roadmap.md](research/2026-11-09-roadmap.md). Bugs: [bugs.md](bugs.md). Acompanhamento de correções/regressão (a cada atualização do upstream): [followup.md](followup.md).**
 
 ## Foco atual (desde 2026-10-28)
 

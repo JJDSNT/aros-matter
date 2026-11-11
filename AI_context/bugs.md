@@ -3,6 +3,8 @@
 Regra (usuário, 2026-11-09): todo bug achado entra aqui, com estado. Se um PR aberto o expõe, a correção
 (com teste) vai nesse PR ([memória: bug-found-check-open-prs]).
 
+**Painel de acompanhamento (quem corrige, onde, verificação, teste de regressão): [followup.md](followup.md).**
+
 Estados: **aberto** (sem correção), **corrigido (branch)** (commit local/fork, PR ainda não aberto),
 **em PR** (PR aberto), **mesclado**.
 
