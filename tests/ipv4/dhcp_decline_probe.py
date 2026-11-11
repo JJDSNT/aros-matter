@@ -9,6 +9,11 @@ offers 192.168.166.50 first, then .51; the host itself holds .50 on aros0
 Expected: AROS takes .50, finds it in use, sends DHCPDECLINE, and some
 10 s later is bound to .51. Before the change: bound to .50 with the host.
 
+With --claim, once AROS is bound to .51 an intruder (tests/ipv4/arpsend.py)
+claims .51 twice, a second apart: the address's defence fails (RFC 5227
+section 2.4), the stack marks it duplicated and dhclient, told by the
+routing socket, declines it and is bound to .52.
+
     dhcp_decline_probe.py [--arostcp FILE] [--dhclient FILE] [--image DIR] [--out DIR]
 Needs sudo -n (port 67, ip addr).
 """
@@ -16,7 +21,8 @@ import argparse, json, os, shutil, subprocess, time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
-TAP, SERVER, INUSE, NEXT = "aros0", "192.168.166.1", "192.168.166.50", "192.168.166.51"
+TAP, SERVER, INUSE, NEXT, LAST = "aros0", "192.168.166.1", "192.168.166.50", "192.168.166.51", "192.168.166.52"
+INTRUDER = "02:00:00:00:00:99"
 
 
 def sh(*a):
@@ -29,6 +35,7 @@ def main():
         os.path.expanduser("~/aros-build-ipv6-hosted-claude/bin/linux-x86_64/AROS")))
     ap.add_argument("--arostcp")
     ap.add_argument("--dhclient", help="boot with this dhclient")
+    ap.add_argument("--claim", action="store_true", help="then take .51 from AROS while it is in use")
     ap.add_argument("--out", default=os.path.join(HERE, "out", "decline-" + time.strftime("%Y%m%d-%H%M%S")))
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
@@ -37,7 +44,7 @@ def main():
     log = os.path.join(a.out, "dhcp.jsonl")
     open(log, "w").close()
     srv = subprocess.Popen(["sudo", "-n", "python3", "-I", os.path.join(HERE, "dhcpserv.py"), TAP, SERVER,
-                            INUSE, NEXT, "110", log])
+                            INUSE, LAST, "150", log])
     script = os.path.join(a.out, "decline.script")
     files = []
     with open(script, "w") as f:
@@ -47,14 +54,25 @@ def main():
             shutil.copy(a.dhclient, os.path.join(d, "dhclient"))
             files.append(os.path.join(d, "dhclient"))
             f.write("Copy C:dhclient SYS:System/Network/AROSTCP/C/dhclient\n")
-        f.write("Execute SYS:System/Network/AROSTCP/S/startnet\nWait 60\n")
+        f.write("Execute SYS:System/Network/AROSTCP/S/startnet\nWait %d\n" % (100 if a.claim else 60))
         f.write("C:ifconfig eth0 >SYS:out/if0.log\n")
-    env = dict(os.environ, AROS_HOSTED_IMAGE=a.image, AROS_TAP_IP="DHCP", AROS_RUN_TIMEOUT="150")
+    env = dict(os.environ, AROS_HOSTED_IMAGE=a.image, AROS_TAP_IP="DHCP", AROS_RUN_TIMEOUT="190")
     if a.arostcp:
         env["AROS_AROSTCP"] = os.path.abspath(a.arostcp)
     try:
-        r = subprocess.run([os.path.join(ROOT, "tools", "hosted-run.sh"), os.path.join(a.out, "aros"), script] + files,
-                           env=env, capture_output=True, text=True)
+        aros = subprocess.Popen([os.path.join(ROOT, "tools", "hosted-run.sh"), os.path.join(a.out, "aros"), script] + files,
+                                env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+        if a.claim:
+            t0 = time.time()
+            while time.time() - t0 < 120:
+                if any('"yiaddr": "%s"' % NEXT in l and '"ACK"' in l for l in open(log)):
+                    break
+                time.sleep(1)
+            time.sleep(10)          # bound, and its probes and announcements done
+            for _ in range(2):
+                subprocess.run(["sudo", "-n", "python3", "-I", os.path.join(HERE, "arpsend.py"), TAP, INTRUDER, NEXT])
+                time.sleep(1)
+        r = subprocess.CompletedProcess(aros.args, 0, aros.communicate()[0], "")
     finally:
         sh("pkill", "-f", "dhcpserv.py %s" % TAP)
         srv.wait(timeout=10)

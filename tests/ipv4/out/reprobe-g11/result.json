@@ -1,0 +1,20 @@
+{
+ "boot": "ok",
+ "events": [
+  [
+   0.0,
+   1
+  ],
+  [
+   1.0,
+   2
+  ]
+ ],
+ "released_at_s": 20.0,
+ "duplicated_at_s": 1.0,
+ "ready_again_at_s": null,
+ "sanity": {
+  "duplicated_first": true,
+  "ok": true
+ }
+}

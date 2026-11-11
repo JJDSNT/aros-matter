@@ -1,0 +1,16 @@
+[Bootstrap] RAM memory block allocated: 0x40ec9000 - 0x50ec9000 (268435456 bytes)
+[Bootstrap] Entering kernel at 0x40410000...
+[KRN] Protecting host process stack (0x00007ffe087002f0 - 0x00007ffe0870a2f0)
+Xlib:  extension "XFree86-VidModeExtension" missing on display ":99".
+[tap] unit 0 attached to aros0
+[tap] [0] MTU 1500 (frame buffer 1514 bytes)
+[tap] [0] hardware address: d6:ca:7e:a2:0d:1b
+[AROSTCP] eth0 is now online.
+[AROSTCP] eth0: probing 192.168.166.2
+
+[AROSTCP] eth0: probed, no conflict: 192.168.166.2
+
+[AROSTCP] eth0: probing 192.168.166.60
+
+[AROSTCP] eth0: duplicated while probing: 192.168.166.60 from E2:90:2A:98:97:BD
+

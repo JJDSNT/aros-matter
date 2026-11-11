@@ -1,0 +1,318 @@
+[Bootstrap] RAM memory block allocated: 0x40d86000 - 0x50d86000 (268435456 bytes)
+[Bootstrap] Entering kernel at 0x50d86000...
+[KRN] Protecting host process stack (0x00007ffc440c8450 - 0x00007ffc440d2450)
+Xlib:  extension "XFree86-VidModeExtension" missing on display ":99".
+[tap] unit 0 attached to aros0
+[tap] [0] MTU 1500 (frame buffer 1514 bytes)
+[tap] [0] hardware address: 86:34:4f:48:28:cf
+[Wanderer:VolumeList]: IconWindowVolumeList__HandleFSUpdate(NotifyMessage @ 0000000042c89240 -> 'EMU:')
+[dhclient] aros_apply_lease: reason=PREINIT interface=eth0 ip=(null) mask=(null) gw=(null)
+[AROSTCP] eth0 is now online.
+[dhclient] PREINIT SIOCAIFADDR(0.0.0.0) OK
+[dhclient] PREINIT SIOCADDRT(255.255.255.255) OK
+[dhclient] starting state machine for interface eth0
+[dhclient] state_init: interface=eth0 xid=6244bec0 → S_SELECTING
+[dhclient] send_packet: iface=eth0 wfdesc=5 dst=255.255.255.255 len=300 result=300 errno=0
+[dhclient] send_discover: interface=eth0 wfdesc=5 result=300 xid=6244bec0
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=2 errno=49
+[dhclient] omapi_one_dispatch: count=2 desc=5 isset=32
+[dhclient] got_one: called for iface=eth0 rfdesc=5
+[dhclient] receive_packet: iface=eth0 rfdesc=5 result=262 errno=0 from=192.168.166.1
+[dhclient] dhcpoffer: received DHCPOFFER of 192.168.166.50 from 192.168.166.1 xid=6244bec0
+[dhclient] send_packet: iface=eth0 wfdesc=5 dst=255.255.255.255 len=300 result=300 errno=0
+[dhclient] omapi_one_dispatch: count=2 desc=6 isset=64
+[dhclient] omapi_one_dispatch: count=2 desc=7 isset=0
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=2 errno=49
+[dhclient] omapi_one_dispatch: count=2 desc=5 isset=32
+[dhclient] got_one: called for iface=eth0 rfdesc=5
+[dhclient] receive_packet: iface=eth0 rfdesc=5 result=262 errno=0 from=192.168.166.1
+[dhclient] dhcpack: accepted offer 192.168.166.50 state=4
+[dhclient] bind_lease: state=4 new_addr=192.168.166.50
+[dhclient] aros_apply_lease: reason=BOUND interface=eth0 ip=192.168.166.50 mask=255.255.255.0 gw=(null)
+[dhclient] aros_apply_lease: removing old addr 0.0.0.0
+[AROSTCP] eth0: probing 192.168.166.50
+
+[dhclient] aros_apply_lease: SIOCAIFADDR(192.168.166.50/255.255.255.0) on eth0 OK
+[AROSTCP] eth0: duplicated while probing: 192.168.166.50 from E2:90:2A:98:97:BD
+
+[dhclient] send_packet: iface=eth0 wfdesc=5 dst=255.255.255.255 len=300 result=300 errno=0
+[dhclient] omapi_one_dispatch: count=2 desc=6 isset=64
+[dhclient] omapi_one_dispatch: count=2 desc=7 isset=0
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=49
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=49
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=49
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=49
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=0 errno=49
+[dhclient] omapi_one_dispatch: blocking WaitSelect count=1 errno=49 sigs=0x00000000
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=49
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=49
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=49
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=49
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=49
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=0 errno=49
+[dhclient] omapi_one_dispatch: blocking WaitSelect count=0 errno=49 sigs=0x00000000
+[dhclient] omapi_one_dispatch: count=0 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=0 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=0 desc=7 isset=0
+[dhclient] state_init: interface=eth0 xid=5e28d2e9 → S_SELECTING
+[dhclient] send_packet: iface=eth0 wfdesc=5 dst=255.255.255.255 len=300 result=300 errno=0
+[dhclient] send_discover: interface=eth0 wfdesc=5 result=300 xid=5e28d2e9
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=3 errno=49
+[dhclient] omapi_one_dispatch: count=3 desc=5 isset=32
+[dhclient] got_one: called for iface=eth0 rfdesc=5
+[dhclient] receive_packet: iface=eth0 rfdesc=5 result=262 errno=0 from=192.168.166.1
+[dhclient] dhcpoffer: received DHCPOFFER of 192.168.166.51 from 192.168.166.1 xid=5e28d2e9
+[dhclient] send_packet: iface=eth0 wfdesc=5 dst=255.255.255.255 len=300 result=300 errno=0
+[dhclient] omapi_one_dispatch: count=3 desc=6 isset=64
+[dhclient] omapi_one_dispatch: count=3 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=3 errno=49
+[dhclient] omapi_one_dispatch: count=3 desc=5 isset=32
+[dhclient] got_one: called for iface=eth0 rfdesc=5
+[dhclient] receive_packet: iface=eth0 rfdesc=5 result=262 errno=0 from=192.168.166.1
+[dhclient] dhcpack: accepted offer 192.168.166.51 state=4
+[dhclient] bind_lease: state=4 new_addr=192.168.166.51
+[dhclient] aros_apply_lease: reason=BOUND interface=eth0 ip=192.168.166.51 mask=255.255.255.0 gw=(null)
+[AROSTCP] eth0: probing 192.168.166.51
+
+[dhclient] aros_apply_lease: SIOCAIFADDR(192.168.166.51/255.255.255.0) on eth0 OK
+[AROSTCP] eth0: probed, no conflict: 192.168.166.51
+
+[dhclient] aros_apply_lease: primary lease is eth0: default route via (none), DNS (none), domain (none)
+[dhclient] omapi_one_dispatch: count=3 desc=6 isset=64
+[dhclient] omapi_one_dispatch: count=3 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=0
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=0
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=0
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=0
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=0
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=0
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=0
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=0 errno=0
+[dhclient] omapi_one_dispatch: blocking WaitSelect count=1 errno=0 sigs=0x00000000
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=0
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=0
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=0
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=0
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=0
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=0 errno=0
+[AROSTCP] eth0: defended 192.168.166.51 from 02:00:00:00:00:99
+
+[AROSTCP] eth0: defence failed, duplicated: 192.168.166.51 from 02:00:00:00:00:99
+
+[dhclient] omapi_one_dispatch: blocking WaitSelect count=1 errno=0 sigs=0x00000000
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] aros_apply_lease: reason=EXPIRE interface=eth0 ip=(null) mask=(null) gw=(null)
+[dhclient] aros_apply_lease: no lease left - default route and DNS of eth0 removed
+[dhclient] send_packet: iface=eth0 wfdesc=5 dst=255.255.255.255 len=300 result=300 errno=0
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=0
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=0
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=0 errno=0
+[dhclient] omapi_one_dispatch: blocking WaitSelect count=0 errno=0 sigs=0x00000000
+[dhclient] omapi_one_dispatch: count=0 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=0 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=0 desc=7 isset=0
+[dhclient] state_init: interface=eth0 xid=306a3327 → S_SELECTING
+[dhclient] send_packet: iface=eth0 wfdesc=5 dst=255.255.255.255 len=300 result=300 errno=0
+[dhclient] send_discover: interface=eth0 wfdesc=5 result=300 xid=306a3327
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=3 errno=0
+[dhclient] omapi_one_dispatch: count=3 desc=5 isset=32
+[dhclient] got_one: called for iface=eth0 rfdesc=5
+[dhclient] receive_packet: iface=eth0 rfdesc=5 result=262 errno=0 from=192.168.166.1
+[dhclient] dhcpoffer: received DHCPOFFER of 192.168.166.52 from 192.168.166.1 xid=306a3327
+[dhclient] send_packet: iface=eth0 wfdesc=5 dst=255.255.255.255 len=300 result=300 errno=0
+[dhclient] omapi_one_dispatch: count=3 desc=6 isset=64
+[dhclient] omapi_one_dispatch: count=3 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=3 errno=0
+[dhclient] omapi_one_dispatch: count=3 desc=5 isset=32
+[dhclient] got_one: called for iface=eth0 rfdesc=5
+[dhclient] receive_packet: iface=eth0 rfdesc=5 result=262 errno=0 from=192.168.166.1
+[dhclient] dhcpack: accepted offer 192.168.166.52 state=4
+[dhclient] bind_lease: state=4 new_addr=192.168.166.52
+[dhclient] aros_apply_lease: reason=BOUND interface=eth0 ip=192.168.166.52 mask=255.255.255.0 gw=(null)
+[AROSTCP] eth0: probing 192.168.166.52
+
+[dhclient] aros_apply_lease: SIOCAIFADDR(192.168.166.52/255.255.255.0) on eth0 OK
+[AROSTCP] eth0: probed, no conflict: 192.168.166.52
+
+[dhclient] aros_apply_lease: primary lease is eth0: default route via (none), DNS (none), domain (none)
+[dhclient] omapi_one_dispatch: count=3 desc=6 isset=64
+[dhclient] omapi_one_dispatch: count=3 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=0
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=0
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=0
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=0
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=0
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=0
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=0
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=0 errno=0
+[dhclient] omapi_one_dispatch: blocking WaitSelect count=1 errno=0 sigs=0x00000000
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=0
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=0
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=0
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=0
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=1 errno=0
+[dhclient] omapi_one_dispatch: count=1 desc=5 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=6 isset=0
+[dhclient] omapi_one_dispatch: count=1 desc=7 isset=128
+[dhclient] omapi_one_dispatch: polling select(max+1=8) fd0_in_r=0
+[dhclient] omapi_one_dispatch: poll count=0 errno=0

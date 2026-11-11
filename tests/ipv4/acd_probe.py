@@ -8,10 +8,11 @@ AROS has 192.168.166.2 on eth0 (tap aros0) and IP=AUTO on eth1 (aros1).
 An "intruder" on the host (tests/ipv4/arpsend.py, a made-up MAC) sends a
 gratuitous ARP claiming each address, twice, 3 s apart; captures of both
 taps show what AROS did:
-  - eth0: after the first claim AROS announces the address again (a
-    defence) and still answers pings; after the second, within the 10 s
-    DEFEND_INTERVAL, the address is duplicated: no more answers, and
-    "duplicated" in ifconfig;
+  - eth0 (configured by hand): after the first claim AROS announces the
+    address again (a defence); a second claim within the 10 s
+    DEFEND_INTERVAL is only logged - an address configured by hand is never
+    given up once in use (RFC 5227 section 2.4 (c)) - so it still answers
+    pings and ifconfig shows it ready;
   - eth1: after the first claim a defence; after the second AROS gives the
     address up and probes a new 169.254 address.
 
@@ -81,6 +82,7 @@ def main():
     while time.monotonic() - t0 < 90 and ping(AROS_IP, 1) == 0:
         time.sleep(1)
     res["pings_before"] = ping(AROS_IP)
+    time.sleep(4)       # past the address's two announcements, 2 s apart
 
     # eth0: a configured address
     c1 = claim("aros0", AROS_IP)

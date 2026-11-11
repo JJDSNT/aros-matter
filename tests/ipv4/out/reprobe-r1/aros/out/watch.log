@@ -1,0 +1,4 @@
+t=0.00 flags=1
+t=0.40 flags=2
+t=60.40 flags=1
+t=65.60 flags=0

@@ -18,6 +18,10 @@ Estados: **aberto** (sem correção), **corrigido (branch)** (commit local/fork,
 
 | Bug | Correção | Estado |
 |---|---|---|
+| B23 (Kal no #2218) ACD: dois ARP em 10 s tiravam para sempre um IP estático em uso (ataque trivial) | política por origem (RFC 5227 §2.4): manual nunca abandonado em uso; DHCP → dhclient recusa (socket de rotas); IPv4LL troca; duplicado sondado de novo a cada minuto (`acd_probe.py`, `dhcp_decline_probe.py --claim`, `acd_reprobe_probe.py`) | **em PR** #2218 |
+| B24 (Kal no #2218) ACD: reload em lugar deixava cada endereço tentativo 3–7 s | endereço em uso que volta em 30 s mantém o estado (`arp_dad_forget()`/`arp_dad_kept()`); teste `ACD_RELOAD` | **em PR** #2218 |
+| B25 (Kal no #2218) ACD: endereço não pronto capturava o tráfego do dono real — `arpresolve()` mandava ao loopback e o ARP do dono era descartado como conflito | `arpresolve()` ignora endereço não pronto; ARP do dono de um duplicado entra no cache; `arpwhohas()` pergunta de um endereço pronto; teste no `ACD_HOST` | **em PR** #2218 |
+| B26 (Kal no #2218) `cunit-net-acd.c` não compilava no GCC 14 (`size_t *` onde `MiamiSysCtl()` pede `LONG *`) | `LONG mib[4]`, `LONG len` | **em PR** #2218 |
 | B22 (meu, ACD não enviada): duas interfaces `IP=AUTO` — a 2ª recebe `EEXIST` da rota 169.254/16, o endereço fica sem sonda e o `autoip_claim()` tenta de novo a cada segundo para sempre | `EEXIST` = endereço posto (ACD sonda; autoip loga o limite da RFC 3927 §3.2) | corrigido antes do envio (#2218) |
 | B20 ARP: entrada completa nunca reverificada e nunca envelhece enquanto usada (`arpresolve()` zera `at_timer`) — vizinho que troca de MAC sem anunciar recebe no MAC velho indefinidamente | NUD para ARP (RFC 4861 §7.3, RFC 1122 unicast poll) + dica do TCP; `arp_stale_probe.py`: master nunca volta, agora 21,4 s | **em PR** #2218 |
 | B21 IPv6: `nd6_nud_hint()` existe mas ninguém chama — o TCP não confirma alcançabilidade (sondas NS desnecessárias) | ligado com `nd6_nud_hint_dst()` (próximo salto, zona pelo rcvif); `tests/ipv6/nd_hint_probe.py`: 2 → 0 NS em 90 s | **em PR** #2218 |

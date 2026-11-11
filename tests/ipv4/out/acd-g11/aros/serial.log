@@ -1,0 +1,38 @@
+[Bootstrap] RAM memory block allocated: 0x40602000 - 0x50602000 (268435456 bytes)
+[Bootstrap] Entering kernel at 0x50602000...
+[KRN] Protecting host process stack (0x00007ffe50f66fa0 - 0x00007ffe50f70fa0)
+Xlib:  extension "XFree86-VidModeExtension" missing on display ":99".
+[tap] unit 0 attached to aros0
+[tap] [0] MTU 1500 (frame buffer 1514 bytes)
+[tap] [0] hardware address: e2:8d:9c:1d:bd:c5
+[AROSTCP] eth0 is now online.
+[AROSTCP] eth0: probing 192.168.166.2
+
+[tap] unit 1 attached to aros1
+[tap] [1] MTU 1500 (frame buffer 1514 bytes)
+[tap] [1] hardware address: 2e:e9:4f:dd:c9:45
+[AROSTCP] eth1 is now online.
+[AROSTCP] eth1: probing 169.254.48.224
+
+[AROSTCP] IPv4LL: claiming 169.254.48.224/16 on eth1
+
+[AROSTCP] eth0: probed, no conflict: 192.168.166.2
+
+[AROSTCP] eth0: defended 192.168.166.2 from 02:00:00:00:00:99
+
+[AROSTCP] eth1: probed, no conflict: 169.254.48.224
+
+[AROSTCP] eth0: defence failed, duplicated: 192.168.166.2 from 02:00:00:00:00:99
+
+[AROSTCP] eth1: defended 169.254.48.224 from 02:00:00:00:00:99
+
+[AROSTCP] eth1: defence failed, duplicated: 169.254.48.224 from 02:00:00:00:00:99
+
+[AROSTCP] IPv4LL: address conflict on eth1 (count 1)
+
+[AROSTCP] eth1: probing 169.254.59.7
+
+[AROSTCP] IPv4LL: claiming 169.254.59.7/16 on eth1
+
+[AROSTCP] eth1: probed, no conflict: 169.254.59.7
+
