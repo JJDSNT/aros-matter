@@ -20,7 +20,8 @@ for c in "$@"; do
   git -C "$src" checkout -q "$c" -- workbench/network || { echo "$c: checkout failed"; continue; }
   for t in m68k x86_64; do
     if [ $t = m68k ]; then b=$m68k; arch=amiga-m68k; else [ "${HOSTED:-0}" = 1 ] || continue; b=$hosted; arch=linux-x86_64; fi
-    rm -rf "$b/bin/$arch/$gen" "$b/bin/$arch/AROS/System/Network/AROSTCP/C/AROSTCP"
+    rm -rf "$b/bin/$arch/$gen" "$b/bin/$arch/AROS/System/Network/AROSTCP/C/AROSTCP" \
+           "$b/bin/$arch/AROS/System/Network/AROSTCP/Libs"
     # the network headers installed in the SDK are the commit's own; a public
     # header the commit did not have yet (net/bpf.h, from 2026-10) would hide
     # the stack's private one of the same name, so it is put aside meanwhile
@@ -35,6 +36,9 @@ for c in "$@"; do
     bin=$b/bin/$arch/AROS/System/Network/AROSTCP/C/AROSTCP
     if [ -f "$bin" ]; then
       mkdir -p "$d/$t/obj"; cp "$bin" "$d/$t/AROSTCP"; cp "$b/bin/$arch/$gen"/*.o "$d/$t/obj/" 2>/dev/null
+      # the modular stack (2026-11-12 on): its protocol and feature modules
+      libs=$(dirname "$(dirname "$bin")")/Libs
+      if [ -d "$libs" ]; then mkdir -p "$d/$t/Libs"; cp "$libs"/* "$d/$t/Libs/"; fi
       echo "$c $t: ok"
     else
       echo "$c $t: FAILED (see $d/build-$t.log)"
