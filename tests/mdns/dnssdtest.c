@@ -244,6 +244,81 @@ status(ULONG *inc, ULONG *sessions, ULONG *ops)
     }
 }
 
+
+/*
+ * Register: an instance with a dot, binary TXT and a subtype; it is found
+ * here (Browse, Resolve), updated, refused twice, renamed on a conflict
+ * with the host's, and held for HOLD seconds with SYS:out/registered
+ * written, for the host to look at it.
+ */
+static void
+registration(const char *type, const char *hostType, int hold)
+{
+    static UBYTE buf[4096];
+    static const UBYTE txt1[] = { 6, 'v','e','r','s','=','2', 6, 'b','i','n','=',0x00,0xff };
+    static const UBYTE txt2[] = { 6, 'v','e','r','s','=','3' };
+    struct MsgPort *mp = CreateMsgPort();
+    DNSSDSessionRef s = NULL;
+    DNSSDOperationRef reg = NULL, dup = NULL, conflict = NULL, op = NULL;
+    struct DNSSDEvent *e;
+    BPTR fh;
+    int n, found = 0;
+
+    if (DNSSD_OpenSessionA(&s, mp, NULL) != DNSSD_OK) {
+        CHECK(0, "register: open");
+        return;
+    }
+    CHECK(DNSSD_Register(s, "Reg.Test", type, 7777, &reg, DNSSD_TXT, (IPTR)txt1,
+        DNSSD_TXTLength, sizeof(txt1), DNSSD_Subtype, (IPTR)"_sub1", TAG_DONE) == DNSSD_OK,
+        "register Reg.Test %s", type);
+    e = wait_kind(s, mp, DNSSD_EVENT_REGISTERED, 8, buf, sizeof(buf));
+    CHECK(e != NULL && e->de_Instance.dr_Size == 8 &&
+          memcmp(PART(e, de_Instance), "Reg.Test", 8) == 0 && e->de_Port == 7777,
+          "registered as Reg.Test");
+    CHECK(DNSSD_Register(s, "Reg.Test", type, 7778, &dup, TAG_DONE) == DNSSD_ERR_EXISTS,
+        "the same again: EXISTS");
+
+    CHECK(DNSSD_Browse(s, type, &op, DNSSD_Subtype, (IPTR)"_sub1", TAG_DONE) == DNSSD_OK,
+        "browse own subtype");
+    for (n = 0; n < 4 && !found; n++) {
+        e = wait_kind(s, mp, DNSSD_EVENT_ADD, 4, buf, sizeof(buf));
+        found = e != NULL && e->de_Instance.dr_Size == 8 &&
+            memcmp(PART(e, de_Instance), "Reg.Test", 8) == 0;
+    }
+    CHECK(found, "browse finds own Reg.Test by subtype");
+    DNSSD_Cancel(op);
+    CHECK(DNSSD_Resolve(s, "Reg.Test", type, &op, TAG_DONE) == DNSSD_OK, "resolve own");
+    e = wait_kind(s, mp, DNSSD_EVENT_RESOLVED, 6, buf, sizeof(buf));
+    CHECK(e != NULL && e->de_Port == 7777 && e->de_TXT.dr_Size == sizeof(txt1) &&
+          memcmp(PART(e, de_TXT), txt1, sizeof(txt1)) == 0,
+          "resolve own: port 7777, binary TXT whole");
+    CHECK(DNSSD_Update(reg, DNSSD_TXT, (IPTR)txt2, DNSSD_TXTLength, sizeof(txt2),
+        TAG_DONE) == DNSSD_OK, "update TXT");
+    e = wait_kind(s, mp, DNSSD_EVENT_RESOLVED, 6, buf, sizeof(buf));
+    CHECK(e != NULL && txt_has(e, "vers=3"), "resolve own after the update: vers=3");
+    DNSSD_Cancel(op);
+
+    if (hostType != NULL) {
+        CHECK(DNSSD_Register(s, "HostTest", hostType, 7779, &conflict, TAG_DONE) == DNSSD_OK,
+            "register HostTest, which the host has");
+        e = wait_kind(s, mp, DNSSD_EVENT_REGISTERED, 12, buf, sizeof(buf));
+        CHECK(e != NULL && e->de_Instance.dr_Size == 12 &&
+              memcmp(PART(e, de_Instance), "HostTest (2)", 12) == 0,
+              "renamed HostTest (2)");
+    }
+    fh = Open("SYS:out/registered", MODE_NEWFILE);
+    if (fh != BNULL) {
+        Close(fh);
+    }
+    Delay(hold * 50);
+    DNSSD_Cancel(reg);
+    if (conflict != NULL) {
+        DNSSD_Cancel(conflict);
+    }
+    DNSSD_CloseSession(s);
+    DeleteMsgPort(mp);
+}
+
 int
 main(int argc, char **argv)
 {
@@ -335,6 +410,7 @@ main(int argc, char **argv)
     if (type != NULL) {
         services(name, type, "HostTest", 9999, "vers=1");
         services(name, type, "Dot.Test", 9998, "path=/a b");
+        registration("_arostest._tcp", type, 20);
     }
 out:
     if (s != NULL) {
