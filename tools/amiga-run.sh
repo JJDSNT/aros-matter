@@ -66,10 +66,16 @@ if [ ! -f "$sys/out/done.log" ] && kill -0 $pid 2>/dev/null; then
     python3 -c "import socket,sys; s=socket.socket(socket.AF_UNIX); s.connect('/run/user/%d/amiberry.sock' % __import__('os').getuid()); s.sendall(('SCREENSHOT\t' + sys.argv[1] + '\n').encode()); s.settimeout(5); s.recv(200)" "$work/screen.png" 2>/dev/null || true
 fi
 sleep 1
-kill -TERM -- -$pid 2>/dev/null || true     # the whole group: timeout, xvfb-run, Xvfb, amiberry
-t=0
-while kill -0 $pid 2>/dev/null && [ $t -lt 3 ]; do sleep 1; t=$((t + 1)); done
-kill -KILL -- -$pid 2>/dev/null || true     # Amiberry does not stop on SIGTERM
+# everything setsid started (timeout, xvfb-run, Xvfb, amiberry) is in one
+# session: stop it by the session's id ($pid need not lead a process group,
+# and Amiberry does not stop on SIGTERM)
+sid=$(ps -o sid= -p $pid 2>/dev/null | tr -d ' ')
+if [ -n "$sid" ]; then
+    pkill -TERM -s "$sid" 2>/dev/null || true
+    t=0
+    while kill -0 $pid 2>/dev/null && [ $t -lt 3 ]; do sleep 1; t=$((t + 1)); done
+    pkill -KILL -s "$sid" 2>/dev/null || true
+fi
 wait $pid 2>/dev/null || true
 cp -r "$sys/out" "$work/out"
 rm -rf "$sys"

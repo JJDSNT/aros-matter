@@ -60,6 +60,8 @@ def main():
     ap.add_argument("--bytes", type=int, default=2000000)
     ap.add_argument("--delay", type=int, default=20)
     ap.add_argument("--services", action="store_true")
+    ap.add_argument("--config", action="append", default=[],
+                    help="a line for db/general.config (repeatable), e.g. PROTOCOLS=INET")
     ap.add_argument("--amiga", action="store_true",
                     help="AROS m68k on an emulated Amiga (tools/amiga-run.sh: A3000, 68030, A2065 on aros0), "
                          "the m68k build's own mbuf defaults (--profile is ignored); --arostcp is an m68k binary")
@@ -80,6 +82,8 @@ def main():
         f.write("Wait 3\nC:memsnap boot >SYS:out/mem.log\n")
         if not a.services:
             f.write("Delete >NIL: %s/services.d/#? QUIET\n" % db)
+        for line in a.config:
+            f.write("Echo \"%s\" >>%s/general.config\n" % (line, db))
         if a.profile == "m68k":
             for line in M68K_MBUF:
                 f.write("Echo \"%s\" >>%s/general.config\n" % (line, db))
@@ -162,7 +166,7 @@ def main():
         except OSError:
             pass
     res = {"arostcp": a.arostcp or "(image)", "machine": "amiga-m68k" if a.amiga else "hosted-x86_64",
-           "profile": a.profile, "services": a.services,
+           "profile": a.profile, "services": a.services, "config": a.config,
            "conns": a.conns, "bytes_each": a.bytes, "error": err, "all_done": all(done) and bool(done),
            "conn_seconds": took, "conn_errors": [w for w in why if w],
            "raw": vals, "boot": "ok" if "finished" in out_text else "did not finish"}

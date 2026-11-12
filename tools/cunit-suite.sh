@@ -9,6 +9,9 @@ out=$1
 src=${AROS_SRC:-$HOME/AROS-ipv6}
 here=$(cd "$(dirname "$0")" && pwd)
 mkdir -p "$out"
+# the taps go away when WSL restarts: without them tap.device does not open,
+# the stack does not start and every suite skips itself
+"$here/tap-up.sh" 0 >/dev/null && "$here/tap-up.sh" 1 >/dev/null || { echo "tap-up failed" >&2; exit 1; }
 script=$out/suite.script
 { echo "Execute SYS:System/Network/AROSTCP/S/startnet"; echo "Wait 6"
   for t in $(sed -n '/CUNITSOCKETTESTFILES/,/^$/p' "$src/developer/debug/test/net/socket/mmakefile.src" | grep -o "cunit-net-[a-z0-9]*"); do
