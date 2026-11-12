@@ -52,15 +52,125 @@ layout(void)
     CHECK(offsetof(struct DNSSDEvent, de_Kind) == 6 &&
           offsetof(struct DNSSDEvent, de_Result) == 12 &&
           offsetof(struct DNSSDEvent, de_RRType) == 28 &&
-          offsetof(struct DNSSDEvent, de_Name) == 32 &&
-          offsetof(struct DNSSDEvent, de_Addresses) == 40 &&
-          offsetof(struct DNSSDEvent, de_UserData) == 48 &&
-          sizeof(struct DNSSDEvent) == 48 + sizeof(IPTR),
+          offsetof(struct DNSSDEvent, de_Port) == 32 &&
+          offsetof(struct DNSSDEvent, de_Name) == 40 &&
+          offsetof(struct DNSSDEvent, de_Instance) == 48 &&
+          offsetof(struct DNSSDEvent, de_TXT) == 80 &&
+          offsetof(struct DNSSDEvent, de_Addresses) == 96 &&
+          offsetof(struct DNSSDEvent, de_UserData) == 104 &&
+          sizeof(struct DNSSDEvent) == 104 + sizeof(IPTR),
           "layout DNSSDEvent (size %u)", (unsigned)sizeof(struct DNSSDEvent));
     CHECK(sizeof(struct DNSSDAddress) == 24 &&
           offsetof(struct DNSSDAddress, da_Interface) == 4 &&
           offsetof(struct DNSSDAddress, da_Bytes) == 8,
           "layout DNSSDAddress (size %u)", (unsigned)sizeof(struct DNSSDAddress));
+}
+
+#define PART(e, ref) ((const char *)(e) + (e)->ref.dr_Offset)
+
+/*
+ * Reads events of one operation until one of kind (or the deadline);
+ * returns the event (in buf) or NULL. Prints each.
+ */
+static struct DNSSDEvent *
+wait_kind(DNSSDSessionRef s, struct MsgPort *port, UWORD kind, int seconds,
+          UBYTE *buf, ULONG max)
+{
+    int ticks = seconds * 10;
+
+    while (ticks-- > 0) {
+        for (;;) {
+            ULONG size = max;
+            struct DNSSDEvent *e = (struct DNSSDEvent *)buf;
+            LONG rc = DNSSD_ReadEvent(s, e, &size);
+
+            if (rc != DNSSD_OK) {
+                break;
+            }
+            printf("  event %u if=%lu name=%.*s instance=%.*s type=%.*s domain=%.*s"
+                   " target=%.*s port=%u txt=%lu rdata=%lu addrs=%u\n",
+                e->de_Kind, (unsigned long)e->de_Interface,
+                (int)e->de_Name.dr_Size, PART(e, de_Name),
+                (int)e->de_Instance.dr_Size, PART(e, de_Instance),
+                (int)e->de_Type.dr_Size, PART(e, de_Type),
+                (int)e->de_Domain.dr_Size, PART(e, de_Domain),
+                (int)e->de_Target.dr_Size, PART(e, de_Target),
+                e->de_Port, (unsigned long)e->de_TXT.dr_Size,
+                (unsigned long)e->de_RData.dr_Size, e->de_AddressCount);
+            if (e->de_Kind == kind) {
+                return e;
+            }
+        }
+        if (GetMsg(port) == NULL) {
+            Delay(5);
+        }
+    }
+    return NULL;
+}
+
+/* Does the TXT data hold this string? */
+static int
+txt_has(const struct DNSSDEvent *e, const char *item)
+{
+    const UBYTE *t = (const UBYTE *)PART(e, de_TXT);
+    ULONG at = 0, n = strlen(item);
+
+    while (at < e->de_TXT.dr_Size) {
+        if (t[at] == n && memcmp(t + at + 1, item, n) == 0) {
+            return 1;
+        }
+        at += 1 + t[at];
+    }
+    return 0;
+}
+
+/* Browse TYPE finds INSTANCE; Resolve gives its port, TXT and addresses;
+ * the host's A record by QueryRecord. */
+static void
+services(const char *host, const char *type, const char *instance,
+         unsigned port, const char *txt)
+{
+    static UBYTE buf[4096];
+    struct MsgPort *mp = CreateMsgPort();
+    DNSSDSessionRef s = NULL;
+    DNSSDOperationRef op = NULL;
+    struct DNSSDEvent *e;
+    int found = 0, n;
+
+    if (DNSSD_OpenSessionA(&s, mp, NULL) != DNSSD_OK) {
+        CHECK(0, "services: open");
+        DeleteMsgPort(mp);
+        return;
+    }
+    CHECK(DNSSD_Browse(s, type, &op, TAG_DONE) == DNSSD_OK, "browse %s", type);
+    for (n = 0; n < 8 && !found; n++) {
+        e = wait_kind(s, mp, DNSSD_EVENT_ADD, 8, buf, sizeof(buf));
+        if (e == NULL) {
+            break;
+        }
+        found = e->de_Instance.dr_Size == strlen(instance) &&
+            memcmp(PART(e, de_Instance), instance, strlen(instance)) == 0 &&
+            e->de_Interface != 0 && e->de_Domain.dr_Size == 5;
+    }
+    CHECK(found, "browse %s: ADD %s", type, instance);
+    DNSSD_Cancel(op);
+
+    CHECK(DNSSD_Resolve(s, instance, type, &op, TAG_DONE) == DNSSD_OK,
+        "resolve %s", instance);
+    e = wait_kind(s, mp, DNSSD_EVENT_RESOLVED, 8, buf, sizeof(buf));
+    CHECK(e != NULL && e->de_Port == port && txt_has(e, txt) &&
+          e->de_AddressCount > 0 && e->de_Target.dr_Size > 0,
+          "resolve %s: port %u, \"%s\", addresses", instance, port, txt);
+    DNSSD_Cancel(op);
+
+    CHECK(DNSSD_QueryRecord(s, host, 1, &op, DNSSD_Timeout, 4, TAG_DONE) == DNSSD_OK,
+        "query %s A", host);
+    e = wait_kind(s, mp, DNSSD_EVENT_ADD, 6, buf, sizeof(buf));
+    CHECK(e != NULL && e->de_RRType == 1 && e->de_RData.dr_Size == 4,
+        "query %s A: 4 bytes", host);
+    DNSSD_Cancel(op);
+    DNSSD_CloseSession(s);
+    DeleteMsgPort(mp);
 }
 
 /* Waits for and reads the session's events until op's END (or the
@@ -139,6 +249,7 @@ main(int argc, char **argv)
 {
     const char *name = argc > 1 ? argv[1] : "arosbox.local";
     const char *missing = argc > 2 ? argv[2] : "nobody-here.local";
+    const char *type = argc > 3 ? argv[3] : NULL;
     struct MsgPort *port;
     DNSSDSessionRef s = NULL;
     DNSSDOperationRef op = NULL;
@@ -165,7 +276,8 @@ main(int argc, char **argv)
     if (s == NULL) {
         goto out;
     }
-    CHECK(DNSSD_LookupAddress(s, "", &op, TAG_DONE) == DNSSD_ERR_BADPARAM, "lookup empty name");
+    CHECK(DNSSD_LookupAddress(s, "", &op, TAG_DONE) == DNSSD_ERR_BADNAME, "lookup empty name");
+    CHECK(DNSSD_LookupAddress(s, "a..b", &op, TAG_DONE) == DNSSD_ERR_BADNAME, "lookup empty label");
     CHECK(DNSSD_LookupAddress(s, name, &op, DNSSD_Timeout, 0, TAG_DONE) == DNSSD_ERR_BADPARAM,
         "lookup timeout 0");
 
@@ -220,6 +332,10 @@ main(int argc, char **argv)
     status(&inc2, &sessions, &ops);
     CHECK(sessions == 0 && ops == 0, "status after sync: sessions %lu operations %lu",
         (unsigned long)sessions, (unsigned long)ops);
+    if (type != NULL) {
+        services(name, type, "HostTest", 9999, "vers=1");
+        services(name, type, "Dot.Test", 9998, "path=/a b");
+    }
 out:
     if (s != NULL) {
         DNSSD_CloseSession(s);
