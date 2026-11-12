@@ -57,7 +57,7 @@ set -- --log -G -r "$rom" ${ext:+-K "$ext"} --model A3000 \
     -s chipmem_size=4 $mem \
     -s a2065=aros0 -s sound_output=none \
     -s filesystem2="rw,DH0:System:$sys,10"
-setsid timeout "$tmo" xvfb-run -a "$amiberry" "$@" > "$work/amiberry.log" 2>&1 &
+setsid timeout "$((tmo + 30))" xvfb-run -a "$amiberry" "$@" > "$work/amiberry.log" 2>&1 &
 pid=$!
 t=0
 while [ $t -lt "$tmo" ] && [ ! -f "$sys/out/done.log" ] && kill -0 $pid 2>/dev/null; do sleep 1; t=$((t + 1)); done

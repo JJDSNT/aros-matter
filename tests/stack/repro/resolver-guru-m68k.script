@@ -1,0 +1,5 @@
+SYS:Developer/Debug/Tests/dnssd/dnssdmodeltest >SYS:out/model.log
+SYS:Developer/Debug/Tests/dnssd/dnssdlinktest >SYS:out/link.log
+Execute SYS:System/Network/AROSTCP/S/startnet
+Wait 8
+SYS:Developer/Debug/Tests/dnssd/dnssdlinkarostest >SYS:out/scan.log
