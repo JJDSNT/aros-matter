@@ -4,11 +4,13 @@
 # service AROS registers; AROS browses a service the host publishes and looks
 # the host's name up. AROS_HOSTED_IMAGE as for tools/hosted-run.sh; MODE=amiga
 # runs AROS m68k on the emulated Amiga instead (tools/amiga-run.sh, A2065 on
-# aros0), without timesyncd there (B35).
+# aros0), without timesyncd there (B35). TWO=1 (hosted) adds eth1 on tap
+# aros1 (192.168.167.2): each link must see that link's address.
 set -u
 out=$1; mkdir -p "$out"
 root=$(cd "$(dirname "$0")/../.." && pwd)
 "$root/tools/tap-up.sh" >/dev/null
+[ "${TWO:-0}" = 1 ] && { "$root/tools/tap-up.sh" 1 >/dev/null; export AROS_TAP2_IP=192.168.167.2; }
 host=$(hostname)
 mode=${MODE:-hosted}
 pre=""

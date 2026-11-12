@@ -86,5 +86,30 @@ código, sem compromisso arquitetural; o que faltar na pilha se implementa na pi
 | registros do host e dos serviços em caminhos distintos | **R6** um conjunto autoritativo (host, serviços, subtipos, TXT binário), conflito e renomeação únicos |
 | duas portas (`BonAmi`, `DNSSD`) | **R7** só `DNSSD`; ferramentas e `netmidid` migram; `bonami.library` sai |
 
-Ordem: R1 → R2 → R4 → R3 → R5 (com o passo 6) → R6 (com o passo 7) → R7 (passo 8). Cada passo: canários, `dnssd.sh`,
-`interop.sh`, hosted e m68k.
+Ordem (revista 2026-11-12): **R1** (feito: `IP_RECVIF` e saída das adesões na pilha, um socket por família) → **API
+completa sobre o motor atual** (passos 6–8: `Browse`/`Resolve`/`Register`/`QueryRecord` na porta `DNSSD` como
+adaptadores) → **migração** das ferramentas e do `netmidid` → **R7** retirada da BonAmi → **R2, R4, R3, R5, R6**
+reescrevendo os internos sem cliente antigo a preservar, com a API e os testes (`dnssdtest`, `interop.sh`, dois
+enlaces `TWO=1`) como rede de segurança. Evita reescrever duas vezes módulos que a BonAmi ainda usa. Cada passo:
+canários, `dnssd.sh`, `interop.sh`, hosted e m68k.
+
+### R5 — cache e consultas contínuas (desenho)
+
+Hoje: `mdns_query.c` repassa registros sem cache, sem TTL, sem supressão por respostas conhecidas; `mdns_discovery.c`
+guarda 128 registros × ~800 B estáticos (~100 KB, pesado no m68k) e entrega o evento Bonami (um IPv4, nome de 64 B).
+Nenhum dos dois serve `Browse`/`Resolve` com vários endereços. Alvo, `mdns_cache.c`:
+
+- **Registro em cache:** nome e RDATA em formato de fio sem compressão (nomes do RDATA expandidos), tipo, classe,
+  enlace (índice), TTL, recebido em; alocado sob orçamento em bytes (padrão menor no m68k), despejo do que expira
+  antes; chave (enlace, nome sem caixa, tipo, classe, RDATA).
+- **Regras do RFC 6762:** cache-flush (§10.2: os do mesmo nome/tipo/classe no mesmo enlace com mais de 1 s caem
+  para TTL 1 s), goodbye (TTL 0 → some em 1 s, §10.1), renovação a 80/85/90/95 % só com interesse ativo (§5.2),
+  POOF (§10.5) depois.
+- **Pergunta contínua** (nome, tipo, enlace ou todos): primeira em 20–120 ms, depois 1, 2, 4 s… até 60 min; respostas
+  conhecidas com mais de metade do TTL vão na pergunta (§7.1); compartilhada por todos os interessados.
+- **Assinantes:** cada operação da porta `DNSSD` assina perguntas e recebe "entrou"/"saiu" por registro.
+  `LookupAddress` = A+AAAA; `QueryRecord` = qualquer tipo; `Browse` = PTR do tipo (ADD/REMOVE por enlace);
+  `Resolve` = SRV+TXT da instância, depois os endereços do alvo, um evento RESOLVED com tudo.
+- **Registros próprios:** o que o host publica entra pelo mesmo caminho (reflexão hoje; o conjunto autoritativo
+  do R6 depois), marcado como local.
+- O `mdns_discovery.c` e o `mdns_query.c` antigos saem com a BonAmi (R7).
