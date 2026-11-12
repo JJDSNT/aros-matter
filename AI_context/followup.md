@@ -44,7 +44,7 @@ Estados: **aberto** · **em correção** (alguém trabalhando) · **corrigido (l
 ## Planos ligados (sem item de bug)
 
 - Regra "padrões ligados à máquina" + auditoria dos valores fixos da pilha — `research/2026-11-11-stack-cost-m68k.md`.
-- Grupo multicast/SSM — issue #2220 **fechada pela conta JJDSNT em 2026-11-10 20:51, sem comentários** (confirmar com o usuário se é para seguir sem o Kal ou se o grupo foi adiado). Plano: `research/2026-11-10-multicast-ssm-design.md`.
+- Grupo multicast/SSM — **cancelado pelo usuário (2026-11-12)**; issue #2220 fechada. O plano (`research/2026-11-10-multicast-ssm-design.md`) fica só como referência.
 - G12 (mDNS/DNS-SD) — `research/2026-11-10-g12-mdns-integration.md`. O resolver do sistema agora é o módulo `resolver.atcp` (`api/resolver_*`): o `.local` via `dnssd.library` entra nele. Bloqueado pela API da `dnssd.library` (Codex; branch sem commits desde 2026-11-09).
 
 ## Último commit do upstream visto

@@ -1,3 +1,5 @@
+> **Cancelado pelo usuário em 2026-11-12** (issue #2220 fechada). Este plano fica só como referência.
+
 # Grupo multicast dual-stack (SSM) — desenho (2026-11-10, em andamento)
 
 ## Decisões do usuário (2026-11-10)
