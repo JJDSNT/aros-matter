@@ -2,13 +2,19 @@
 # interop.sh OUTDIR - mdnsd on hosted AROS (tap aros0) against the host's
 # Avahi, both ways: the host resolves AROS's name (A, AAAA) and browses a
 # service AROS registers; AROS browses a service the host publishes and looks
-# the host's name up. AROS_HOSTED_IMAGE as for tools/hosted-run.sh.
+# the host's name up. AROS_HOSTED_IMAGE as for tools/hosted-run.sh; MODE=amiga
+# runs AROS m68k on the emulated Amiga instead (tools/amiga-run.sh, A2065 on
+# aros0), without timesyncd there (B35).
 set -u
 out=$1; mkdir -p "$out"
 root=$(cd "$(dirname "$0")/../.." && pwd)
 "$root/tools/tap-up.sh" >/dev/null
 host=$(hostname)
+mode=${MODE:-hosted}
+pre=""
+[ "$mode" = amiga ] && pre="Delete >NIL: SYS:System/Network/AROSTCP/db/services.d/timesync QUIET"
 cat > "$out/s.script" <<EOS
+$pre
 Execute SYS:System/Network/AROSTCP/S/startnet
 Wait 12
 Run >NIL: C:dnssd -R AROSTest _arostest._tcp . 8080 -t 60 path=/ >SYS:out/register.log
@@ -18,9 +24,15 @@ C:dnssd -G v4 $host.local >SYS:out/lookup.log
 Wait 20
 EOS
 avahi-publish-service HostTest _hosttest._tcp 9999 vers=1 >/dev/null 2>&1 & pub=$!
-AROS_TAP_IP=192.168.166.2 AROS_RUN_TIMEOUT=150 \
-  "$root/tools/hosted-run.sh" "$out/aros" "$out/s.script" > "$out/run.txt" 2>&1 & run=$!
-sleep 40
+if [ "$mode" = amiga ]; then
+  AMIGA_TAP_IP=192.168.166.2 AMIGA_RUN_TIMEOUT=200 \
+    "$root/tools/amiga-run.sh" "$out/aros" "$out/s.script" > "$out/run.txt" 2>&1 & run=$!
+  sleep 70
+else
+  AROS_TAP_IP=192.168.166.2 AROS_RUN_TIMEOUT=150 \
+    "$root/tools/hosted-run.sh" "$out/aros" "$out/s.script" > "$out/run.txt" 2>&1 & run=$!
+  sleep 40
+fi
 avahi-resolve -4 -n arosbox.local > "$out/host-resolve4.txt" 2>&1
 avahi-resolve -6 -n arosbox.local > "$out/host-resolve6.txt" 2>&1
 timeout 10 avahi-browse -rpt _arostest._tcp > "$out/host-browse.txt" 2>&1
