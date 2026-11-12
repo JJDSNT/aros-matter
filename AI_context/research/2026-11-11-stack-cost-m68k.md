@@ -106,3 +106,29 @@ do autosizing antes de ligados a `AvailMem()` (#2194).
 - `tools/stack-size-report.py` — seções, subsistemas, objetos e símbolos que mais cresceram entre dois builds.
 - `tests/stack/memcost.py` (`--amiga`), `tests/stack/memsnap.c`.
 - Resultados: `tests/stack/out/hist/` (binários e objetos por commit), `tests/stack/out/cmp-*` (memória).
+
+## Reavaliação sobre a pilha modular (master `64d00bf2da`, 2026-11-12)
+
+O Kal dividiu a pilha em núcleo + módulos (`inet.prot`, `inet6.prot`, `transport.prot`; `resolver.atcp`,
+`admin.atcp`, `packet.atcp` sob demanda; `netconfig.atcp` só na leitura da configuração) e corrigiu B27
+(`tcp_debug` só alocado quando usado), B31 (UDP no m68k), B32–B34.
+
+**Binário (m68k):** núcleo 146.348; `inet.prot` 36.883; `inet6.prot` 57.251; `transport.prot` 52.753;
+`resolver.atcp` 18.061; `admin.atcp` 14.027; `packet.atcp` 15.809; `netconfig.atcp` 17.167. Residente típico
+(núcleo + IPv4 + IPv6 + transporte) 293.235 (inicial 5.11: 286.712, +6,5 KB); só IPv4 235.984 (−50,7 KB).
+
+**Memória (Amiga emulado, mesmo método; 4 conexões TCP de 1 MB):**
+
+| | repouso | pico | depois |
+|---|---|---|---|
+| inicial 5.11 | 637,5 | 1.144 | 775 |
+| master monolítico anterior | 716,3 | 1.225–1.229 | 862 |
+| **modular, IPv4+IPv6** (4 execuções) | **638,2** | 1.151 | 784 |
+| **modular, só IPv4** (`PROTOCOLS=INET`, 3 execuções) | **541,0** | 1.039–1.045 | 670 |
+
+A primeira execução IPv4+IPv6 deu 583 KB (as outras quatro, 638,2): não explicada, descartada.
+
+**Conclusão revista:** a pilha moderna completa custa o mesmo que a inicial em repouso (+0,7 KB) e ~+7 KB no pico;
+só IPv4 custa ~97 KB a menos que a inicial. O perfil sem IPv6 agora existe em tempo de execução (`PROTOCOLS=`), sem
+build próprio — B28 (perfil `INET6=0` de compilação) perde a razão. UDP abre no m68k (`tests/stack/udpdiag.c` no
+emulador: UDP4/UDP6/TCP4/TCP6 ok). Delta do #2218 reimplementado: núcleo igual, `inet.prot` +2.468 B.
