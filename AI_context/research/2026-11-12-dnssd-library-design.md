@@ -189,3 +189,11 @@ e do cache passam a rodar junto com `dnssdtest`/interop como critério de aceita
   `DNSSD_OperationID()` entrou; enumeração de tipos dá `TYPE`. `dnssd_model_test` (ASan/UBSan) ok; `dnssdtest`
   68/68 hosted e m68k; fixtures 44/45/16; interop íntegra.
 - **Próximo:** passo 2 (envelope com tamanho + carga tipada no lugar da `DNSSDIPCMsg` fixa).
+
+### Entrega (decisão do usuário, 2026-11-12)
+
+Um PR maior que troca o código antigo pelo novo de uma vez ("capotar do código antigo para o novo"), em vez dos PRs
+por fatia do roteiro do Codex: núcleo nativo do mdnsd + `dnssd.library` + ferramentas e `netmidid` migrados + retirada da
+`bonami.library`, da porta `BonAmi` e dos headers `<bonami/*>`; alguns commits lógicos dentro dele; aval do usuário antes
+de abrir (mdnsd é dele). Dependência: o PR do AROSTCP com `IP_RECVIF`, B36 e B37 (`review/arostcp-ip-recvif`) entra
+antes, na fila de um PR do AROSTCP por vez (depois do #2218).
