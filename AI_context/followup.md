@@ -54,7 +54,7 @@ se o #2218 ainda estiver aberto, tudo entra nele (um comentário explicando o es
      socket precisa forçar a interface de entrada — o mdnsd antigo (socket por interface) acertava na imagem do #2218.
    - `alias`: **passa.** Toda resposta saiu por aros0, com origem de eth0 e só os A de eth0 (.2 e .50).
    Conclusão: item 6 confirmado.
-   **Depois do `IP_PKTINFO` (2026-11-13, `abf32a3b04` no #2218; mdnsd `9ac0697075` na linha mDNS rebaseada sobre
+   **Depois do `IP_PKTINFO` (2026-11-13, `abf32a3b04` no #2218; mdnsd `1eb2b56aa9` na linha mDNS rebaseada sobre
    ele):** `route`, `ll` e `alias` passam: QU e legado saem pela interface perguntada, com a origem dela (ll:
    169.254 de eth1 com a rede roteada por eth0), sem cópia na outra. Regressões mDNS: `dnssdtest` 68/68, interop
    TWO=1 (cada enlace vê o seu endereço), fixtures do Codex 44/45/16.
