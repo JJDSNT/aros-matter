@@ -8,6 +8,15 @@ anotado); (2) foi verificada por nós no hosted **e**, se o item toca o m68k, no
 teste que falharia se o defeito voltasse (anotado na coluna "Teste de regressão") e ele roda na nossa suíte.
 
 
+## Um PR com as pendências do AROSTCP (decisão do usuário, 2026-11-12)
+
+Branch `review/arostcp-pending` (worktree `~/AROS-pr2218`, sobre `review/arostcp-ipv4-acd`): os 3 commits do #2218 +
+`IP_RECVIF`, B36, B37 (cherry-pick sem conflito). Falta: **portar o B5** (`11df4517ea`, cache de vizinhos IPv6 por
+interface) para a pilha modular — o `rtsock.c` está no `admin.atcp`, o `amiga_roadshow.c` foi repartido, a queda de
+enlace é `NFE_LINKDOWN`: o ND6 é alcançado pelos ganchos da família IPv6, não por chamada do núcleo; e o B30. Depois:
+se o #2218 ainda estiver aberto, tudo entra nele (um comentário explicando o escopo: o `IP_RECVIF` é o que foi prometido
+"quando o mDNS de socket único precisar"); se já tiver sido mesclado, um PR só com o resto. Bump uma vez, no último commit.
+
 ## Worktrees e builds (desde 2026-11-12)
 
 Uma worktree e um build por linha de PR; a validação final de um PR roda numa imagem feita só da branch dele.
