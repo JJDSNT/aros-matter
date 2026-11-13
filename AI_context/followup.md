@@ -86,6 +86,8 @@ se o #2218 ainda estiver aberto, tudo entra nele (um comentário explicando o es
    vistas da mesma informação de recepção (`in_savecontrol`), sem segunda implementação; CUnit próprio; mdnsd consome;
 7. mensagem do commit do `IP_RECVIF` corrigida (não basta sozinho).
 
+**Enviado ao #2218 (2026-11-13):** força-push `67f7666bfd` (8 commits), descrição e título novos, comentário consolidado (correções comprovadas / limitações / custo com a tabela do ND6; teto global deixado ao Kal; B39 e B40 só descritos, PRs separados). mdnsd rebaseado: `cff8996a8d`. Aguarda o Kal.
+
 **Apresentação ao Kal:** separar correção comprovada (incluindo os cenários que falhavam), limitação conhecida (zona nas
 rotas de PMTU IPv6) e custo medido.
 
