@@ -7,6 +7,19 @@ nada deixado de corrigir. Este é o painel; o detalhe de cada bug fica em [bugs.
 anotado); (2) foi verificada por nós no hosted **e**, se o item toca o m68k, no Amiga emulado; (3) existe um
 teste que falharia se o defeito voltasse (anotado na coluna "Teste de regressão") e ele roda na nossa suíte.
 
+
+## Worktrees e builds (desde 2026-11-12)
+
+Uma worktree e um build por linha de PR; a validação final de um PR roda numa imagem feita só da branch dele.
+
+| Linha | Worktree | Build hosted | Branch |
+|---|---|---|---|
+| #2218 (ACD/IPv4LL/decline/NUD) | `~/AROS-pr2218` | `~/aros-build-pr2218-hosted` | `review/arostcp-ipv4-acd` |
+| mDNS/`dnssd.library` (+ pilha `review/arostcp-ip-recvif` na base) | `~/AROS-ipv6` | `~/aros-build-ipv6-hosted-claude` | `review/mdnsd-canonical-links` |
+| m68k (Amiga emulado) | `~/AROS-hist` (destacada) | `~/aros-build-hist-m68k` | conforme o teste |
+
+`tools/cunit-suite.sh` e os benches tomam `AROS_SRC`/`AROS_BUILD`/`AROS_HOSTED_IMAGE`; apontar para o par certo.
+
 ## Procedimento a cada atualização do upstream
 
 1. `git -C ~/AROS-ipv6 fetch upstream` e

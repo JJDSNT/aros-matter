@@ -9,20 +9,27 @@ offers 192.168.166.50 first, then .51; the host itself holds .50 on aros0
 Expected: AROS takes .50, finds it in use, sends DHCPDECLINE, and some
 10 s later is bound to .51. Before the change: bound to .50 with the host.
 
-With --claim, once AROS is bound to .51 an intruder (tests/ipv4/arpsend.py)
-claims .51 twice, a second apart: the address's defence fails (RFC 5227
-section 2.4), the stack marks it duplicated and dhclient, told by the
-routing socket, declines it and is bound to .52.
+With --claim, once AROS is bound to .51 it also adds .60/32 by hand
+(tests/ipv4/alias_owner.c), and an intruder (tests/ipv4/arpsend.py) claims
+both twice, a second apart. Expected (RFC 5227 section 2.4, each address by
+where it came from): the lease's defence fails, the stack marks it
+duplicated and dhclient - woken by the stack's address-change signal, with
+no routing socket - declines it and is bound to .52; the alias configured
+by hand is defended and kept (its flags at the end 0). And the routing
+sockets' module, admin, is not held by dhclient (tests/stack/modquery.c).
 
     dhcp_decline_probe.py [--arostcp FILE] [--dhclient FILE] [--image DIR] [--out DIR]
 Needs sudo -n (port 67, ip addr).
 """
-import argparse, json, os, shutil, subprocess, time
+import argparse, json, os, shutil, subprocess, sys, time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
+sys.path.insert(0, os.path.join(ROOT, "tests", "tcp"))
+from run_tcp import CROSS
 TAP, SERVER, INUSE, NEXT, LAST = "aros0", "192.168.166.1", "192.168.166.50", "192.168.166.51", "192.168.166.52"
 INTRUDER = "02:00:00:00:00:99"
+MANUAL = "192.168.166.60"
 
 
 def sh(*a):
@@ -54,9 +61,20 @@ def main():
             shutil.copy(a.dhclient, os.path.join(d, "dhclient"))
             files.append(os.path.join(d, "dhclient"))
             f.write("Copy C:dhclient SYS:System/Network/AROSTCP/C/dhclient\n")
-        f.write("Execute SYS:System/Network/AROSTCP/S/startnet\nWait %d\n" % (100 if a.claim else 60))
+        f.write("Execute SYS:System/Network/AROSTCP/S/startnet\n")
+        if a.claim:
+            for name, src in (("alias_owner", "alias_owner.c"), ("modquery", "../stack/modquery.c")):
+                exe = os.path.join(a.out, name)
+                subprocess.run([CROSS, "--sysroot", os.path.join(a.image, "Developer"), "-O2", "-o", exe,
+                                os.path.join(HERE, src)], check=True)
+                files.append(exe)
+            # by hand, on the DHCP interface, once the lease is there
+            f.write("Wait 30\nRun >NIL: C:alias_owner eth0 %s 60 >SYS:out/alias.log\nWait 90\n" % MANUAL)
+            f.write("C:modquery admin >SYS:out/modules.log\n")
+        else:
+            f.write("Wait 60\n")
         f.write("C:ifconfig eth0 >SYS:out/if0.log\n")
-    env = dict(os.environ, AROS_HOSTED_IMAGE=a.image, AROS_TAP_IP="DHCP", AROS_RUN_TIMEOUT="190")
+    env = dict(os.environ, AROS_HOSTED_IMAGE=a.image, AROS_TAP_IP="DHCP", AROS_RUN_TIMEOUT="280")
     if a.arostcp:
         env["AROS_AROSTCP"] = os.path.abspath(a.arostcp)
     try:
@@ -68,9 +86,13 @@ def main():
                 if any('"yiaddr": "%s"' % NEXT in l and '"ACK"' in l for l in open(log)):
                     break
                 time.sleep(1)
-            time.sleep(10)          # bound, and its probes and announcements done
+            ready = os.path.join(a.out, "aros", "AROS", "out", "alias-ready")
+            while time.time() - t0 < 150 and not os.path.exists(ready):
+                time.sleep(0.5)
+            time.sleep(10)          # bound, and the probes and announcements done
             for _ in range(2):
-                subprocess.run(["sudo", "-n", "python3", "-I", os.path.join(HERE, "arpsend.py"), TAP, INTRUDER, NEXT])
+                for addr in (NEXT, MANUAL):
+                    subprocess.run(["sudo", "-n", "python3", "-I", os.path.join(HERE, "arpsend.py"), TAP, INTRUDER, addr])
                 time.sleep(1)
         r = subprocess.CompletedProcess(aros.args, 0, aros.communicate()[0], "")
     finally:
@@ -86,10 +108,24 @@ def main():
            "declined": [m.get("requested") for m in msgs if m.get("got") == "DECLINE"],
            "acked": [m["yiaddr"] for m in msgs if m.get("sent") == "ACK"],
            "ifconfig_eth0": inet}
+    for name in ("alias", "modules"):
+        f = os.path.join(a.out, "aros", "out", name + ".log")
+        if os.path.exists(f):
+            res[name] = [l.strip() for l in open(f) if l.strip()]
     # the bench checks itself: the server heard AROS, and acknowledged .50 first
     res["sanity"] = {"server_heard_aros": any(m.get("got") == "DISCOVER" for m in msgs),
                      "offered_inuse_first": bool(res["acked"]) and res["acked"][0] == INUSE}
     res["sanity"]["ok"] = all(res["sanity"].values())
+    if a.claim:
+        # what #2218's review asks: the lease given up and replaced, the
+        # address configured by hand kept, admin not held by dhclient
+        res["expect"] = {
+            "lease_declined_and_replaced": NEXT in res["declined"] and res["acked"][-1:] == [LAST],
+            "manual_kept": any(l.endswith("flags at the end 0") for l in res.get("alias", [])),
+            "admin_not_held": any(l.startswith("admin: result 2 ") or " users 0" in l
+                                  for l in res.get("modules", [])),
+        }
+        res["expect"]["ok"] = all(res["expect"].values())
     json.dump(res, open(os.path.join(a.out, "result.json"), "w"), indent=1)
     print(json.dumps(res, indent=1))
 
