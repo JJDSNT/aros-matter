@@ -88,6 +88,16 @@ se o #2218 ainda estiver aberto, tudo entra nele (um comentário explicando o es
 
 **Enviado ao #2218 (2026-11-13):** força-push `67f7666bfd` (8 commits), descrição e título novos, comentário consolidado (correções comprovadas / limitações / custo com a tabela do ND6; teto global deixado ao Kal; B39 e B40 só descritos, PRs separados). mdnsd rebaseado: `cff8996a8d`. Aguarda o Kal.
 
+**3ª revisão do Kal no #2218 (2026-11-13, em andamento):** 1) protótipos (64-bit: `in_readyia` truncado por
+`cltq`) — corrigido com protótipos canônicos nos cabeçalhos donos, `-Werror=implicit-function-declaration` limpo nos
+arquivos do PR; 2) só IPv6: `cmsg` era o teste (índice por socket `AF_INET`, do nosso commit `IP_RECVIF`), `acd`
+LIMITS `ST_V4`, `pmtu6` TWO_LINKS a reproduzir; 3) vizinhos estáticos mantidos no link down (e os dos nossos
+endereços), tudo sai no detach — **testado pelo caminho real**: `tap.device` passou a relatar o enlace
+(`review/tap-link-events` `28f608842d`, PR próprio) e `tests/ipv6/nd6_link.sh` (antes 1/1, down 1/0, up 1/0,
+removida 0/0; controle sem a correção falha no down); 4) `if_fullname()` no lugar de `snprintf` (inet6.prot −6,6 KB
+hosted); 5) `nd6_maxnbrs` por `AvailMem()` 16–256, limite global de pacotes retidos (descarta o mais antigo),
+`nd6_maxqueuelen` em uso, netvars com faixa, `cunit-net-nd6limits`. A2065 (LANCE) não relata enlace.
+
 **Apresentação ao Kal:** separar correção comprovada (incluindo os cenários que falhavam), limitação conhecida (zona nas
 rotas de PMTU IPv6) e custo medido.
 
