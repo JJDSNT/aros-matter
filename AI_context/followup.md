@@ -54,13 +54,13 @@ se o #2218 ainda estiver aberto, tudo entra nele (um comentário explicando o es
      socket precisa forçar a interface de entrada — o mdnsd antigo (socket por interface) acertava na imagem do #2218.
    - `alias`: **passa.** Toda resposta saiu por aros0, com origem de eth0 e só os A de eth0 (.2 e .50).
    Conclusão: item 6 confirmado.
-   **Depois do `IP_PKTINFO` (2026-11-13, `abf32a3b04` no #2218; mdnsd `1eb2b56aa9` na linha mDNS rebaseada sobre
+   **Depois do `IP_PKTINFO` (2026-11-13, `5fc25bc8c4` no #2218; mdnsd `d8163cc691` na linha mDNS rebaseada sobre
    ele):** `route`, `ll` e `alias` passam: QU e legado saem pela interface perguntada, com a origem dela (ll:
    169.254 de eth1 com a rede roteada por eth0), sem cópia na outra. Regressões mDNS: `dnssdtest` 68/68, interop
    TWO=1 (cada enlace vê o seu endereço), fixtures do Codex 44/45/16.
    Ambiente: o Windows do WSL também se chama `palerma` e ganhou o nome no mDNS (Avahi virou `palerma-2`); os
    scripts `dnssd.sh`/`interop.sh` pegam agora o nome que o Avahi tem em aros0.
-6. **feito** (`abf32a3b04`, `cunit-net-pktinfo` 7 testes): **`IP_PKTINFO` bidirecional** (envio: interface e origem forçadas, não só influência na rota;
+6. **feito** (`5fc25bc8c4`, `cunit-net-pktinfo` 8 testes): **`IP_PKTINFO` bidirecional** (envio: interface e origem forçadas, não só influência na rota;
    recepção: `IP_RECVPKTINFO`), `struct in_pktinfo` do Linux (`ipi_ifindex`, `ipi_spec_dst` = endereço local da
    interface de entrada, `ipi_addr` = destino do cabeçalho, ex. 224.0.0.251; no envio `ipi_spec_dst` é a origem),
    constante livre documentada; `IP_RECVIF`/`IP_RECVDSTADDR`/`IP_RECVPKTINFO` como
