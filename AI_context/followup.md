@@ -17,6 +17,25 @@ enlace é `NFE_LINKDOWN`: o ND6 é alcançado pelos ganchos da família IPv6, n�
 se o #2218 ainda estiver aberto, tudo entra nele (um comentário explicando o escopo: o `IP_RECVIF` é o que foi prometido
 "quando o mDNS de socket único precisar"); se já tiver sido mesclado, um PR só com o resto. Bump uma vez, no último commit.
 
+**B5 portado (2026-11-13, não commitado ainda):** ND6 pelos ganchos da família (`NFC_LLINFO_RTMSG`/`ROWS` no
+`nfo_control` do IPv6, admin sem conhecer o ND6), `rt_pmtu_update_if()` no fim do `netcore.def` (v11) com
+`NFQ_GATEWAYLINK`, `nd6_lt_resolve()`, `NFE_LINKDOWN` limpa vizinhos, `nd6_deinit()` libera o cache próprio;
+`netcore-update.sh`: 0 de 68 objetos de módulo chamam o núcleo; 11 suítes do B5 0 falhas.
+
+**Critérios de fechamento do PR único** (usuário + ChatGPT, 2026-11-13):
+1. bateria completa no build limpo;
+2. **PMTU:** mesmo link-local em dois enlaces — sem corrupção entre eles, e recuperação depois que a rota dinâmica expira
+   (teste novo; tabela de rotas com zona fica como pendência à parte);
+3. **ABI v11:** módulos v10 com núcleo novo funcionam; módulos v11 com núcleo antigo recusados com log, sem travar;
+4. **memória do B5 no m68k:** repouso/carga e cache com 0, 64 e 256 vizinhos (limite);
+5. **saída IPv4 do mDNS**, com captura nas duas interfaces: QU em eth1 respondida por eth1 com a rota preferida em eth0;
+   dois enlaces IPv4LL; interface com dois endereços (origem = anunciado); nenhuma cópia pela outra interface; uma
+   interface só continua certa;
+6. se confirmado: **`IP_PKTINFO` bidirecional** (envio: interface e origem forçadas, não só influência na rota;
+   recepção: `IP_RECVPKTINFO`), constante livre documentada; `IP_RECVIF`/`IP_RECVDSTADDR`/`IP_RECVPKTINFO` como
+   vistas da mesma informação de recepção (`in_savecontrol`), sem segunda implementação; CUnit próprio; mdnsd consome;
+7. mensagem do commit do `IP_RECVIF` corrigida (não basta sozinho).
+
 ## Worktrees e builds (desde 2026-11-12)
 
 Uma worktree e um build por linha de PR; a validação final de um PR roda numa imagem feita só da branch dele.
