@@ -197,3 +197,16 @@ por fatia do roteiro do Codex: núcleo nativo do mdnsd + `dnssd.library` + ferra
 `bonami.library`, da porta `BonAmi` e dos headers `<bonami/*>`; alguns commits lógicos dentro dele; aval do usuário antes
 de abrir (mdnsd é dele). Dependência: o PR do AROSTCP com `IP_RECVIF`, B36 e B37 (`review/arostcp-ip-recvif`) entra
 antes, na fila de um PR do AROSTCP por vez (depois do #2218).
+
+### Aberto: saída IPv4 com um socket só (alerta do usuário, 2026-11-13)
+
+`IP_RECVIF` diz por onde a pergunta **entrou**; não garante por onde a resposta **sai** nem de que endereço. Hoje:
+- multicast: `IP_MULTICAST_IF` (endereço do enlace) antes de cada envio → interface certa; origem = um endereço pronto
+  da interface (`in_srcia`/`in_readyia`), que pode não ser o anunciado se a interface tem vários;
+- **unicast** (QU, resolvedor "legacy"): interface e origem pela **rota** do destino → errado com a mesma sub-rede em dois
+  enlaces e com IPv4LL em dois enlaces (169.254/16 roteada uma vez, RFC 3927 §3.2).
+O teste de dois enlaces (`TWO=1`) usa sub-redes distintas e não cobre isso. Antes de escolher o mecanismo (por
+datagrama: interface de saída e origem — `IP_SENDSRCADDR` do FreeBSD só dá a origem; `IP_PKTINFO` do NetBSD/Linux/macOS
+dá interface e origem e é o par do `IPV6_PKTINFO`; o número 25 do NetBSD colide com `IP_ADD_SOURCE_MEMBERSHIP` no AROS),
+reproduzir os três casos: mesma sub-rede em dois enlaces; IPv4LL nos dois; interface com dois endereços (origem do
+multicast). Até lá o `IP_RECVIF` não é apresentado como suficiente.
