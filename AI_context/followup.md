@@ -74,6 +74,11 @@ se o #2218 ainda estiver aberto, tudo entra nele (um comentário explicando o es
    scripts `dnssd.sh`/`interop.sh` pegam agora o nome que o Avahi tem em aros0.
    Custo no m68k do `IP_PKTINFO` (build do commit anterior `5ea3ea051b` contra `5fc25bc8c4`): `inet.prot` +964 B;
    núcleo e demais módulos iguais. Bateria completa: 67 suítes, 0 falhas nas duas execuções.
+   **PR inteiro contra o master no m68k (`fa21d0c38e` vs `64d00bf2da`):** núcleo +376 B, `admin.atcp` +252 B,
+   `inet.prot` +5.028 B, `inet6.prot` +9.076 B, `dhclient` +2.208 B; `transport.prot` e os demais iguais.
+   Versão 5.46 (kernel v0.85) movida para o último commit (13.11.2026). Codacy: `const char *end` no teste do
+   pmtu6 e `memset` no `IP_RECVIF`, dobrados nos seus commits; `cunit-net-pktinfo` passou a usar .77 (ninguém) —
+   o host respondia ao porto 9 e o ARP dele fazia a entrada (corrida vista na 2ª execução).
 6. **feito** (`5fc25bc8c4`, `cunit-net-pktinfo` 8 testes): **`IP_PKTINFO` bidirecional** (envio: interface e origem forçadas, não só influência na rota;
    recepção: `IP_RECVPKTINFO`), `struct in_pktinfo` do Linux (`ipi_ifindex`, `ipi_spec_dst` = endereço local da
    interface de entrada, `ipi_addr` = destino do cabeçalho, ex. 224.0.0.251; no envio `ipi_spec_dst` é a origem),
