@@ -188,7 +188,17 @@ e do cache passam a rodar junto com `dnssdtest`/interop como critério de aceita
   igual em x86_64 e m68k, sem ponteiro); nomes em formato de fio + `DNSSD_NameToText()`; `DNSSD_UserData` saiu,
   `DNSSD_OperationID()` entrou; enumeração de tipos dá `TYPE`. `dnssd_model_test` (ASan/UBSan) ok; `dnssdtest`
   68/68 hosted e m68k; fixtures 44/45/16; interop íntegra.
-- **Próximo:** passo 2 (envelope com tamanho + carga tipada no lugar da `DNSSDIPCMsg` fixa).
+- **Passo 2 feito (`ec347cac90`, 2026-11-13):** requisição = um bloco alocado pela biblioteca por chamada:
+  cabeçalho de largura fixa (`struct dnssd_ipc_request`, 132 B iguais em x86_64 e m68k) + dados referenciados por
+  deslocamento/tamanho, como os eventos; nenhum ponteiro do chamador (só a notificação da sessão é emprestada,
+  `dnssd_ipc_port.h`). O mdnsd valida tudo antes de ler (`dnssd_ipc_validate()`: versão, comando, o que o comando
+  exige/proíbe, referências dentro, alinhadas e sem sobreposição, nomes de fio, rótulos, TXT, endereços). READ: a
+  sala de resposta nunca é maior que o buffer do chamador; evento que não cabe fica no mdnsd. Codec em C puro
+  (`dnssd_ipc.c`) na biblioteca, no mdnsd e no `dnssd_ipc_test` (todo comando; cada malformação; cada byte de um
+  REGISTER alterado: 1.277 aceitos / 899 recusados, leitura só dentro do bloco sob ASan/UBSan). Aceitação: host
+  ASan ok; AROS hosted e m68k `dnssdipctest`/`dnssdmodeltest` 0 falhas; `dnssdtest` 68/68 hosted e m68k; interop
+  TWO=1 íntegra; fixtures 44/45/16.
+- **Próximo:** passo 3 (coordenador do Codex com `TNA_REMOVED` no lugar das sessões com `FindTaskByPID()`).
 
 ### Entrega (decisão do usuário, 2026-11-12)
 
@@ -198,7 +208,9 @@ por fatia do roteiro do Codex: núcleo nativo do mdnsd + `dnssd.library` + ferra
 de abrir (mdnsd é dele). Dependência: o PR do AROSTCP com `IP_RECVIF`, B36 e B37 (`review/arostcp-ip-recvif`) entra
 antes, na fila de um PR do AROSTCP por vez (depois do #2218).
 
-### Aberto: saída IPv4 com um socket só (alerta do usuário, 2026-11-13)
+### Resolvido: saída IPv4 com um socket só (alerta do usuário, 2026-11-13)
+
+**Resolvido (2026-11-13):** reproduzido no fio (`tests/mdns/ipv4_out.py`: route falha, ll perdido, alias ok); `IP_PKTINFO` implementado no AROSTCP (#2218, `67f7666bfd`) e consumido pelo mdnsd (envio e recepção); os três casos passam. Texto original abaixo.
 
 `IP_RECVIF` diz por onde a pergunta **entrou**; não garante por onde a resposta **sai** nem de que endereço. Hoje:
 - multicast: `IP_MULTICAST_IF` (endereço do enlace) antes de cada envio → interface certa; origem = um endereço pronto
