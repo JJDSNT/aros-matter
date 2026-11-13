@@ -60,6 +60,8 @@ se o #2218 ainda estiver aberto, tudo entra nele (um comentário explicando o es
    TWO=1 (cada enlace vê o seu endereço), fixtures do Codex 44/45/16.
    Ambiente: o Windows do WSL também se chama `palerma` e ganhou o nome no mDNS (Avahi virou `palerma-2`); os
    scripts `dnssd.sh`/`interop.sh` pegam agora o nome que o Avahi tem em aros0.
+   Custo no m68k do `IP_PKTINFO` (build do commit anterior `5ea3ea051b` contra `5fc25bc8c4`): `inet.prot` +964 B;
+   núcleo e demais módulos iguais. Bateria completa: 67 suítes, 0 falhas nas duas execuções.
 6. **feito** (`5fc25bc8c4`, `cunit-net-pktinfo` 8 testes): **`IP_PKTINFO` bidirecional** (envio: interface e origem forçadas, não só influência na rota;
    recepção: `IP_RECVPKTINFO`), `struct in_pktinfo` do Linux (`ipi_ifindex`, `ipi_spec_dst` = endereço local da
    interface de entrada, `ipi_addr` = destino do cabeçalho, ex. 224.0.0.251; no envio `ipi_spec_dst` é a origem),
