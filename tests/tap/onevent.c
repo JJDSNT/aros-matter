@@ -169,6 +169,7 @@ int main(int argc, char **argv)
     CHECK(done_within(a5, 2) && a5->ios2_Req.io_Error == IOERR_ABORTED,
           "the unit's last opener closing: its request back aborted (%d)", a5->ios2_Req.io_Error);
 
+    dispose(a); dispose(b);
     dispose(a1); dispose(b1); dispose(a2); dispose(b2);
     dispose(a3); dispose(a4); dispose(a5);
     printf("RESULT %d passed, %d failed\n", passes, fails);
