@@ -25,16 +25,23 @@ se o #2218 ainda estiver aberto, tudo entra nele (um comentário explicando o es
 **Critérios de fechamento do PR único** (usuário + ChatGPT, 2026-11-13):
 1. bateria completa no build limpo;
 2. **PMTU:** mesmo link-local em dois enlaces — sem corrupção entre eles, e recuperação depois que a rota dinâmica expira
-   (teste novo; tabela de rotas com zona fica como pendência à parte);
+   (teste novo, lendo a rota pelo socket de roteamento: a de A existe; B não é registrado; a de A some; B cria a sua no
+   enlace de B com o MTU certo; tabela de rotas com zona fica como pendência à parte);
 3. **ABI v11:** módulos v10 com núcleo novo funcionam; módulos v11 com núcleo antigo recusados com log, sem travar;
-4. **memória do B5 no m68k:** repouso/carga e cache com 0, 64 e 256 vizinhos (limite);
+4. **memória do B5 no m68k:** repouso/carga e cache com 0, 64 e 256 vizinhos (limite): absoluto e por entrada, e mais
+   uma medição depois que as entradas expiram (memória retida);
 5. **saída IPv4 do mDNS**, com captura nas duas interfaces: QU em eth1 respondida por eth1 com a rota preferida em eth0;
    dois enlaces IPv4LL; interface com dois endereços (origem = anunciado); nenhuma cópia pela outra interface; uma
    interface só continua certa;
 6. se confirmado: **`IP_PKTINFO` bidirecional** (envio: interface e origem forçadas, não só influência na rota;
-   recepção: `IP_RECVPKTINFO`), constante livre documentada; `IP_RECVIF`/`IP_RECVDSTADDR`/`IP_RECVPKTINFO` como
+   recepção: `IP_RECVPKTINFO`), `struct in_pktinfo` do Linux (`ipi_ifindex`, `ipi_spec_dst` = endereço local da
+   interface de entrada, `ipi_addr` = destino do cabeçalho, ex. 224.0.0.251; no envio `ipi_spec_dst` é a origem),
+   constante livre documentada; `IP_RECVIF`/`IP_RECVDSTADDR`/`IP_RECVPKTINFO` como
    vistas da mesma informação de recepção (`in_savecontrol`), sem segunda implementação; CUnit próprio; mdnsd consome;
 7. mensagem do commit do `IP_RECVIF` corrigida (não basta sozinho).
+
+**Escopo congelado (2026-11-13):** nada além destes itens; só correções de defeitos demonstrados; resultados
+consolidados para o Kal.
 
 ## Worktrees e builds (desde 2026-11-12)
 
