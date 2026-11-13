@@ -71,6 +71,11 @@ def main():
                  "dnssd_ipc.h", "include/dnssd/dnssd.h")
     except (OSError, subprocess.CalledProcessError):
         pass
+    try:                                # the request envelope (realignment step 2)
+        source("dnssd_ipc_port.h")
+        names = (*names, "dnssd_ipc_port.h")
+    except (OSError, subprocess.CalledProcessError):
+        pass
     for name in (*names,
                  "include/bonami/mdns.h", "include/libraries/bonamibase.h"):
         target = output / name
