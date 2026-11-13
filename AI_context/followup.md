@@ -28,8 +28,13 @@ se o #2218 ainda estiver aberto, tudo entra nele (um comentário explicando o es
    (teste novo, lendo a rota pelo socket de roteamento: a de A existe; B não é registrado; a de A some; B cria a sua no
    enlace de B com o MTU certo; tabela de rotas com zona fica como pendência à parte);
 3. **ABI v11:** módulos v10 com núcleo novo funcionam; módulos v11 com núcleo antigo recusados com log, sem travar;
-4. **memória do B5 no m68k:** repouso/carga e cache com 0, 64 e 256 vizinhos (limite): absoluto e por entrada, e mais
-   uma medição depois que as entradas expiram (memória retida);
+4. **memória do B5 no m68k:** repouso/carga e cache com 0, 64 e 256 vizinhos: absoluto e por entrada, e mais uma
+   medição depois que as entradas expiram (memória retida). **Contar antes de calcular:** ler o cache
+   (`GetRouteInfo` com `RTF_LLINFO`, e o contador de estados no teste) e confirmar quantas entradas existem, por
+   interface. O limite é **por interface** (`nd6_maxnbrs` 256 em cada uma das 16 primeiras, mais 256 compartilhadas
+   acima disso: pior caso teórico 4.352 entradas): medir com 256 em um enlace e em dois. Se o pior caso medido for
+   inaceitável no m68k, é defeito demonstrado (memória esgotada por enxurrada de NS) e a correção é um teto global além
+   do por interface (como o `gc_thresh` do Linux);
 5. **saída IPv4 do mDNS**, com captura nas duas interfaces: QU em eth1 respondida por eth1 com a rota preferida em eth0;
    dois enlaces IPv4LL; interface com dois endereços (origem = anunciado); nenhuma cópia pela outra interface; uma
    interface só continua certa;
@@ -39,6 +44,9 @@ se o #2218 ainda estiver aberto, tudo entra nele (um comentário explicando o es
    constante livre documentada; `IP_RECVIF`/`IP_RECVDSTADDR`/`IP_RECVPKTINFO` como
    vistas da mesma informação de recepção (`in_savecontrol`), sem segunda implementação; CUnit próprio; mdnsd consome;
 7. mensagem do commit do `IP_RECVIF` corrigida (não basta sozinho).
+
+**Apresentação ao Kal:** separar correção comprovada (incluindo os cenários que falhavam), limitação conhecida (zona nas
+rotas de PMTU IPv6) e custo medido.
 
 **Escopo congelado (2026-11-13):** nada além destes itens; só correções de defeitos demonstrados; resultados
 consolidados para o Kal.
