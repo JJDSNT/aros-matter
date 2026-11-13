@@ -160,3 +160,21 @@ reaproveitamento, auditoria do núcleo, inventário de proveniência; protótipo
 
 Ordem: (1) evento = `dnssd_model`; (2) envelope tipado; (3) coordenador com `TNA_REMOVED`; (4) objeto de registro
 canônico e responder sobre ele, `mdnsd.h` sem Bonami; (5) um cache só; depois D8 (ferramentas, `netmidid`, retirada).
+
+### Inventário completo do trabalho do Codex (varredura de 2026-11-12)
+
+- **AROS `proposal/dnssd-canonical-model`** (`e812bd5be9`, `86a8e7cdc9`, `0b64c38bb0`, `bb6b138b31`, `d18246e864`):
+  `dnssd_model.*` (retrato canônico), `dnssd_link.*` (inventário), `dnssd_link_aros.*` (coletor), rescan, publicação
+  de vários endereços; testes em `developer/debug/test/dnssd/`. Já na minha branch.
+- **aros-midihub `review/mdns-modernization-plan`:** ADR, roteiro D0–D9, auditorias, inventário de proveniência,
+  `docs/dnssd-native-validation-2026-11-09.md`; **coordenador D1** `prototypes/dnssd/coordinator.{c,h}`,
+  `tests/dnssd_coordinator.c`, `ports/aros/dnssd_coordinator_probe.c`, `tools/dnssd-coordinator-hosted.sh` (16
+  verificações no hosted, `TNA_REMOVED`); **fixtures do responder e do cache** `tests/review/mdns_responder_rfc.c`,
+  `mdns_query.c`, `mdns_discovery.c`, `mdns_wire_contract.c`, `mdns_text_capacity.c` com
+  `tools/review-mdns-responder.py`, `review-mdns-*-hosted.sh`, `dnssd-canary-hosted.sh`.
+- **Superados (era Bonami V2, antes da ADR):** `recovery/*`, `archive/mdns-v2-wip-20261108`, `design/mdns-discovery-api`,
+  `g0/mdns-reconcile`, AROS `review/mdns-discovery-v2` (#2123), `review/mdns-tools-v2`. Não servem de base.
+- Worktrees `~/AROS-*-codex`: limpas, sem trabalho não commitado.
+
+Uso: o coordenador entra no lugar das minhas sessões; o `dnssd_model` no lugar do meu evento; as fixtures do responder
+e do cache passam a rodar junto com `dnssdtest`/interop como critério de aceitação.
