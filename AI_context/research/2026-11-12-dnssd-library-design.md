@@ -113,3 +113,20 @@ Nenhum dos dois serve `Browse`/`Resolve` com vários endereços. Alvo, `mdns_cac
 - **Registros próprios:** o que o host publica entra pelo mesmo caminho (reflexão hoje; o conjunto autoritativo
   do R6 depois), marcado como local.
 - O `mdns_discovery.c` e o `mdns_query.c` antigos saem com a BonAmi (R7).
+
+## Auditoria: limitações herdadas da BonAmi (2026-11-12, a pedido do usuário)
+
+Gatilho: o registro em nome de outro host saiu na API nova só com IPv4 (`DNSSD_HostAddress`), cópia do
+`rs_HostAddr` (`ULONG`) do responder antigo. Diretriz: não transportar limitações da BonAmi para a API nativa.
+
+| # | Onde | Limitação herdada | Correção |
+|---|---|---|---|
+| A1 | registro para outro host | um endereço, só IPv4; endereço do host anunciado mas **não sondado** nem defendido (RFC 6762 §8.1 pede sondar todos os registros únicos); consulta AAAA do host não respondida; sem conflito do nome do host; atualização não troca endereços | vários endereços IPv4/IPv6 (`struct DNSSDAddress`, tag repetível, zona por `da_Interface` para link-local), A e AAAA, sondagem e desempate do nome do host, conflito → operação termina com `DNSSD_ERR_CONFLICT`, `DNSSD_UpdateA` troca o conjunto (goodbye dos que saem) |
+| A2 | TXT do registro | buffers de 512 B no anúncio, na sondagem e no conflito: um TXT de mais de 512 B saía **vazio** (erro meu ao ligar o TXT binário) | TXT alocado do tamanho certo, sem cópia em buffer fixo; limite do RFC 6763 §6.2 (recomenda ≤ 1300, permite até 8900) |
+| A3 | cache novo (`mdns_cache.c`) | RDATA ≤ 512 B (o `MDNS_RECORD_DATA_MAX` da BonAmi): TXT maior era descartado e o `Resolve` falhava | RDATA até o tamanho do pacote, buffer de trabalho estático (pilha do m68k) |
+| A4 | `Resolve` | TXT ≤ 1024 B no evento | alocado do tamanho do registro |
+| A5 | limites de texto do responder | `MDNS_MAX_DOMAIN` 16, `MDNS_MAX_SUBTYPES` 8, `MDNS_MAX_TYPE` 32 vêm do IPC BonAmi | o domínio do mDNS é `local` (RFC 6762): a API recusa outro com erro claro; subtipos e tipo revistos no R6 |
+| A6 | motor de descoberta/consulta antigo, porta `BonAmi` | eventos de um IPv4, nome de 64 B | saem no R7 (já previsto) |
+| A7 | `md_HostAddr` | "o endereço do host" IPv4 único | só semente aleatória; sai |
+
+Ordem: A1–A4 agora (antes da migração das ferramentas), com testes hosted e m68k nas duas famílias; A5 junto; A6/A7 no R7.
