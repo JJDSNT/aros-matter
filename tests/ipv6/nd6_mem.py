@@ -14,6 +14,7 @@ second later, then records its free memory:
   rest            before any flood
   n64, n256, n300 that many sources (eth0's cache holds nd6_maxnbrs = 256)
   gone64, ...     15 s after each: the entries expired
+  again256        256 once more, after all that: does the memory climb again?
 The stack allocates from its own pool (CreatePool, 128 KB puddles): free
 memory moves when a puddle is taken or given back, not per entry. The
 entries' own size is sizeof(struct llinfo_nd6) in a pooled vector.
@@ -72,16 +73,21 @@ def main():
     steps = []
     for n in (64, 256, 300):
         steps += [("n%d" % n, 0, n), ("gone%d" % n, None, 15)]
+    # the second round: the same load again; memory that keeps climbing
+    # would be a leak, memory that comes back to the plateau is kept for reuse
+    steps += [("again256", 0, 256), ("goneagain", None, 15)]
     script = os.path.join(a.out, "s.script")
     with open(script, "w") as f:
         if amiga:
             f.write("Delete >NIL: SYS:System/Network/AROSTCP/db/services.d/#? QUIET\n")
         f.write("Execute SYS:System/Network/AROSTCP/S/startnet\nWait %d\n" % (40 if amiga else 15))
-        f.write("C:ifconfig -a >SYS:out/if.log\nC:nd6mem rest >>SYS:out/mem.log\nEcho >SYS:out/ready0 r\n")
+        f.write("C:nd6mem rest >>SYS:out/mem.log\nEcho >>SYS:out/mbuf.log \"== rest\"\nC:netstat -m >>SYS:out/mbuf.log\n"
+                "Echo >SYS:out/ready0 r\n")
         for i, (label, first, n) in enumerate(steps, 1):
             # wait for the host's go, by polling for the file
             f.write("Lab w%d\nIf NOT EXISTS SYS:out/go%d\n Wait 1\n Skip w%d BACK\nEndIf\n" % (i, i, i))
             f.write("Wait 1\nC:nd6mem %s >>SYS:out/mem.log\n" % label)
+            f.write("Echo >>SYS:out/mbuf.log \"== %s\"\nC:netstat -m >>SYS:out/mbuf.log\n" % label)
             f.write("Echo >SYS:out/ready%d r\n" % i)
         f.write("C:ip -6 neigh >SYS:out/neigh.log\n")
     env = dict(os.environ)
@@ -116,8 +122,22 @@ def main():
         print("AROS did not get ready")
         p.wait()
         return
-    m = re.search(r"^eth0:.*?inet6 (fe80::[0-9a-f:]+)", open(os.path.join(d, "if.log")).read(), re.S | re.M)
-    target = m.group(1)
+    # AROS's link-local address, from its MAC (EUI-64): ARP after a ping to
+    # its IPv4 address (not ifconfig -a, which overflows a 4 KB Amiga stack:
+    # bugs.md B39; AROS does not answer echo to ff02::1)
+    subprocess.run(["ping", "-c", "2", "-w", "4", "192.168.166.2"], capture_output=True)
+    neigh = subprocess.run(["ip", "neigh", "show", "192.168.166.2", "dev", "aros0"],
+                           capture_output=True, text=True).stdout
+    m = re.search(r"lladdr ([0-9a-f:]{17})", neigh)
+    target = None
+    if m:
+        b = bytes.fromhex(m.group(1).replace(":", ""))
+        eui = bytes([b[0] ^ 2]) + b[1:3] + b"\xff\xfe" + b[3:]
+        target = socket.inet_ntop(socket.AF_INET6, bytes.fromhex("fe80000000000000") + eui)
+    if target is None:
+        print("AROS's link-local address did not answer")
+        p.wait()
+        return
     for i, (label, first, n) in enumerate(steps, 1):
         if first is not None:
             subprocess.run(["sudo", "-n", sys.executable, os.path.abspath(__file__), "--send", "aros0", target,
@@ -136,6 +156,16 @@ def main():
         f = line.split()
         if len(f) >= 11:
             rows[f[0]] = dict(rows=int(f[2]), flood=int(f[4]), lladdr=int(f[6]), free=int(f[8]), largest=int(f[10]))
+    mb = os.path.join(d, "mbuf.log")
+    if os.path.exists(mb):
+        label = None
+        for line in open(mb):
+            m = re.match(r"== (\w+)", line)
+            if m:
+                label = m.group(1)
+            m = re.search(r"(\d+)\s*K?bytes? allocated to network", line) or re.search(r"(\d+)K bytes allocated", line)
+            if m and label in rows:
+                rows[label]["mbuf_line"] = line.strip()
     res = {"mode": a.mode, "target": target, "steps": rows}
     base = rows.get("rest")
     if base:
