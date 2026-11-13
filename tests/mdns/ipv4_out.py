@@ -78,17 +78,11 @@ def main():
         if a.case == "route":
             f.write("C:route add -host 192.168.167.1 192.168.166.1 >SYS:out/route.log\n")
         if a.case == "alias":
-            f.write("Run >NIL: C:alias_owner eth0 192.168.166.50 50 >SYS:out/alias.log\nWait 8\n")
+            f.write("C:ifconfig eth0 192.168.166.50 netmask 255.255.255.0 alias >SYS:out/alias.log\nWait 4\n")
         f.write("C:netstat -rn >SYS:out/routes.log\nC:ifconfig -a >SYS:out/if.log\n")
-        f.write("Echo >SYS:out/ready ready\nWait 40\n")
+        f.write("Echo >SYS:out/ready ready\nWait 20\n")
+        f.write("C:netstat -rn >SYS:out/routes2.log\nC:ifconfig -a >SYS:out/if2.log\nC:arp -an >SYS:out/arp_table.log\nWait 20\n")
     files = []
-    if a.case == "alias":
-        cc = subprocess.run([sys.executable, "-c", "import sys;sys.path.insert(0,%r);import run_tcp;print(run_tcp.CROSS)"
-                             % os.path.join(ROOT, "tests", "tcp")], capture_output=True, text=True).stdout.strip()
-        exe = os.path.join(a.out, "alias_owner")
-        subprocess.run([cc, "--sysroot", os.path.join(a.image, "Developer"), "-O2", "-o", exe,
-                        os.path.join(ROOT, "tests", "ipv4", "alias_owner.c")], check=True)
-        files.append(exe)
     env = dict(os.environ, AROS_HOSTED_IMAGE=a.image, AROS_RUN_TIMEOUT="120")
     if a.case == "ll":
         env.update(AROS_TAP_IP="AUTO", AROS_TAP2_IP="AUTO")
@@ -106,7 +100,7 @@ def main():
         for dev in ("aros0", "aros1"):
             pcap = os.path.join(a.out, dev + ".pcap")
             caps[dev] = (pcap, subprocess.Popen(["sudo", "-n", "tcpdump", "-i", dev, "-U", "-w", pcap,
-                                                 "udp and src port 5353"],
+                                                 "arp or (udp and src port 5353)"],
                                                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL))
         time.sleep(1.5)
         dev, src = ("aros0", host[0]) if a.case == "alias" else ("aros1", host[1])
@@ -130,12 +124,14 @@ def main():
     for dev, (pcap, _) in caps.items():
         r = sh("tcpdump", "-nn", "-r", pcap, "udp and src port 5353")
         res["packets"][dev] = [l.split(" ", 1)[1] for l in r.stdout.splitlines() if " IP " in l]
-    for name in ("routes", "if"):
+        r = sh("tcpdump", "-nn", "-r", pcap, "arp")
+        res.setdefault("arp", {})[dev] = [l.split(" ", 1)[1] for l in r.stdout.splitlines()]
+    for name in ("routes", "if", "routes2", "if2", "arp_table"):
         p = os.path.join(a.out, "aros", "out", name + ".log")
         if os.path.exists(p):
             res[name] = open(p).read()
     json.dump(res, open(os.path.join(a.out, "result.json"), "w"), indent=1)
-    print(json.dumps(res["packets"], indent=1))
+    print(json.dumps({k: res[k] for k in ("packets", "arp")}, indent=1))
 
 
 if __name__ == "__main__":

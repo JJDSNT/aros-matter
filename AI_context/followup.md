@@ -45,6 +45,15 @@ se o #2218 ainda estiver aberto, tudo entra nele (um comentário explicando o es
 5. **saída IPv4 do mDNS**, com captura nas duas interfaces: QU em eth1 respondida por eth1 com a rota preferida em eth0;
    dois enlaces IPv4LL; interface com dois endereços (origem = anunciado); nenhuma cópia pela outra interface; uma
    interface só continua certa;
+   **Resultado (2026-11-13, `tests/mdns/ipv4_out.py`, imagem da linha mDNS, um socket por família):**
+   - `route`: **falha.** QU e legado saíram por aros0 com origem 192.168.166.2 (o A diz 192.168.167.2); o QM saiu
+     certo por aros1. Defeito confirmado.
+   - `ll`: a resposta legada **não saiu** (nem ARP). Causa: o autoip do master com duas interfaces IPv4LL deixa
+     `default (0) U eth1` e nenhuma rota 169.254/16 (B38; o commit do ACD já corrige: na imagem do #2218 a tabela é
+     `169.254 U eth0`). Mesmo corrigida, 169.254/16 é roteada por uma interface só (RFC 3927 §3.2): o responder de um
+     socket precisa forçar a interface de entrada — o mdnsd antigo (socket por interface) acertava na imagem do #2218.
+   - `alias`: **passa.** Toda resposta saiu por aros0, com origem de eth0 e só os A de eth0 (.2 e .50).
+   Conclusão: item 6 confirmado.
 6. se confirmado: **`IP_PKTINFO` bidirecional** (envio: interface e origem forçadas, não só influência na rota;
    recepção: `IP_RECVPKTINFO`), `struct in_pktinfo` do Linux (`ipi_ifindex`, `ipi_spec_dst` = endereço local da
    interface de entrada, `ipi_addr` = destino do cabeçalho, ex. 224.0.0.251; no envio `ipi_spec_dst` é a origem),
