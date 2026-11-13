@@ -137,3 +137,26 @@ serviço maior que um MTU vai em pacote próprio, RFC 6762 §17), A3 (`mdnsParse
 > 512 B — antes descartava o pacote inteiro; cache até o tamanho do pacote), A4, A5 (só `local`). Achado junto: o
 goodbye de registro próprio nunca saía do cache. `dnssdtest` 63/63 hosted e m68k; o host (Avahi) resolve
 `proxyhost.local` em IPv4 e IPv6, vê o endereço trocado e o TXT de 2000 B.
+
+## Realinhamento ao desenho do Codex (2026-11-12, pedido do usuário)
+
+O usuário tinha pedido para achar o trabalho do Codex antes de continuar. Eu tinha lido só a ADR e construí sobre o
+responder legado. O desenho do Codex (aros-midihub `review/mdns-modernization-plan`: roteiro D0–D9, auditoria de
+reaproveitamento, auditoria do núcleo, inventário de proveniência; protótipo do coordenador `prototypes/dnssd/`,
+`ports/aros/dnssd_coordinator_probe.c`, validado no hosted com `TNA_REMOVED`) passa a mandar. Triagem do que fiz:
+
+| Peça minha | Desenho do Codex | Decisão |
+|---|---|---|
+| `IP_RECVIF`, B36, B37 (AROSTCP) e um socket por família (R1) | regra da lacuna genérica: corrige-se no AROSTCP, o mdnsd consome depois | **fica** |
+| 5 commits do Codex (modelo, inventário, coletor, rescan, multi-endereço) | D2 | **fica** (é dele) |
+| `mdns_cache.c` ao lado do `mdns_discovery.c` | "sem segundo cache"; reaproveitar os algoritmos do cache existente, redesenhar o modelo guardado | **revisar**: um cache só; trazer do `mdns_discovery.c` o que ele faz melhor (endereços pendentes antes do SRV, renovação, perda) e retirar o outro |
+| `dnssd_ipc.h`: uma `DNSSDIPCMsg` fixa que cresce a cada função (`dm_Host`, `dm_Extra`, ...) | "envelope com tamanho + carga tipada por comando"; é a crítica que ele faz à `MDNSIPCMsg` | **refazer**: cabeçalho com tamanho/versão/comando/IDs e carga tipada, validada contra o tamanho recebido |
+| sessões em `dnssd_server.c` com reaproveitamento por `FindTaskByPID()` | D1/D7: coordenador validado, `TNA_REMOVED`, reaproveitamento só como recuperação | **refazer** sobre o coordenador dele |
+| `DNSSDEvent`/`EventParts` próprios | `dnssd_model` (retrato canônico do serviço, spans contados, conjunto de endereços, codificador validado) | **refazer**: o evento é a projeção do `dnssd_model`; um formato só |
+| `MDNSRegisteredService` estendido (texto, `MDNS_MAX_*`, `rs_TaskID`) | D2/D4: objeto de registro canônico (nomes contados, TXT de fio, conjunto de endereços, ID do daemon, dono = sessão); estados pendente/estabelecido/conflito/atualizado/removido | **refazer**, reaproveitando os algoritmos de `mdns_reg.c`/`mdns_host.c` |
+| `mdnsd.h` incluindo `<bonami/mdns.h>`/`mdns_ipc.h` | nenhum tipo Bonami no núcleo | sai com o objeto canônico; a porta BonAmi sai no D8 |
+| `dnssd.library` (chamadas, tags) e `dnssdtest`/interop/dois enlaces | D3/D4/D5 | chamadas **ficam**; o evento muda; os testes viram critério de aceitação |
+| D2 aberto no Codex: RRset maior que um pacote; retrato de serviço só-leitura | — | entra no D2 realinhado |
+
+Ordem: (1) evento = `dnssd_model`; (2) envelope tipado; (3) coordenador com `TNA_REMOVED`; (4) objeto de registro
+canônico e responder sobre ele, `mdnsd.h` sem Bonami; (5) um cache só; depois D8 (ferramentas, `netmidid`, retirada).
