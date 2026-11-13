@@ -122,7 +122,8 @@ def main():
         print("AROS did not get ready")
         p.wait()
         return
-    # AROS's link-local address, from its MAC (EUI-64): ARP after a ping to
+    # AROS's link-local address, from its MAC (EUI-64, as AROS's in6.c makes
+    # it; checked after the first burst): ARP after a ping to
     # its IPv4 address (not ifconfig -a, which overflows a 4 KB Amiga stack:
     # bugs.md B39; AROS does not answer echo to ff02::1)
     subprocess.run(["ping", "-c", "2", "-w", "4", "192.168.166.2"], capture_output=True)
@@ -148,6 +149,13 @@ def main():
         if wait_for("ready%d" % i, 300) is None:
             print("no ready%d" % i)
             break
+        if i == 1:
+            # the premise: AROS takes an NS only for its own address, so
+            # entries prove the EUI-64 derivation found it (lab method only)
+            last = open(os.path.join(d, "mem.log")).read().split("\n")[-2].split()
+            if len(last) > 2 and last[2] == "0":
+                print("no entries after the first burst: %s is not AROS's address" % target)
+                break
     p.wait()
     if not os.path.exists(os.path.join(d, "mem.log")):    # the run's copy, after it ended
         d = os.path.join(a.out, "aros", "out")
