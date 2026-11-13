@@ -1,17 +1,23 @@
 /*
- * nd6mem LABEL [IFNAME [del N]] - the IPv6 neighbour cache of IFNAME
+ * nd6mem LABEL [IFNAME [del N | hold N]] - the IPv6 neighbour cache of IFNAME
  * (default eth0) and AROS's free memory, on one line:
  *   "LABEL rows R flood F lladdr L free BYTES largest BYTES"
  * R: rows GetRouteInfo(AF_INET6, RTF_LLINFO) lists on the interface; F:
  * those of the flood (fe80::a:0:0:N, which tests/ipv6/nd6_mem.py sends
  * Neighbor Solicitations from); L: rows with a link-layer address. With
  * "del N" it first deletes the flood's first N entries (RTM_DELETE with
- * RTF_LLINFO, as ndp -d) and waits a second.
+ * RTF_LLINFO, as ndp -d) and waits a second. With "hold N" it first sends
+ * a 1 KB datagram to each of N link-local addresses nobody has
+ * (fe80::4d54:dead:N): each makes an entry with a packet held while it is
+ * resolved, up to the stack's limits; then it waits half a second.
+ * (The cache's limits are read by nd6vars.c: miami.library and the
+ * Roadshow calls this needs do not build together.)
  */
 #define __CONFIG_ROADSHOW__     /* GetRouteInfo() */
 #include <proto/exec.h>
 #include <proto/dos.h>
 #include <proto/socket.h>
+
 #include <exec/memory.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
@@ -25,6 +31,33 @@
 #include <string.h>
 
 struct Library *SocketBase;
+
+static void hold(unsigned ifindex, int n)
+{
+    static char data[1024];
+    struct sockaddr_in6 d;
+    int s = socket(AF_INET6, SOCK_DGRAM, 0), k;
+
+    if (s < 0)
+        return;
+    memset(&d, 0, sizeof(d));
+    d.sin6_len = sizeof(d);
+    d.sin6_family = AF_INET6;
+    d.sin6_port = htons(9);
+    d.sin6_scope_id = ifindex;
+    d.sin6_addr.s6_addr[0] = 0xfe;
+    d.sin6_addr.s6_addr[1] = 0x80;
+    d.sin6_addr.s6_addr[10] = 0x4d;
+    d.sin6_addr.s6_addr[11] = 0x54;
+    d.sin6_addr.s6_addr[12] = 0xde;
+    d.sin6_addr.s6_addr[13] = 0xad;
+    for (k = 0; k < n; k++) {
+        d.sin6_addr.s6_addr[14] = k >> 8;
+        d.sin6_addr.s6_addr[15] = k;
+        sendto(s, data, sizeof(data), 0, (struct sockaddr *)&d, sizeof(d));
+    }
+    CloseSocket(s);
+}
 
 #define ROUNDUP(a) ((a) > 0 ? (1 + (((a) - 1) | (sizeof(long) - 1))) : sizeof(long))
 
@@ -70,6 +103,7 @@ int main(int argc, char **argv)
 {
     const char *ifname = argc > 2 ? argv[2] : "eth0";
     int del = (argc > 4 && strcmp(argv[3], "del") == 0) ? atoi(argv[4]) : 0;
+    int held = (argc > 4 && strcmp(argv[3], "hold") == 0) ? atoi(argv[4]) : 0;
     int rows = 0, flood = 0, stale = 0, i, s;
     unsigned ifindex = 0;
     struct ifreq ifr;
@@ -93,6 +127,10 @@ int main(int argc, char **argv)
     if (s >= 0)
         CloseSocket(s);
 
+    if (held > 0) {
+        hold(ifindex, held);
+        Delay(25);
+    }
     if (del > 0) {
         s = socket(PF_ROUTE, SOCK_RAW, 0);
         for (i = 0; s >= 0 && i < del; i++)

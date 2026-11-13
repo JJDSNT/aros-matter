@@ -15,6 +15,10 @@ second later, then records its free memory:
   n64, n256, n300 that many sources (eth0's cache holds nd6_maxnbrs = 256)
   gone64, ...     15 s after each: the entries expired
   again256        256 once more, after all that: does the memory climb again?
+  held64, held512 AROS sends 1 KB to that many neighbours nobody is: each
+                  holds a packet while resolved, up to nd6_maxheld
+"rest" also records the limits as the stack sized them (nd6_maxnbrs,
+nd6_maxheld, nd6_maxqlen).
 The stack allocates from its own pool (CreatePool, 128 KB puddles): free
 memory moves when a puddle is taken or given back, not per entry. The
 entries' own size is sizeof(struct llinfo_nd6) in a pooled vector.
@@ -70,23 +74,31 @@ def main():
     import memcost
     amiga = a.mode == "amiga"
     exe = memcost.build(a.out, "nd6mem", os.path.join(HERE, "nd6mem.c"), amiga=amiga)
+    vars_exe = memcost.build(a.out, "nd6vars", os.path.join(HERE, "nd6vars.c"), amiga=amiga)
     steps = []
     for n in (64, 256, 300):
         steps += [("n%d" % n, 0, n), ("gone%d" % n, None, 15)]
     # the second round: the same load again; memory that keeps climbing
     # would be a leak, memory that comes back to the plateau is kept for reuse
     steps += [("again256", 0, 256), ("goneagain", None, 15)]
+    # held packets: AROS sends 1 KB to N neighbours nobody is - each an entry
+    # with a packet held while resolved, up to nd6_maxheld - below and above
+    # the limit; they fail and go after ~3 s
+    steps += [("held64", -1, 64), ("goneheld64", None, 15), ("held512", -1, 512), ("goneheld512", None, 15)]
     script = os.path.join(a.out, "s.script")
     with open(script, "w") as f:
         if amiga:
             f.write("Delete >NIL: SYS:System/Network/AROSTCP/db/services.d/#? QUIET\n")
         f.write("Execute SYS:System/Network/AROSTCP/S/startnet\nWait %d\n" % (40 if amiga else 15))
-        f.write("C:nd6mem rest >>SYS:out/mem.log\nEcho >>SYS:out/mbuf.log \"== rest\"\nC:netstat -m >>SYS:out/mbuf.log\n"
+        f.write("C:nd6vars >>SYS:out/mem.log\nC:nd6mem rest >>SYS:out/mem.log\nEcho >>SYS:out/mbuf.log \"== rest\"\nC:netstat -m >>SYS:out/mbuf.log\n"
                 "Echo >SYS:out/ready0 r\n")
         for i, (label, first, n) in enumerate(steps, 1):
             # wait for the host's go, by polling for the file
             f.write("Lab w%d\nIf NOT EXISTS SYS:out/go%d\n Wait 1\n Skip w%d BACK\nEndIf\n" % (i, i, i))
-            f.write("Wait 1\nC:nd6mem %s >>SYS:out/mem.log\n" % label)
+            if first == -1:
+                f.write("C:nd6mem %s eth0 hold %d >>SYS:out/mem.log\n" % (label, n))
+            else:
+                f.write("Wait 1\nC:nd6mem %s >>SYS:out/mem.log\n" % label)
             f.write("Echo >>SYS:out/mbuf.log \"== %s\"\nC:netstat -m >>SYS:out/mbuf.log\n" % label)
             f.write("Echo >SYS:out/ready%d r\n" % i)
         f.write("C:ip -6 neigh >SYS:out/neigh.log\n")
@@ -96,13 +108,13 @@ def main():
         if a.system:
             env["AMIGA_SYSTEM"] = a.system
         env.update(AMIGA_TAP_IP="192.168.166.2", AMIGA_RUN_TIMEOUT="900")
-        run = [os.path.join(ROOT, "tools", "amiga-run.sh"), os.path.join(a.out, "aros"), script, exe]
+        run = [os.path.join(ROOT, "tools", "amiga-run.sh"), os.path.join(a.out, "aros"), script, exe, vars_exe]
         outdir = os.path.join(a.out, "aros", "AROS", "out")
     else:
         if a.system:
             env["AROS_HOSTED_IMAGE"] = a.system
         env.update(AROS_TAP_IP="192.168.166.2", AROS_RUN_TIMEOUT="600")
-        run = [os.path.join(ROOT, "tools", "hosted-run.sh"), os.path.join(a.out, "aros"), script, exe]
+        run = [os.path.join(ROOT, "tools", "hosted-run.sh"), os.path.join(a.out, "aros"), script, exe, vars_exe]
         outdir = os.path.join(a.out, "aros", "AROS", "out")
     p = subprocess.Popen(run, env=env, stdout=open(os.path.join(a.out, "run.txt"), "w"), stderr=subprocess.STDOUT)
 
@@ -140,11 +152,11 @@ def main():
         p.wait()
         return
     for i, (label, first, n) in enumerate(steps, 1):
-        if first is not None:
+        if first is None:
+            time.sleep(n)
+        elif first >= 0:
             subprocess.run(["sudo", "-n", sys.executable, os.path.abspath(__file__), "--send", "aros0", target,
                             str(first), str(n)], check=True)
-        else:
-            time.sleep(n)
         open(os.path.join(d, "go%d" % i), "w").close()
         if wait_for("ready%d" % i, 300) is None:
             print("no ready%d" % i)
@@ -160,8 +172,12 @@ def main():
     if not os.path.exists(os.path.join(d, "mem.log")):    # the run's copy, after it ended
         d = os.path.join(a.out, "aros", "out")
     rows = {}
+    limits = None
     for line in open(os.path.join(d, "mem.log")):
         f = line.split()
+        if f and f[0] == "limits":
+            limits = dict(zip(f[1::2], (int(x) for x in f[2::2])))
+            continue
         if len(f) >= 11:
             rows[f[0]] = dict(rows=int(f[2]), flood=int(f[4]), lladdr=int(f[6]), free=int(f[8]), largest=int(f[10]))
     mb = os.path.join(d, "mbuf.log")
@@ -174,7 +190,7 @@ def main():
             m = re.search(r"(\d+)\s*K?bytes? allocated to network", line) or re.search(r"(\d+)K bytes allocated", line)
             if m and label in rows:
                 rows[label]["mbuf_line"] = line.strip()
-    res = {"mode": a.mode, "target": target, "steps": rows}
+    res = {"mode": a.mode, "target": target, "limits": limits, "steps": rows}
     base = rows.get("rest")
     if base:
         for k, v in rows.items():
