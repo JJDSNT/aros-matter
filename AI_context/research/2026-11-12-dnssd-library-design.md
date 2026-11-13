@@ -198,14 +198,16 @@ e do cache passam a rodar junto com `dnssdtest`/interop como critério de aceita
   REGISTER alterado: 1.277 aceitos / 899 recusados, leitura só dentro do bloco sob ASan/UBSan). Aceitação: host
   ASan ok; AROS hosted e m68k `dnssdipctest`/`dnssdmodeltest` 0 falhas; `dnssdtest` 68/68 hosted e m68k; interop
   TWO=1 íntegra; fixtures 44/45/16.
-- **Passo 3 feito no hosted (`68b0ef59b3`, 2026-11-13):** gancho `TNA_REMOVED` do `task.resource` (mecanismo do
-  coordenador D1): no contexto de quem remove, sem esperar outra tarefa — sob `Forbid()` marca as sessões da tarefa
-  como idas e tira a notificação; sinaliza o mdnsd, que as fecha na própria tarefa (operações acabam, serviços saem
-  com goodbye). Notificação só sob `Forbid()` e nunca a sessão ida (fechou a corrida verificar/`ReplyMsg`); reap por
-  ID fica como recuperação. `tests/mdns/dnssd_gone.sh`: sessão + registro + browse de uma tarefa filha; removida à
-  força: some em < 20 ms (passo 2: 380 ms); sai sem fechar: < 20 ms (passo 2: 3.020 ms); Avahi viu o serviço vir e ir
-  as duas vezes (goodbye). **Falta:** m68k (ver se a ROM tem `task.resource`), regressões (`dnssdtest`, interop,
-  fixtures) sobre o passo 3. **Pausado (2026-11-13) para a revisão do #2218.**
+- **Passo 3 feito (`5241d57093`, 2026-11-13; linha mDNS rebaseada sobre o #2218 `283464c0b6`, que está sobre o master
+  `834490510e`):** gancho `TNA_REMOVED` do `task.resource` (mecanismo do coordenador D1): no contexto de quem remove, sem
+  esperar outra tarefa — sob `Forbid()` marca as sessões da tarefa como idas e tira a notificação; sinaliza o mdnsd, que
+  as fecha na própria tarefa (operações acabam, serviços saem com goodbye). Notificação só sob `Forbid()` e nunca a sessão
+  ida (fechou a corrida verificar/`ReplyMsg`); reap por ID fica como recuperação. `tests/mdns/dnssd_gone.sh`: tarefa
+  filha com sessão + registro + browse, removida à força e saindo sem fechar: some em < 20 ms (passo 2, só reap: 380 e
+  3.020 ms); Avahi viu o serviço vir e ir as duas vezes (goodbye). **m68k:** a ROM tem `task.resource` e o gancho funciona
+  (some em < 20 ms também no A3000 emulado). Regressões na base nova: `dnssdtest` 68/68 hosted e m68k, interop TWO=1,
+  saída IPv4 (route/ll/alias) ok, fixtures 44/45/16.
+- **Próximo:** passo 4 (objeto de registro canônico; `mdnsd.h` sem Bonami).
 
 ### Entrega (decisão do usuário, 2026-11-12)
 
