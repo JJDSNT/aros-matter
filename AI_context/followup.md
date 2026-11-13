@@ -42,6 +42,18 @@ se o #2218 ainda estiver aberto, tudo entra nele (um comentário explicando o es
    acima disso: pior caso teórico 4.352 entradas): medir com 256 em um enlace e em dois. Se o pior caso medido for
    inaceitável no m68k, é defeito demonstrado (memória esgotada por enxurrada de NS) e a correção é um teto global além
    do por interface (como o `gc_thresh` do Linux);
+   **Resultado (2026-11-13, `tests/ipv6/nd6_mem.py`, A3000 emulado, pilha do #2218; nd6mem-m68k-050623):** NS de N origens
+   falsas, entradas contadas (`GetRouteInfo`) 1 s depois, memória livre e `netstat -m` a cada passo, 15 s de
+   expiração entre passos. Entradas 64 / 234 / 256 (300 enviadas: o teto segura) / 236 na 2ª rodada de 256.
+   Tomado do sistema em relação ao repouso: 64 → 24 B; pico com 256 → 182,6 KB; depois da expiração 116,6 KB;
+   2ª rodada → 116,6 KB (nem pico nem patamar sobem: sem vazamento). O patamar retido é o pool de mbufs
+   (`netstat -m`: 96 → 210 KB tomados para mbufs e clusters, +114 KB, pelo tráfego da enxurrada: NA e 3 sondas
+   por entrada), que por desenho não é devolvido e no m68k tem teto (MAXMEM 1 MB). O custo das entradas é
+   transitório (~66 KB com 256, devolvidos ao expirar). Uma enxurrada se limpa sozinha: sem resposta às sondas,
+   cada entrada sai em ~8 s (RFC 4861 §7.3.3). Hosted: 0 B em todos os passos (pool pré-alocado).
+   **Decisão (usuário, 2026-11-13):** sem teto global no #2218 — seria política nova de recursos (repartição
+   entre interfaces, reação no limite, por plataforma); relatar ao Kal as opções (manter 256 por interface, ou
+   política global/por plataforma depois). Só um vazamento ou crescimento ilimitado seria defeito a corrigir.
 5. **saída IPv4 do mDNS**, com captura nas duas interfaces: QU em eth1 respondida por eth1 com a rota preferida em eth0;
    dois enlaces IPv4LL; interface com dois endereços (origem = anunciado); nenhuma cópia pela outra interface; uma
    interface só continua certa;
