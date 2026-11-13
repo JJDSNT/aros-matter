@@ -23,11 +23,15 @@ se o #2218 ainda estiver aberto, tudo entra nele (um comentário explicando o es
 `netcore-update.sh`: 0 de 68 objetos de módulo chamam o núcleo; 11 suítes do B5 0 falhas.
 
 **Critérios de fechamento do PR único** (usuário + ChatGPT, 2026-11-13):
-1. bateria completa no build limpo;
+1. bateria completa no build limpo; ✅ 66 suítes, 0 falhas, duas execuções (B5 portado, `24a5bc7ba1`);
 2. **PMTU:** mesmo link-local em dois enlaces — sem corrupção entre eles, e recuperação depois que a rota dinâmica expira
    (teste novo, lendo a rota pelo socket de roteamento: a de A existe; B não é registrado; a de A some; B cria a sua no
    enlace de B com o MTU certo; tabela de rotas com zona fica como pendência à parte);
-3. **ABI v11:** módulos v10 com núcleo novo funcionam; módulos v11 com núcleo antigo recusados com log, sem travar;
+3. **ABI v11:** ✅ (2026-11-13) núcleo novo + módulos v10 (build da linha mDNS, hashes conferidos): carregam e as suítes
+   que passam pela tabela de serviços dão 0 falhas (udp, inet6, addr6, adminmod, module, cmsg, mcast6, scope6,
+   localhost); só o caso link-local do `pmtu6` falha, funcionalidade do B5 que o `inet6` antigo não tem. Núcleo v10 +
+   módulos v11: "module library netconfig.atcp needs version 11 of the stack's services; this stack has version 10",
+   a pilha não sobe, o sistema não trava;
 4. **memória do B5 no m68k:** repouso/carga e cache com 0, 64 e 256 vizinhos: absoluto e por entrada, e mais uma
    medição depois que as entradas expiram (memória retida). **Contar antes de calcular:** ler o cache
    (`GetRouteInfo` com `RTF_LLINFO`, e o contador de estados no teste) e confirmar quantas entradas existem, por
