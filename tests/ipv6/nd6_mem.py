@@ -5,18 +5,18 @@ emulated Amiga (m68k, tools/amiga-run.sh) or hosted AROS.
 
 The host sends Neighbor Solicitations to AROS's link-local address from
 fe80::a:0:0:N (N counting from 0), each with its own link-layer address:
-each makes a STALE entry (RFC 4861 section 7.2.3). AROS's C:nd6mem first
-counts the entries on eth0 (GetRouteInfo, as ip -6 neigh) and then records
-its free memory, at each step:
-  rest     no flood entry
-  n64      64 flood sources
-  n256     256 (eth0's cache holds nd6_maxnbrs = 256 entries, with AROS's
-           own addresses and the host's among them)
-  n300     300 sent: the cache stays at its limit
-  deleted  the flood's entries deleted (RTM_DELETE, as at their expiry)
-  again    256 sources once more: is the memory the deleted ones held used
-           again, or taken anew?
-Per entry = (free before - free after) / (entries after - entries before).
+each makes an entry (RFC 4861 section 7.2.3). AROS answers each with an
+advertisement, which puts the entry in DELAY; nobody answers the probes
+that follow, and the entry is deleted some 8 s later (section 7.3.3) -
+a flood cleans itself up. So each step sends its burst afresh and AROS's
+C:nd6mem counts the entries on eth0 (GetRouteInfo, as ip -6 neigh) a
+second later, then records its free memory:
+  rest            before any flood
+  n64, n256, n300 that many sources (eth0's cache holds nd6_maxnbrs = 256)
+  gone64, ...     15 s after each: the entries expired
+The stack allocates from its own pool (CreatePool, 128 KB puddles): free
+memory moves when a puddle is taken or given back, not per entry. The
+entries' own size is sizeof(struct llinfo_nd6) in a pooled vector.
 
     nd6_mem.py [--mode amiga|hosted] [--system DIR] [--out DIR]
 Needs sudo -n (raw frames on aros0).
@@ -40,7 +40,7 @@ def csum(data):
 def send_ns(iface, target, first, count):
     """count NSes to target from fe80::a:0:0:N, N = first.. (run as root)"""
     t = socket.inet_pton(socket.AF_INET6, target)
-    group = bytes.fromhex("ff020000000000000000000000000001ff") + t[13:]
+    group = bytes.fromhex("ff0200000000000000000001ff") + t[13:]   # ff02::1:ffXX:XXXX
     gmac = b"\x33\x33" + group[12:]
     s = socket.socket(socket.AF_PACKET, socket.SOCK_RAW)
     s.bind((iface, 0))
@@ -52,7 +52,7 @@ def send_ns(iface, target, first, count):
         icmp = icmp[:2] + struct.pack("!H", csum(pseudo + icmp)) + icmp[4:]
         ip6 = struct.pack("!IHBB", 0x60000000, len(icmp), 58, 255) + src + group
         s.send(gmac + mac + b"\x86\xdd" + ip6 + icmp)
-        time.sleep(0.01)
+        time.sleep(0.004)
     s.close()
 
 
@@ -69,7 +69,9 @@ def main():
     import memcost
     amiga = a.mode == "amiga"
     exe = memcost.build(a.out, "nd6mem", os.path.join(HERE, "nd6mem.c"), amiga=amiga)
-    steps = [("n64", 0, 64), ("n256", 64, 192), ("n300", 256, 44), ("deleted", None, 300), ("again", 0, 256)]
+    steps = []
+    for n in (64, 256, 300):
+        steps += [("n%d" % n, 0, n), ("gone%d" % n, None, 15)]
     script = os.path.join(a.out, "s.script")
     with open(script, "w") as f:
         if amiga:
@@ -79,10 +81,7 @@ def main():
         for i, (label, first, n) in enumerate(steps, 1):
             # wait for the host's go, by polling for the file
             f.write("Lab w%d\nIf NOT EXISTS SYS:out/go%d\n Wait 1\n Skip w%d BACK\nEndIf\n" % (i, i, i))
-            if first is None:
-                f.write("C:nd6mem %s eth0 del %d >>SYS:out/mem.log\n" % (label, n))
-            else:
-                f.write("Wait 3\nC:nd6mem %s >>SYS:out/mem.log\n" % label)
+            f.write("Wait 1\nC:nd6mem %s >>SYS:out/mem.log\n" % label)
             f.write("Echo >SYS:out/ready%d r\n" % i)
         f.write("C:ip -6 neigh >SYS:out/neigh.log\n")
     env = dict(os.environ)
@@ -123,11 +122,15 @@ def main():
         if first is not None:
             subprocess.run(["sudo", "-n", sys.executable, os.path.abspath(__file__), "--send", "aros0", target,
                             str(first), str(n)], check=True)
+        else:
+            time.sleep(n)
         open(os.path.join(d, "go%d" % i), "w").close()
         if wait_for("ready%d" % i, 300) is None:
             print("no ready%d" % i)
             break
     p.wait()
+    if not os.path.exists(os.path.join(d, "mem.log")):    # the run's copy, after it ended
+        d = os.path.join(a.out, "aros", "out")
     rows = {}
     for line in open(os.path.join(d, "mem.log")):
         f = line.split()
@@ -138,7 +141,7 @@ def main():
     if base:
         for k, v in rows.items():
             v["taken"] = base["free"] - v["free"]
-        for x, y in (("rest", "n64"), ("n64", "n256"), ("rest", "n256"), ("rest", "again")):
+        for x, y in (("rest", "n64"), ("rest", "n256"), ("rest", "n300")):
             if x in rows and y in rows and rows[y]["rows"] != rows[x]["rows"]:
                 res["per_entry_%s_%s" % (x, y)] = round((rows[x]["free"] - rows[y]["free"]) /
                                                          (rows[y]["rows"] - rows[x]["rows"]), 1)
