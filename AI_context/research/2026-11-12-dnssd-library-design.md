@@ -207,7 +207,25 @@ e do cache passam a rodar junto com `dnssdtest`/interop como critério de aceita
   3.020 ms); Avahi viu o serviço vir e ir as duas vezes (goodbye). **m68k:** a ROM tem `task.resource` e o gancho funciona
   (some em < 20 ms também no A3000 emulado). Regressões na base nova: `dnssdtest` 68/68 hosted e m68k, interop TWO=1,
   saída IPv4 (route/ll/alias) ok, fixtures 44/45/16.
-- **Próximo:** passo 4 (objeto de registro canônico; `mdnsd.h` sem Bonami).
+- **Passo 4 feito (`94f6117b70`, 2026-11-13):** registro = `struct dnssd_reg` (`dnssd_reg.h/.c`, C puro): rótulo da
+  instância contado (UTF-8, ponto permitido), tipo e domínio em formato de fio, subtipos como rótulos, host substituído
+  com endereços IPv4/IPv6, porta, enlace; validado uma vez na criação (tipo `_x._tcp|_udp`, subtipos únicos e não
+  vazios, `fe80::` exige enlace, todo nome ≤ 255); renomeação "Nome (n)" cortada em início de caractere. O
+  `mdns_reg.c` mantém os algoritmos (sondagem, desempate §8.2, anúncio, respostas atrasadas, conhecidas, legado, tipos,
+  subtipos, proxy) com nomes de fio prontos (`rs_Name`, `rs_TypeName`, `rs_HostName`) comparados ao `qwire`/`wire` do
+  que chega: nenhum texto no meio. `mdnsd.h` sem Bonami: códigos `MDNSD_OK`/`MDNSD_ERR_*` (mesmos valores),
+  `MDNSD_HOST_MAX`, `MDNSD_TTL_MAX`; a porta BonAmi (mensagens, motores de descoberta/consulta) em `mdns_bonami.h`;
+  registros BonAmi viram canônicos em `mdns_client.c` (mantém a regra LDH de subtipo dela); `dnssd_server.c` monta o
+  registro direto dos rótulos da requisição. API do núcleo: `mdnsRegAddCanonical`, `UpdateRef` (endereços de fio,
+  TTL), `RemoveRef`, `RemoveOwner`, `Find`. Pelo `dnssd.library`, subtipo passa a aceitar qualquer rótulo não vazio
+  (RFC 6763 §7.1; antes a regra LDH da BonAmi). Aceitação: `dnssd_reg_test` (host ASan/UBSan, AROS hosted e m68k) 0
+  falhas; fixtures 44/45/16 (shim `MDNS_CANONICAL_REG`: a fixture registra pela porta BonAmi como a biblioteca);
+  `dnssdtest` 68/68 hosted e m68k (pegou um bug meu: a checagem de endereços do `UpdateRef` apontava para a struct que
+  `dnssd_reg_init()` zera); `dnssd_gone` 8/8 ×2 hosted e m68k com goodbye no Avahi; interop TWO=1 hosted e interop
+  m68k; saída IPv4 route/ll/alias ok. **m68k:** mdnsd texto +156 B, bss +4.352 B (`qwire[256]` das 16 perguntas e
+  `wire[256]` do registro analisado; o `qname` em texto sai quando ninguém mais o usar, passo 5), cada registro ~1,2 KB
+  a mais no heap (estimativa pelo layout: nomes de fio prontos).
+- **Próximo:** passo 5 (um cache só: `mdns_cache.c`, trazendo do `mdns_discovery.c` o que ele faz melhor).
 
 ### Entrega (decisão do usuário, 2026-11-12)
 

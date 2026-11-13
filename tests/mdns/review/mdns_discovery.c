@@ -466,8 +466,14 @@ static void subtype_local(void)
 
     init_local();
     service = (struct MDNSRegisteredService *)md.md_Services.lh_Head;
+#ifdef MDNS_CANONICAL_REG
+    service->rs_Reg.subtype_count = 1;
+    service->rs_Reg.subtype_len[0] = 6;
+    memcpy(service->rs_Reg.subtypes[0], "_L3840", 6);
+#else
     service->rs_SubtypeCount = 1;
     strcpy(service->rs_Subtypes[0], "_L3840");
+#endif
     ref = begin_type(0, NULL, "_L3840._sub._midi2._udp");
     mdnsDiscoveryTick(&md);
     CHECK(read_event(ref, &event) == MDNS_OK);

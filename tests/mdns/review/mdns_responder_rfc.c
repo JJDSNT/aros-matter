@@ -3,7 +3,11 @@
  * Exit 1 means a contract failed, 2 means invalid setup.
  */
 #include "mdns_exec_mock.h"
+#ifdef MDNS_CANONICAL_REG
+#include "mdns_bonami.h"
+#else
 #include "mdnsd.h"
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -43,6 +47,41 @@ static void own_message(struct MDNSIPCMsg *message)
 #endif
 }
 static UBYTE rx[MDNS_MAX_PACKET], tx[MDNS_MAX_PACKET];
+
+#ifdef MDNS_CANONICAL_REG
+/* Realignment step 4: a registration is canonical (dnssd_reg.h) and
+ * bonami.library's are made so in mdns_client.c; the fixtures go through
+ * that port as the library does. */
+static LONG client_call(struct MDNSDaemon *md, const struct MDNSIPCMsg *m,
+                        UWORD command)
+{
+    struct MDNSIPCMsg *message = (struct MDNSIPCMsg *)m;
+
+    message->mi_Command = command;
+    message->mi_Version = MDNS_IPC_VERSION;
+    message->mi_Msg.mn_Length = sizeof(*message);
+    mdnsClientMessage(md, message);
+    return message->mi_Result;
+}
+#define mdnsRegAdd(md, m)       client_call((md), (m), MDNS_IPC_REGISTER)
+#define mdnsRegUpdate(md, m)    client_call((md), (m), MDNS_IPC_UPDATE)
+#define mdnsRegRemove(md, m)    ((void)client_call((md), (m), MDNS_IPC_UNREGISTER))
+static const char *instance_text(const struct MDNSRegisteredService *service)
+{
+    static char text[64];
+
+    memcpy(text, service->rs_Reg.instance, service->rs_Reg.instance_len);
+    text[service->rs_Reg.instance_len] = '\0';
+    return text;
+}
+#define RS_INSTANCE(s)  instance_text(s)
+#define RS_PORT(s)      ((s)->rs_Reg.port)
+#define RS_TASK(s)      ((s)->rs_Owner)
+#else
+#define RS_INSTANCE(s)  ((s)->rs_Instance)
+#define RS_PORT(s)      ((s)->rs_Port)
+#define RS_TASK(s)      ((s)->rs_TaskID)
+#endif
 
 void NewList(struct List *list)
 {
@@ -466,9 +505,17 @@ static void enable_ipv6(struct MDNSDaemon *md)
 #ifdef MDNS_SUBTYPE_CORE
 static void enable_subtypes(struct MDNSRegisteredService *service)
 {
+#ifdef MDNS_CANONICAL_REG
+    service->rs_Reg.subtype_count = 2;
+    service->rs_Reg.subtype_len[0] = 6;
+    memcpy(service->rs_Reg.subtypes[0], "_L3840", 6);
+    service->rs_Reg.subtype_len[1] = 8;
+    memcpy(service->rs_Reg.subtypes[1], "_I001122", 8);
+#else
     service->rs_SubtypeCount = 2;
     strcpy(service->rs_Subtypes[0], "_L3840");
     strcpy(service->rs_Subtypes[1], "_I001122");
+#endif
 }
 #endif
 
@@ -614,8 +661,8 @@ int main(int argc, char **argv)
         at = record(packet, 12, "Session._midi2._udp.local", DNS_TYPE_SRV,
                     DNS_CLASS_IN_FLUSH, 60, data, length);
         receive(&md, packet, at);
-        printf("after SRV: instance='%s', state=%u\n", service->rs_Instance, service->rs_State);
-        failure = identical ? strcmp(service->rs_Instance, "Session") != 0 ||
+        printf("after SRV: instance='%s', state=%u\n", RS_INSTANCE(service), service->rs_State);
+        failure = identical ? strcmp(RS_INSTANCE(service), "Session") != 0 ||
             service->rs_State != MDNS_NAME_ANNOUNCED : service->rs_State != MDNS_NAME_PROBING;
     } else if (!strcmp(argv[1], "class-in") || !strcmp(argv[1], "class-any") ||
                !strcmp(argv[1], "class-ch") || !strcmp(argv[1], "opcode") ||
@@ -663,8 +710,8 @@ int main(int argc, char **argv)
         mdnsRegTick(&md);
         ticks += 50;
         mdnsRegTick(&md);
-        printf("after port update: port=%u, announcements=%u\n", service->rs_Port, announcements);
-        failure = service->rs_Port != 6000 || announcements < 2;
+        printf("after port update: port=%u, announcements=%u\n", RS_PORT(service), announcements);
+        failure = RS_PORT(service) != 6000 || announcements < 2;
     } else if (!strcmp(argv[1], "update-unchanged")) {
         /* An update that changes nothing, the way a client asks whether
            its handle is still known, sends nothing; one that changes the
@@ -676,7 +723,7 @@ int main(int argc, char **argv)
         own_message(&message);
         if (mdnsRegUpdate(&md, &message))
             abort();
-        message.mi_Port = service->rs_Port;
+        message.mi_Port = RS_PORT(service);
         if (mdnsRegUpdate(&md, &message))
             abort();
         ticks += 50;
@@ -684,7 +731,7 @@ int main(int argc, char **argv)
         ticks += 50;
         mdnsRegTick(&md);
         quiet = announcements;
-        message.mi_Port = (UWORD)(service->rs_Port + 1);
+        message.mi_Port = (UWORD)(RS_PORT(service) + 1);
         if (mdnsRegUpdate(&md, &message))
             abort();
         ticks += 50;
@@ -832,7 +879,7 @@ int main(int argc, char **argv)
             is_srv ? DNS_TYPE_SRV : DNS_TYPE_TXT, DNS_CLASS_IN_FLUSH,
             goodbye ? 0 : 60, data, length);
         receive(&md, packet, at);
-        failure = strcmp(service->rs_Instance, "Session") != 0 ||
+        failure = strcmp(RS_INSTANCE(service), "Session") != 0 ||
             service->rs_State != MDNS_NAME_ANNOUNCED;
     } else if (!strcmp(argv[1], "compressed-srv")) {
         memset(packet, 0, 12);
@@ -849,7 +896,7 @@ int main(int argc, char **argv)
         at = record(packet, at, "Session._midi2._udp.local", DNS_TYPE_SRV,
             DNS_CLASS_IN_FLUSH, 60, data, 8);
         receive(&md, packet, at);
-        failure = strcmp(service->rs_Instance, "Session") != 0;
+        failure = strcmp(RS_INSTANCE(service), "Session") != 0;
     } else if (!strcmp(argv[1], "local-rename")) {
         struct MDNSIPCMsg msg;
         unsigned suffix;
@@ -869,7 +916,7 @@ int main(int argc, char **argv)
         at = record(packet, 12, "Session._midi2._udp.local", DNS_TYPE_SRV,
             DNS_CLASS_IN_FLUSH, 60, data, length);
         receive(&md, packet, at);
-        failure = strcmp(service->rs_Instance, "Session (4)") != 0;
+        failure = strcmp(RS_INSTANCE(service), "Session (4)") != 0;
     } else if (!strcmp(argv[1], "reject-instance")) {
         struct MDNSIPCMsg msg;
         memset(&msg, 0, sizeof(msg));
@@ -933,7 +980,7 @@ int main(int argc, char **argv)
             abort();
         mdnsClientReap(&md);
         service = (struct MDNSRegisteredService *)md.md_Services.lh_Head;
-        failure |= service->rs_TaskID != 2 || service->rs_Node.ln_Succ->ln_Succ != NULL;
+        failure |= RS_TASK(service) != 2 || service->rs_Node.ln_Succ->ln_Succ != NULL;
     } else if (!strcmp(argv[1], "update-ttl")) {
         struct MDNSIPCMsg msg;
         memset(&msg, 0, sizeof(msg));
@@ -941,7 +988,7 @@ int main(int argc, char **argv)
         msg.mi_Handle = service->rs_ClientRef;
         msg.mi_Port = 6000;
         msg.mi_TTL = 4501;
-        failure = mdnsRegUpdate(&md, &msg) != MDNSERR_BADPARAM || service->rs_Port != 5673;
+        failure = mdnsRegUpdate(&md, &msg) != MDNSERR_BADPARAM || RS_PORT(service) != 5673;
         msg.mi_TTL = 60;
         failure |= mdnsRegUpdate(&md, &msg) != MDNS_OK || service->rs_TTL != 60;
     }

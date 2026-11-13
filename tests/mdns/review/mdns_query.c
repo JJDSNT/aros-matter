@@ -246,8 +246,14 @@ query_local_subtype(void)
 
     init_query();
     service = (struct MDNSRegisteredService *)daemon.md_Services.lh_Head;
+#ifdef MDNS_CANONICAL_REG
+    service->rs_Reg.subtype_count = 1;
+    service->rs_Reg.subtype_len[0] = 6;
+    memcpy(service->rs_Reg.subtypes[0], "_L3840", 6);
+#else
     service->rs_SubtypeCount = 1;
     strcpy(service->rs_Subtypes[0], "_L3840");
+#endif
     ref = begin("_L3840._sub._midi2._udp.local", DNS_TYPE_PTR, 0);
     CHECK(read_record(ref, &event) == MDNS_OK);
     CHECK(event.re_Type == DNS_TYPE_PTR && event.re_TTL == 4500);

@@ -76,6 +76,15 @@ def main():
         names = (*names, "dnssd_ipc_port.h")
     except (OSError, subprocess.CalledProcessError):
         pass
+    canonical = False
+    try:                                # canonical registrations (step 4)
+        source("dnssd_reg.h")
+        sources += ("dnssd_reg.c",)
+        names = (*names, "dnssd_reg.c", "dnssd_reg.h", "dnssd_model.h",
+                 "mdns_bonami.h")
+        canonical = True
+    except (OSError, subprocess.CalledProcessError):
+        pass
     for name in (*names,
                  "include/bonami/mdns.h", "include/libraries/bonamibase.h"):
         target = output / name
@@ -83,7 +92,8 @@ def main():
         target.write_bytes(source(name))
     binary = output / ("query" if args.query else
                        "discovery" if args.discovery else "responder-rfc")
-    reap = b"mdnsDiscoveryReap" in (output / "mdnsd.h").read_bytes()
+    reap = any(b"mdnsDiscoveryReap" in (output / h).read_bytes()
+               for h in ("mdnsd.h", "mdns_bonami.h") if (output / h).exists())
     flags = [os.environ.get("CC", "cc"), "-std=c99", "-O1", "-g", "-Wall", "-Wextra",
              "-Werror", "-Wno-unused-parameter", "-fno-strict-aliasing",
              "-fsanitize=address,undefined", "-fno-sanitize-recover=undefined",
@@ -97,6 +107,8 @@ def main():
         flags.append("-DMDNS_SUBTYPE_CORE")
     if reap:
         flags.append("-DMDNS_DISCOVERY_REAP")
+    if canonical:
+        flags.append("-DMDNS_CANONICAL_REG")
     fixture = ("mdns_query.c" if args.query else
                "mdns_discovery.c" if args.discovery else "mdns_responder_rfc.c")
     subprocess.run(flags + [str(fixtures / fixture),
