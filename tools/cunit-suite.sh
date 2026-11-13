@@ -3,7 +3,8 @@
 # socket/mmakefile.src) on hosted AROS with two taps (tools/tap-up.sh 0 and 1),
 # then print per suite "name basic-run/failed automated-run/failed", and the
 # suites with a failure or a missing run after "== FAIL".
-# AROS_SRC, AROS_BUILD as in aros-bld.sh; AROS_AROSTCP to boot another binary.
+# AROS_SRC, AROS_BUILD as in aros-bld.sh; AROS_AROSTCP to boot another binary;
+# PROTOCOLS (e.g. INET6) for a stack with only some families.
 set -u
 out=$1
 src=${AROS_SRC:-$HOME/AROS-ipv6}
@@ -13,7 +14,8 @@ mkdir -p "$out"
 # the stack does not start and every suite skips itself
 "$here/tap-up.sh" 0 >/dev/null && "$here/tap-up.sh" 1 >/dev/null || { echo "tap-up failed" >&2; exit 1; }
 script=$out/suite.script
-{ echo "Execute SYS:System/Network/AROSTCP/S/startnet"; echo "Wait 6"
+{ [ -n "${PROTOCOLS:-}" ] && echo "Echo \"PROTOCOLS=$PROTOCOLS\" >>SYS:System/Network/AROSTCP/db/general.config"
+  echo "Execute SYS:System/Network/AROSTCP/S/startnet"; echo "Wait 6"
   for t in $(sed -n '/CUNITSOCKETTESTFILES/,/^$/p' "$src/developer/debug/test/net/socket/mmakefile.src" | grep -o "cunit-net-[a-z0-9]*"); do
     a=""; [ "$t" = cunit-net-tcpinfo ] && a=" eth0"
     echo "SYS:Developer/Debug/Tests/cunit/net/socket/$t$a >SYS:out/${t#cunit-net-}.log"
