@@ -178,3 +178,14 @@ canônico e responder sobre ele, `mdnsd.h` sem Bonami; (5) um cache só; depois 
 
 Uso: o coordenador entra no lugar das minhas sessões; o `dnssd_model` no lugar do meu evento; as fixtures do responder
 e do cache passam a rodar junto com `dnssdtest`/interop como critério de aceitação.
+
+### Progresso do realinhamento
+
+- **Passo 0 (linha de base):** fixtures do Codex em `tests/mdns/review/` + `tools/review-mdns-responder.py`: 44/45/16
+  na árvore atual (igual à ponta do Codex). Única mudança: ponto no rótulo da instância é aceito (era regra legada).
+- **Passo 1 feito (`33c35348d7`):** todo evento é a mensagem do `dnssd_model` (versão 2: `ADDRESS`, `RECORD`,
+  `REGISTERED`, `END`, `LOST`; validação do que cada tipo carrega); `struct DNSSDEvent` = layout do modelo (116 B,
+  igual em x86_64 e m68k, sem ponteiro); nomes em formato de fio + `DNSSD_NameToText()`; `DNSSD_UserData` saiu,
+  `DNSSD_OperationID()` entrou; enumeração de tipos dá `TYPE`. `dnssd_model_test` (ASan/UBSan) ok; `dnssdtest`
+  68/68 hosted e m68k; fixtures 44/45/16; interop íntegra.
+- **Próximo:** passo 2 (envelope com tamanho + carga tipada no lugar da `DNSSDIPCMsg` fixa).

@@ -3,8 +3,8 @@
  *
  *   dnssdtest NAME [MISSING]
  *
- * Checks the public layout (the same offsets on every CPU but de_UserData's
- * size), the parameter checks, an asynchronous lookup of NAME (addresses
+ * Checks the public layout (mdnsd's canonical message: the same on every
+ * CPU), the parameter checks, an asynchronous lookup of NAME (addresses
  * with their interface, END OK), a lookup of MISSING (END TIMEOUT), a
  * lookup cancelled at once (nothing after the cancel), the synchronous
  * lookup of both, and that mdnsd keeps no session or operation afterwards.
@@ -50,16 +50,14 @@ print_address(const struct DNSSDAddress *a)
 static void
 layout(void)
 {
-    CHECK(offsetof(struct DNSSDEvent, de_Kind) == 6 &&
-          offsetof(struct DNSSDEvent, de_Result) == 12 &&
-          offsetof(struct DNSSDEvent, de_RRType) == 28 &&
-          offsetof(struct DNSSDEvent, de_Port) == 32 &&
-          offsetof(struct DNSSDEvent, de_Name) == 40 &&
-          offsetof(struct DNSSDEvent, de_Instance) == 48 &&
-          offsetof(struct DNSSDEvent, de_TXT) == 80 &&
-          offsetof(struct DNSSDEvent, de_Addresses) == 96 &&
-          offsetof(struct DNSSDEvent, de_UserData) == 104 &&
-          sizeof(struct DNSSDEvent) == 104 + sizeof(IPTR),
+    CHECK(sizeof(struct DNSSDEvent) == 116 &&
+          offsetof(struct DNSSDEvent, de_Kind) == 8 &&
+          offsetof(struct DNSSDEvent, de_Result) == 16 &&
+          offsetof(struct DNSSDEvent, de_Operation) == 28 &&
+          offsetof(struct DNSSDEvent, de_Port) == 48 &&
+          offsetof(struct DNSSDEvent, de_Name) == 52 &&
+          offsetof(struct DNSSDEvent, de_TXT) == 92 &&
+          offsetof(struct DNSSDEvent, de_Addresses) == 108,
           "layout DNSSDEvent (size %u)", (unsigned)sizeof(struct DNSSDEvent));
     CHECK(sizeof(struct DNSSDAddress) == 24 &&
           offsetof(struct DNSSDAddress, da_Interface) == 4 &&
@@ -68,6 +66,17 @@ layout(void)
 }
 
 #define PART(e, ref) ((const char *)(e) + (e)->ref.dr_Offset)
+
+/* A wire name of an event as text (DNSSD_NameToText()), "" if none. */
+static const char *
+text_of(const struct DNSSDEvent *e, const struct DNSSDRef *ref, char *buf)
+{
+    buf[0] = '\0';
+    if (ref->dr_Size != 0) {
+        DNSSD_NameToText((const UBYTE *)e + ref->dr_Offset, ref->dr_Size, buf, 256);
+    }
+    return buf;
+}
 
 /*
  * Reads events of one operation until one of kind (or the deadline);
@@ -88,14 +97,15 @@ wait_kind(DNSSDSessionRef s, struct MsgPort *port, UWORD kind, int seconds,
             if (rc != DNSSD_OK) {
                 break;
             }
-            printf("  event %u if=%lu name=%.*s instance=%.*s type=%.*s domain=%.*s"
-                   " target=%.*s port=%u txt=%lu rdata=%lu addrs=%u\n",
+            char t1[256], t2[256], t3[256], t4[256];
+
+            printf("  event %u if=%lu name=%s instance=%.*s type=%s domain=%s"
+                   " target=%s port=%u txt=%lu rdata=%lu addrs=%u\n",
                 e->de_Kind, (unsigned long)e->de_Interface,
-                (int)e->de_Name.dr_Size, PART(e, de_Name),
+                text_of(e, &e->de_Name, t1),
                 (int)e->de_Instance.dr_Size, PART(e, de_Instance),
-                (int)e->de_Type.dr_Size, PART(e, de_Type),
-                (int)e->de_Domain.dr_Size, PART(e, de_Domain),
-                (int)e->de_Target.dr_Size, PART(e, de_Target),
+                text_of(e, &e->de_Type, t2), text_of(e, &e->de_Domain, t3),
+                text_of(e, &e->de_Target, t4),
                 e->de_Port, (unsigned long)e->de_TXT.dr_Size,
                 (unsigned long)e->de_RData.dr_Size, e->de_AddressCount);
             if (e->de_Kind == kind) {
@@ -151,9 +161,25 @@ services(const char *host, const char *type, const char *instance,
         }
         found = e->de_Instance.dr_Size == strlen(instance) &&
             memcmp(PART(e, de_Instance), instance, strlen(instance)) == 0 &&
-            e->de_Interface != 0 && e->de_Domain.dr_Size == 5;
+            e->de_Interface != 0 && e->de_Domain.dr_Size == 7;
     }
     CHECK(found, "browse %s: ADD %s", type, instance);
+    DNSSD_Cancel(op);
+
+    /* the service types on the link (RFC 6763 section 9) */
+    CHECK(DNSSD_Browse(s, "_services._dns-sd._udp", &op, TAG_DONE) == DNSSD_OK,
+        "browse the service types");
+    for (n = 0, found = 0; n < 12 && !found; n++) {
+        char t[256];
+
+        e = wait_kind(s, mp, DNSSD_EVENT_TYPE, 6, buf, sizeof(buf));
+        if (e == NULL) {
+            break;
+        }
+        found = strcmp(text_of(e, &e->de_Type, t), type) == 0 &&
+            e->de_Instance.dr_Size == 0 && !(e->de_Flags & DNSSD_EVENTF_REMOVED);
+    }
+    CHECK(found, "the service types include %s", type);
     DNSSD_Cancel(op);
 
     CHECK(DNSSD_Resolve(s, instance, type, &op, TAG_DONE) == DNSSD_OK,
@@ -166,8 +192,9 @@ services(const char *host, const char *type, const char *instance,
 
     CHECK(DNSSD_QueryRecord(s, host, 1, &op, DNSSD_Timeout, 4, TAG_DONE) == DNSSD_OK,
         "query %s A", host);
-    e = wait_kind(s, mp, DNSSD_EVENT_ADD, 6, buf, sizeof(buf));
-    CHECK(e != NULL && e->de_RRType == 1 && e->de_RData.dr_Size == 4,
+    e = wait_kind(s, mp, DNSSD_EVENT_RECORD, 6, buf, sizeof(buf));
+    CHECK(e != NULL && e->de_RRType == 1 && e->de_RData.dr_Size == 4 &&
+          !(e->de_Flags & DNSSD_EVENTF_REMOVED),
         "query %s A: 4 bytes", host);
     DNSSD_Cancel(op);
     DNSSD_CloseSession(s);
@@ -178,7 +205,7 @@ services(const char *host, const char *type, const char *instance,
  * deadline in seconds); returns how many addresses and the END result. */
 static int
 drain(DNSSDSessionRef s, struct MsgPort *port, int seconds, LONG *endResult,
-      ULONG *events, IPTR userData)
+      ULONG *events, ULONG operation)
 {
     union {
         struct DNSSDEvent e;
@@ -202,7 +229,7 @@ drain(DNSSDSessionRef s, struct MsgPort *port, int seconds, LONG *endResult,
             }
             (*events)++;
             if (buf.e.de_Size != size || buf.e.de_Version != DNSSD_EVENT_VERSION ||
-                buf.e.de_Sequence != *events || buf.e.de_UserData != userData) {
+                (operation != 0 && buf.e.de_Operation != operation)) {
                 printf("  bad event header size=%lu/%lu version=%u seq=%lu\n",
                     (unsigned long)buf.e.de_Size, (unsigned long)size,
                     buf.e.de_Version, (unsigned long)buf.e.de_Sequence);
@@ -288,15 +315,15 @@ count_records(DNSSDSessionRef s, struct MsgPort *port, int seconds,
             if (DNSSD_ReadEvent(s, e, &size) != DNSSD_OK) {
                 break;
             }
-            if (e->de_Kind != DNSSD_EVENT_ADD && e->de_Kind != DNSSD_EVENT_REMOVE) {
+            if (e->de_Kind != DNSSD_EVENT_RECORD) {
                 continue;
             }
             printf("  %s type %u %lu bytes if=%lu\n",
-                e->de_Kind == DNSSD_EVENT_ADD ? "ADD" : "REMOVE", e->de_RRType,
+                !(e->de_Flags & DNSSD_EVENTF_REMOVED) ? "ADD" : "REMOVE", e->de_RRType,
                 (unsigned long)e->de_RData.dr_Size, (unsigned long)e->de_Interface);
             if (rdata == NULL || (e->de_RData.dr_Size == len &&
                     memcmp(PART(e, de_RData), rdata, len) == 0)) {
-                if (e->de_Kind == DNSSD_EVENT_ADD) {
+                if (!(e->de_Flags & DNSSD_EVENTF_REMOVED)) {
                     (*adds)++;
                 } else {
                     (*removes)++;
@@ -370,9 +397,13 @@ proxy(const char *type, const char *hostName, DNSSDSessionRef s, struct MsgPort 
             v6n += got[k].da_Family == DNSSD_FAMILY_IPV6;
         }
     }
-    CHECK(e != NULL && e->de_Target.dr_Size == 15 &&
-          memcmp(PART(e, de_Target), "proxyhost.local", 15) == 0 && v4n == 1 && v6n == 2,
+    {
+        char t[256];
+
+        CHECK(e != NULL && strcmp(text_of(e, &e->de_Target, t), "proxyhost.local") == 0 &&
+              v4n == 1 && v6n == 2,
           "proxy: resolve gives proxyhost.local, 1 IPv4 + 2 IPv6 (%d, %d)", v4n, v6n);
+    }
     DNSSD_Cancel(op);
 
     CHECK(DNSSD_QueryRecord(s, "proxyhost.local", 28, &q, TAG_DONE) == DNSSD_OK, "proxy: AAAA query");
@@ -403,12 +434,15 @@ proxy(const char *type, const char *hostName, DNSSDSessionRef s, struct MsgPort 
                 if (x->de_RData.dr_Size != 4) {
                     continue;
                 }
+                if (x->de_Kind != DNSSD_EVENT_RECORD) {
+                    continue;
+                }
                 if (memcmp(PART(x, de_RData), new4, 4) == 0) {
-                    addNew += x->de_Kind == DNSSD_EVENT_ADD;
-                    rmNew += x->de_Kind == DNSSD_EVENT_REMOVE;
+                    addNew += !(x->de_Flags & DNSSD_EVENTF_REMOVED);
+                    rmNew += (x->de_Flags & DNSSD_EVENTF_REMOVED) != 0;
                 } else if (memcmp(PART(x, de_RData), old4, 4) == 0) {
-                    addOld += x->de_Kind == DNSSD_EVENT_ADD;
-                    rmOld += x->de_Kind == DNSSD_EVENT_REMOVE;
+                    addOld += !(x->de_Flags & DNSSD_EVENTF_REMOVED);
+                    rmOld += (x->de_Flags & DNSSD_EVENTF_REMOVED) != 0;
                 }
             }
             if (GetMsg(mp) == NULL) {
@@ -584,9 +618,10 @@ main(int argc, char **argv)
     CHECK(DNSSD_LookupAddress(s, name, &op, DNSSD_Timeout, 0, TAG_DONE) == DNSSD_ERR_BADPARAM,
         "lookup timeout 0");
 
-    rc = DNSSD_LookupAddress(s, name, &op, DNSSD_Timeout, 3, DNSSD_UserData, 0x1234, TAG_DONE);
+    rc = DNSSD_LookupAddress(s, name, &op, DNSSD_Timeout, 3, TAG_DONE);
+    CHECK(DNSSD_OperationID(op) != 0, "an operation has its id");
     CHECK(rc == DNSSD_OK, "lookup %s (%ld)", name, (long)rc);
-    n = drain(s, port, 6, &end, &events, 0x1234);
+    n = drain(s, port, 6, &end, &events, DNSSD_OperationID(op));
     CHECK(n > 0 && end == DNSSD_OK, "lookup %s: %d addresses, end %ld", name, n, (long)end);
     DNSSD_Cancel(op);
 
