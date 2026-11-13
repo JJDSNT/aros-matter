@@ -11,7 +11,11 @@ out=$1; mkdir -p "$out"
 root=$(cd "$(dirname "$0")/../.." && pwd)
 "$root/tools/tap-up.sh" >/dev/null
 [ "${TWO:-0}" = 1 ] && { "$root/tools/tap-up.sh" 1 >/dev/null; export AROS_TAP2_IP=192.168.167.2; }
-host=$(hostname)
+# the name the host's Avahi holds on aros0: after a conflict (another
+# machine of the same name, e.g. Windows under WSL) it is not hostname's
+host=$(avahi-resolve -4 -a 192.168.166.1 2>/dev/null | awk '{print $2}')
+host=${host%.local}
+[ -n "$host" ] || host=$(hostname)
 mode=${MODE:-hosted}
 pre=""
 [ "$mode" = amiga ] && pre="Delete >NIL: SYS:System/Network/AROSTCP/db/services.d/timesync QUIET"
