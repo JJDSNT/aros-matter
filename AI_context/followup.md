@@ -88,7 +88,7 @@ se o #2218 ainda estiver aberto, tudo entra nele (um comentário explicando o es
 
 **Enviado ao #2218 (2026-11-13):** força-push `67f7666bfd` (8 commits), descrição e título novos, comentário consolidado (correções comprovadas / limitações / custo com a tabela do ND6; teto global deixado ao Kal; B39 e B40 só descritos, PRs separados). mdnsd rebaseado: `cff8996a8d`. Aguarda o Kal.
 
-**3ª revisão do Kal no #2218 (2026-11-13, em andamento):** 1) protótipos (64-bit: `in_readyia` truncado por
+**3ª revisão do Kal no #2218 (2026-11-13) — respondida, força-push `60a074e222`:** 1) protótipos (64-bit: `in_readyia` truncado por
 `cltq`) — corrigido com protótipos canônicos nos cabeçalhos donos, `-Werror=implicit-function-declaration` limpo nos
 arquivos do PR; 2) só IPv6: `cmsg` era o teste (índice por socket `AF_INET`, do nosso commit `IP_RECVIF`), `acd`
 LIMITS `ST_V4`, `pmtu6` TWO_LINKS a reproduzir; 3) vizinhos estáticos mantidos no link down (e os dos nossos
@@ -97,6 +97,14 @@ endereços), tudo sai no detach — **testado pelo caminho real**: `tap.device` 
 removida 0/0; controle sem a correção falha no down); 4) `if_fullname()` no lugar de `snprintf` (inet6.prot −6,6 KB
 hosted); 5) `nd6_maxnbrs` por `AvailMem()` 16–256, limite global de pacotes retidos (descarta o mais antigo),
 `nd6_maxqueuelen` em uso, netvars com faixa, `cunit-net-nd6limits`. A2065 (LANCE) não relata enlace.
+Prova do ponto 1 em execução: hosted com 2 GB (RAM alta), `pmtu4` cai sem o protótipo ("Program failed") e passa com
+ele. `pmtu6` TWO_LINKS **não reproduz** (só IPv6, sozinho e na bateria, memória padrão e 2 GB, tap antigo e novo: A 1400
+índice 2 → B 1300 índice 3) — dito ao Kal com as condições. Baterias: dual 68/0, só IPv6 68/0 (5 IPv4 se pulam).
+m68k: `inet6.prot` −6.316 B (agora +2.760 sobre o master), `inet.prot` +4.860; limites 256/256/16 no A3000; hosted 16 MB →
+92. Pressão de pacotes retidos (`nd6_mem.py hold`): 512 envios → 256 entradas e 256 clusters (o teto), após expiração
+clusters de volta a 32, pool fica em 796 KB (teto 1 MB). Infra nova: `tap.device` relata o enlace
+(`review/tap-link-events` `6e64e46c66`, PR próprio, não enviado), `tests/tap/onevent.sh` 10/10 (direto no driver; achou o
+`ln_Type` não marcado), `tests/ipv6/nd6_link.sh`. Fila depois do #2218: tap, B40, B39, B41.
 
 **Apresentação ao Kal:** separar correção comprovada (incluindo os cenários que falhavam), limitação conhecida (zona nas
 rotas de PMTU IPv6) e custo medido.
