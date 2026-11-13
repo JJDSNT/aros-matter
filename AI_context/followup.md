@@ -27,6 +27,9 @@ se o #2218 ainda estiver aberto, tudo entra nele (um comentário explicando o es
 2. **PMTU:** mesmo link-local em dois enlaces — sem corrupção entre eles, e recuperação depois que a rota dinâmica expira
    (teste novo, lendo a rota pelo socket de roteamento: a de A existe; B não é registrado; a de A some; B cria a sua no
    enlace de B com o MTU certo; tabela de rotas com zona fica como pendência à parte);
+   ✅ (2026-11-13) `cunit-net-pmtu6` "the same link-local destination on two links" (rota de A apagada como na
+   expiração): A 1400 na interface 2; B não registrado enquanto A existe; B 1300 na interface 3 depois. Bench
+   `tests/ipv6/pmtu_expiry.sh` com a **expiração real** (600 s): A 1400/if 2 → rota de A sumiu → B 1300/if 3, PASS;
 3. **ABI v11:** ✅ (2026-11-13) núcleo novo + módulos v10 (build da linha mDNS, hashes conferidos): carregam e as suítes
    que passam pela tabela de serviços dão 0 falhas (udp, inet6, addr6, adminmod, module, cmsg, mcast6, scope6,
    localhost); só o caso link-local do `pmtu6` falha, funcionalidade do B5 que o `inet6` antigo não tem. Núcleo v10 +
