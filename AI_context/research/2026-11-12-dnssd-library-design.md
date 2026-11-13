@@ -130,3 +130,10 @@ Gatilho: o registro em nome de outro host saiu na API nova só com IPv4 (`DNSSD_
 | A7 | `md_HostAddr` | "o endereço do host" IPv4 único | só semente aleatória; sai |
 
 Ordem: A1–A4 agora (antes da migração das ferramentas), com testes hosted e m68k nas duas famílias; A5 junto; A6/A7 no R7.
+
+**Feito (2026-11-12, `77276cbd38`):** A1 (proxy com até 8 endereços IPv4/IPv6, link-local com zona, sondagem e
+desempate do nome do host, `DNSSD_ERR_CONFLICT`, troca de endereços com goodbye), A2 (TXT alocado, até 8900 B;
+serviço maior que um MTU vai em pacote próprio, RFC 6762 §17), A3 (`mdnsParseRecord()` não rejeita mais RDATA
+> 512 B — antes descartava o pacote inteiro; cache até o tamanho do pacote), A4, A5 (só `local`). Achado junto: o
+goodbye de registro próprio nunca saía do cache. `dnssdtest` 63/63 hosted e m68k; o host (Avahi) resolve
+`proxyhost.local` em IPv4 e IPv6, vê o endereço trocado e o TXT de 2000 B.

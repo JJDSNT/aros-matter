@@ -21,6 +21,7 @@
 
 struct Library *DNSSDBase;
 static int fails, passes;
+static ULONG link_index;        /* the link the host's addresses came by */
 
 #define CHECK(cond, ...) do { \
     if (cond) { passes++; printf("PASS "); } else { fails++; printf("FAIL "); } \
@@ -245,6 +246,224 @@ status(ULONG *inc, ULONG *sessions, ULONG *ops)
 }
 
 
+
+static void
+v4(struct DNSSDAddress *a, int last)
+{
+    memset(a, 0, sizeof(*a));
+    a->da_Family = DNSSD_FAMILY_IPV4;
+    a->da_Length = 4;
+    a->da_Bytes[0] = 192; a->da_Bytes[1] = 168; a->da_Bytes[2] = 166; a->da_Bytes[3] = last;
+}
+
+static void
+v6(struct DNSSDAddress *a, int linklocal, ULONG zone)
+{
+    memset(a, 0, sizeof(*a));
+    a->da_Family = DNSSD_FAMILY_IPV6;
+    a->da_Length = 16;
+    if (linklocal) {
+        a->da_Bytes[0] = 0xfe; a->da_Bytes[1] = 0x80;
+    } else {
+        a->da_Bytes[0] = 0x20; a->da_Bytes[1] = 0x01; a->da_Bytes[2] = 0x0d; a->da_Bytes[3] = 0xb8;
+    }
+    a->da_Bytes[15] = 0x77;
+    a->da_Interface = zone;
+}
+
+/* Reads events for up to seconds; counts ADD and REMOVE of rdata (len
+ * bytes), or of any record if rdata is NULL. */
+static void
+count_records(DNSSDSessionRef s, struct MsgPort *port, int seconds,
+              const UBYTE *rdata, ULONG len, int *adds, int *removes)
+{
+    static UBYTE buf[4096];
+    int ticks = seconds * 10;
+
+    while (ticks-- > 0) {
+        for (;;) {
+            ULONG size = sizeof(buf);
+            struct DNSSDEvent *e = (struct DNSSDEvent *)buf;
+
+            if (DNSSD_ReadEvent(s, e, &size) != DNSSD_OK) {
+                break;
+            }
+            if (e->de_Kind != DNSSD_EVENT_ADD && e->de_Kind != DNSSD_EVENT_REMOVE) {
+                continue;
+            }
+            printf("  %s type %u %lu bytes if=%lu\n",
+                e->de_Kind == DNSSD_EVENT_ADD ? "ADD" : "REMOVE", e->de_RRType,
+                (unsigned long)e->de_RData.dr_Size, (unsigned long)e->de_Interface);
+            if (rdata == NULL || (e->de_RData.dr_Size == len &&
+                    memcmp(PART(e, de_RData), rdata, len) == 0)) {
+                if (e->de_Kind == DNSSD_EVENT_ADD) {
+                    (*adds)++;
+                } else {
+                    (*removes)++;
+                }
+            }
+        }
+        if (GetMsg(port) == NULL) {
+            Delay(5);
+        }
+    }
+}
+
+/*
+ * Register for another host, both families: an IPv4, a global IPv6 and a
+ * link-local IPv6 with its zone. Its AAAA are found here, all the
+ * addresses come with Resolve; the IPv4 replaced by an update goes
+ * (REMOVE) and the new one comes; bad address sets are refused; a host
+ * name another host has ends the registration with CONFLICT. Left
+ * registered (*held) for the host to look at.
+ */
+static void
+proxy(const char *type, const char *hostName, DNSSDSessionRef s, struct MsgPort *mp,
+      DNSSDOperationRef *held)
+{
+    static UBYTE buf[4096];
+    static const UBYTE old4[4] = { 192, 168, 166, 77 }, new4[4] = { 192, 168, 166, 78 };
+    struct DNSSDAddress a[3], bad[9];
+    DNSSDOperationRef op = NULL, q = NULL, c = NULL;
+    struct DNSSDEvent *e;
+    int adds = 0, removes = 0, i, v4n = 0, v6n = 0;
+    ULONG k;
+
+    v4(&a[0], 77);
+    v6(&a[1], 0, 0);
+    v6(&a[2], 1, link_index);
+    CHECK(link_index != 0, "proxy: the link's index (%lu)", (unsigned long)link_index);
+
+    v6(&bad[0], 1, 0);
+    CHECK(DNSSD_Register(s, "Bad.Proxy", type, 7781, &op, DNSSD_Host, (IPTR)"badproxy",
+        DNSSD_HostAddress, (IPTR)&bad[0], TAG_DONE) == DNSSD_ERR_BADPARAM,
+        "proxy: link-local with no zone refused");
+    {
+        struct TagItem t[12];
+
+        t[0].ti_Tag = DNSSD_Host;
+        t[0].ti_Data = (IPTR)"badproxy";
+        for (i = 0; i < 9; i++) {
+            v4(&bad[i], 100 + i);
+            t[1 + i].ti_Tag = DNSSD_HostAddress;
+            t[1 + i].ti_Data = (IPTR)&bad[i];
+        }
+        t[10].ti_Tag = TAG_DONE;
+        CHECK(DNSSD_RegisterA(s, "Bad.Proxy", type, 7781, &op, t) == DNSSD_ERR_BADPARAM,
+            "proxy: nine addresses refused");
+    }
+
+    CHECK(DNSSD_Register(s, "Proxy.Test", type, 7780, held, DNSSD_Host, (IPTR)"proxyhost",
+        DNSSD_HostAddress, (IPTR)&a[0], DNSSD_HostAddress, (IPTR)&a[1],
+        DNSSD_HostAddress, (IPTR)&a[2], TAG_DONE) == DNSSD_OK, "proxy: register, 3 addresses");
+    e = wait_kind(s, mp, DNSSD_EVENT_REGISTERED, 10, buf, sizeof(buf));
+    CHECK(e != NULL, "proxy: registered");
+
+    CHECK(DNSSD_Resolve(s, "Proxy.Test", type, &op, TAG_DONE) == DNSSD_OK, "proxy: resolve");
+    e = wait_kind(s, mp, DNSSD_EVENT_RESOLVED, 6, buf, sizeof(buf));
+    if (e != NULL) {
+        const struct DNSSDAddress *got = (const struct DNSSDAddress *)PART(e, de_Addresses);
+
+        for (k = 0; k < e->de_AddressCount; k++) {
+            print_address(&got[k]);
+            v4n += got[k].da_Family == DNSSD_FAMILY_IPV4;
+            v6n += got[k].da_Family == DNSSD_FAMILY_IPV6;
+        }
+    }
+    CHECK(e != NULL && e->de_Target.dr_Size == 15 &&
+          memcmp(PART(e, de_Target), "proxyhost.local", 15) == 0 && v4n == 1 && v6n == 2,
+          "proxy: resolve gives proxyhost.local, 1 IPv4 + 2 IPv6 (%d, %d)", v4n, v6n);
+    DNSSD_Cancel(op);
+
+    CHECK(DNSSD_QueryRecord(s, "proxyhost.local", 28, &q, TAG_DONE) == DNSSD_OK, "proxy: AAAA query");
+    count_records(s, mp, 4, NULL, 0, &adds, &removes);
+    CHECK(adds == 2, "proxy: 2 AAAA (%d)", adds);
+    DNSSD_Cancel(q);
+
+    CHECK(DNSSD_QueryRecord(s, "proxyhost.local", 1, &q, TAG_DONE) == DNSSD_OK, "proxy: A query");
+    adds = removes = 0;
+    count_records(s, mp, 3, old4, 4, &adds, &removes);
+    CHECK(adds == 1, "proxy: A 192.168.166.77");
+    v4(&a[0], 78);
+    CHECK(DNSSD_Update(*held, DNSSD_HostAddress, (IPTR)&a[0], DNSSD_HostAddress, (IPTR)&a[1],
+        DNSSD_HostAddress, (IPTR)&a[2], TAG_DONE) == DNSSD_OK, "proxy: update the addresses");
+    {
+        int addNew = 0, rmNew = 0, addOld = 0, rmOld = 0;
+        static UBYTE ev[4096];
+        int ticks = 40;
+
+        while (ticks-- > 0) {
+            for (;;) {
+                ULONG size = sizeof(ev);
+                struct DNSSDEvent *x = (struct DNSSDEvent *)ev;
+
+                if (DNSSD_ReadEvent(s, x, &size) != DNSSD_OK) {
+                    break;
+                }
+                if (x->de_RData.dr_Size != 4) {
+                    continue;
+                }
+                if (memcmp(PART(x, de_RData), new4, 4) == 0) {
+                    addNew += x->de_Kind == DNSSD_EVENT_ADD;
+                    rmNew += x->de_Kind == DNSSD_EVENT_REMOVE;
+                } else if (memcmp(PART(x, de_RData), old4, 4) == 0) {
+                    addOld += x->de_Kind == DNSSD_EVENT_ADD;
+                    rmOld += x->de_Kind == DNSSD_EVENT_REMOVE;
+                }
+            }
+            if (GetMsg(mp) == NULL) {
+                Delay(5);
+            }
+        }
+        CHECK(addNew == 1 && rmOld == 1 && rmNew == 0,
+            "proxy: after the update .78 ADD (%d), .77 REMOVE (%d)", addNew, rmOld);
+    }
+    DNSSD_Cancel(q);
+
+    if (hostName != NULL) {
+        struct DNSSDAddress x;
+
+        v4(&x, 99);
+        CHECK(DNSSD_Register(s, "Conflict.Test", type, 7782, &c, DNSSD_Host, (IPTR)hostName,
+            DNSSD_HostAddress, (IPTR)&x, TAG_DONE) == DNSSD_OK, "proxy: register for %s", hostName);
+        e = wait_kind(s, mp, DNSSD_EVENT_END, 12, buf, sizeof(buf));
+        CHECK(e != NULL && e->de_Result == DNSSD_ERR_CONFLICT,
+            "proxy: %s is the host's: CONFLICT (%ld)", hostName,
+            e != NULL ? (long)e->de_Result : 0L);
+        DNSSD_Cancel(c);
+    }
+}
+
+/* A TXT of 2000 bytes (RFC 6763 section 6.2 allows up to 8900): registered,
+ * and resolved here whole. */
+static void
+big_txt(const char *type, DNSSDSessionRef s, struct MsgPort *mp, DNSSDOperationRef *held)
+{
+    static UBYTE txt[2000], buf[4096];
+    DNSSDOperationRef op = NULL;
+    struct DNSSDEvent *e;
+    int i;
+
+    for (i = 0; i < 2000; i += 200) {
+        txt[i] = 199;
+        memset(txt + i + 1, 'a' + i / 200, 199);
+        txt[i + 1] = 'k';
+        txt[i + 2] = '=';
+    }
+    CHECK(DNSSD_Register(s, "Big.Txt", type, 7783, held, DNSSD_TXT, (IPTR)txt,
+        DNSSD_TXTLength, sizeof(txt), TAG_DONE) == DNSSD_OK, "big TXT: register 2000 bytes");
+    e = wait_kind(s, mp, DNSSD_EVENT_REGISTERED, 8, buf, sizeof(buf));
+    CHECK(e != NULL, "big TXT: registered");
+    CHECK(DNSSD_Resolve(s, "Big.Txt", type, &op, TAG_DONE) == DNSSD_OK, "big TXT: resolve");
+    e = wait_kind(s, mp, DNSSD_EVENT_RESOLVED, 6, buf, sizeof(buf));
+    CHECK(e != NULL && e->de_TXT.dr_Size == sizeof(txt) &&
+          memcmp(PART(e, de_TXT), txt, sizeof(txt)) == 0, "big TXT: resolved whole (%lu)",
+          e != NULL ? (unsigned long)e->de_TXT.dr_Size : 0UL);
+    DNSSD_Cancel(op);
+}
+
+static const char *hostName;    /* the host on the link's name, its first label */
+
 /*
  * Register: an instance with a dot, binary TXT and a subtype; it is found
  * here (Browse, Resolve), updated, refused twice, renamed on a conflict
@@ -259,7 +478,8 @@ registration(const char *type, const char *hostType, int hold)
     static const UBYTE txt2[] = { 6, 'v','e','r','s','=','3' };
     struct MsgPort *mp = CreateMsgPort();
     DNSSDSessionRef s = NULL;
-    DNSSDOperationRef reg = NULL, dup = NULL, conflict = NULL, op = NULL;
+    DNSSDOperationRef reg = NULL, dup = NULL, conflict = NULL, op = NULL, proxyOp = NULL;
+    DNSSDOperationRef bigOp = NULL;
     struct DNSSDEvent *e;
     BPTR fh;
     int n, found = 0;
@@ -306,12 +526,20 @@ registration(const char *type, const char *hostType, int hold)
               memcmp(PART(e, de_Instance), "HostTest (2)", 12) == 0,
               "renamed HostTest (2)");
     }
+    proxy(type, hostType != NULL ? hostName : NULL, s, mp, &proxyOp);
+    big_txt(type, s, mp, &bigOp);
     fh = Open("SYS:out/registered", MODE_NEWFILE);
     if (fh != BNULL) {
         Close(fh);
     }
     Delay(hold * 50);
     DNSSD_Cancel(reg);
+    if (proxyOp != NULL) {
+        DNSSD_Cancel(proxyOp);
+    }
+    if (bigOp != NULL) {
+        DNSSD_Cancel(bigOp);
+    }
     if (conflict != NULL) {
         DNSSD_Cancel(conflict);
     }
@@ -404,9 +632,23 @@ main(int argc, char **argv)
     rc = DNSSD_LookupAddressSync(name, addrs, &count, DNSSD_Family, DNSSD_FAMILY_IPV4, TAG_DONE);
     CHECK(rc == DNSSD_OK && count == 1 && addrs[0].da_Family == DNSSD_FAMILY_IPV4,
         "sync %s IPv4, one slot (%ld)", name, (long)rc);
+    if (rc == DNSSD_OK && count == 1) {
+        link_index = addrs[0].da_Interface;
+    }
     status(&inc2, &sessions, &ops);
     CHECK(sessions == 0 && ops == 0, "status after sync: sessions %lu operations %lu",
         (unsigned long)sessions, (unsigned long)ops);
+    {
+        /* "palerma.local": "palerma" */
+        static char label[64];
+        int k;
+
+        for (k = 0; k < 63 && name[k] != '\0' && name[k] != '.'; k++) {
+            label[k] = name[k];
+        }
+        label[k] = '\0';
+        hostName = label;
+    }
     if (type != NULL) {
         services(name, type, "HostTest", 9999, "vers=1");
         services(name, type, "Dot.Test", 9998, "path=/a b");
