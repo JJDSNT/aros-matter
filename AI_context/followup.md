@@ -177,8 +177,10 @@ Estados: **aberto** · **em correção** (alguém trabalhando) · **corrigido (l
 
 - **B42** (troca de hostname sem reconfiguração não chega ao mdnsd; desde `db1826863d`): resolver **junto da integração
   do `.local` no `resolver.atcp`** (passo 5 do desenho, PR do AROSTCP depois do #2218), que depende do nome atual do
-  mdnsd. Duas partes: o AROSTCP acorda os assinantes de `SBTC_SIG_ADDRESS_CHANGE_MASK` também em
-  `Miami_sethostname()`/ARexx; o mdnsd relê o nome a cada despertar/olhada, não só quando o inventário muda. Teste:
+  mdnsd. Duas partes: o AROSTCP avisa a troca de hostname em `Miami_sethostname()`/ARexx — de preferência por uma
+  notificação própria (ex.: um `SBTC_SIG_HOSTNAME_CHANGE_MASK`), não sobrecarregando o sinal de troca de endereço
+  (decisão a tomar no PR do AROSTCP, com o Kal); o mdnsd relê o nome quando avisado, não só quando o inventário muda.
+  **Não implementar agora** (usuário, 2026-11-14). Teste:
   trocar o hostname por `Miami_sethostname()` sem reconfiguração e ver o mdnsd anunciar o novo.
 - **Provedor canônico de registros locais** (investigação futura, fora do PR do mDNS por decisão do usuário): medir
   três benefícios possíveis antes de decidir — (1) memória residente (os registros locais copiados no cache: host e
