@@ -40,3 +40,5 @@ echo "alias errors: $(cat "$o/alias.err" 2>/dev/null | grep -c .) (IPv4), $(cat 
 echo "before:          ifconfig -a eth1 $(has if0.log '^eth1:'), ip addr eth1 $(has ip0.log ': eth1:')"
 echo "$n IPv4 aliases: ifconfig -a eth1 $(has if4.log '^eth1:'), ip addr eth1 $(has ip4.log ': eth1:')"
 echo "200 IPv6:        ip addr shows $(grep -c 'inet6 2001:db8::' "$o/ip6.log" 2>/dev/null) of 200, eth1 $(has ip6.log ': eth1:')"
+# B45 (IPv4 aliases shown, each with its own /32): 0 before the fix
+echo "aliases shown:   ifconfig -a $(grep -c 'inet 10\.9\..* netmask 0xffffffff' "$o/if4.log" 2>/dev/null) of $n, ip addr $(grep -c 'inet 10\.9\..*/32' "$o/ip4.log" 2>/dev/null) of $n"
