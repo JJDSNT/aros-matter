@@ -3,7 +3,9 @@
  * Exit 1 means a contract failed, 2 means invalid setup.
  */
 #include "mdns_exec_mock.h"
-#ifdef MDNS_CANONICAL_REG
+#if defined(MDNS_NO_BONAMI_PORT)
+#include "mdnsd.h"
+#elif defined(MDNS_CANONICAL_REG)
 #include "mdns_bonami.h"
 #else
 #include "mdnsd.h"
@@ -30,6 +32,10 @@ static struct Task owner;
 static ULONG live_task_id = 1;
 
 struct Task *FindTaskByPID(ULONG id) { return id == live_task_id ? &owner : NULL; }
+#ifdef MDNS_NO_BONAMI_PORT
+/* D8: bonami.library is gone; the cases register through an adapter */
+#include "mdns_reg_adapter.h"
+#endif
 /* Lent requests come back here; the fixtures check order and count. */
 static struct Message *replied[16];
 static unsigned replies;
@@ -49,7 +55,23 @@ static void own_message(struct MDNSIPCMsg *message)
 }
 static UBYTE rx[MDNS_MAX_PACKET], tx[MDNS_MAX_PACKET];
 
-#ifdef MDNS_CANONICAL_REG
+#if defined(MDNS_NO_BONAMI_PORT)
+#define mdnsRegAdd(md, m)       adapter_add((md), (m))
+#define mdnsRegUpdate(md, m)    adapter_update((md), (m))
+#define mdnsRegRemove(md, m)    adapter_remove((md), (m))
+#define mdnsClientReap(md)      adapter_reap(md)
+static const char *instance_text(const struct MDNSRegisteredService *service)
+{
+    static char text[64];
+
+    memcpy(text, service->rs_Reg.instance, service->rs_Reg.instance_len);
+    text[service->rs_Reg.instance_len] = '\0';
+    return text;
+}
+#define RS_INSTANCE(s)  instance_text(s)
+#define RS_PORT(s)      ((s)->rs_Reg.port)
+#define RS_TASK(s)      adapter_owner((s)->rs_ClientRef)
+#elif defined(MDNS_CANONICAL_REG)
 /* Realignment step 4: a registration is canonical (dnssd_reg.h) and
  * bonami.library's are made so in mdns_client.c; the fixtures go through
  * that port as the library does. */
@@ -450,6 +472,9 @@ static struct MDNSRegisteredService *setup(struct MDNSDaemon *md, ULONG ttl)
     md->md_TxBuf = tx;
     md->md_RxBuf = rx;
     md->md_NextHandle = 1;
+#ifdef MDNS_NO_BONAMI_PORT
+    memset(adapter_owners, 0, sizeof(adapter_owners));
+#endif
     memset(&message, 0, sizeof(message));
     strcpy(message.mi_Name, "Session");
     strcpy(message.mi_ServiceType, "_midi2._udp");

@@ -240,8 +240,28 @@ e do cache passam a rodar junto com `dnssdtest`/interop como critério de aceita
   **m68k:** texto −3.360 B; `struct MDNSDiscovery` 223.300 → 117.990 B (−105 KB de heap, alocado no primeiro browse
   BonAmi; o resto é a fila de eventos por sessão da API BonAmi, 16 × 8 × 626 B, que sai no D8). O `qname` em texto
   ainda serve ao `mdns_host.c` e ao `mdns_query.c` (BonAmi): sai no D8.
-- **Próximo:** D8 (migrar a ferramenta `dnssd`, Nearby, Share, Handshake e `netmidid` para `dnssd.library`; retirar a
-  BonAmi) e o PR de corte único com o aval do usuário.
+- **D8 feito (2026-11-14), commits locais:** `498225056e` `dnssd.library`: `DNSSD_TimeToLive` (Register/Update, campo
+  `ttl` no envelope, 136 B) e Resolve com `DNSSD_Timeout` 0 = até cancelar (flag no envelope); limites de operações
+  ligados à máquina (m68k 24/48, outros 64/128). `bfb20de2a6` ferramentas sobre a biblioteca, `ba_*` → `sd_*` (pedido do
+  usuário: nome sem BonAmi), AutoDoc em cada comando; todos os endereços IPv4/IPv6 (-Z escreve AAAA), TXT binário (`\xNN`),
+  -P com IPv6, e o browse **acompanha** as instâncias (UPDATE quando endereço/porta/host/TXT mudam, como a BonAmi fazia;
+  questão levantada pelo usuário): 16 seguidas por resolve até cancelar, o resto resolvido uma vez (4 de cada vez) e
+  seguido quando abre vaga. `a053d46cd6` `netmidid` redesenhado (opinião do ChatGPT + revisão): orientado a eventos (sinal
+  da sessão no `WaitSelect`), todos os endereços, peer seguido, nome próprio pelo `REGISTERED` (corrige: renomeado
+  "AROS MIDI (2)" passava a se ver como peer), sessão × encarnação. Transportes do netmidid continuam só IPv4 (PR próprio).
+  `d6a04bc658` sai a `bonami.library`, headers, porta `BonAmi`, `mdns_client/discovery/query.c`, `DISCOVERY.md`, código
+  morto. `7e5eb1fa08` créditos à amigazen (pedido do usuário): `mdns_dns.h` sem aviso desde `db1826863d` ganhou o da
+  amigazen; LICENSE com os dois titulares; README diz o que deriva da Bonami. Aceitação: `tests/mdns/tools.sh` (todas as
+  verificações, inclusive TTL 45 no fio, proxy IPv6, TXT binário, UPDATE), `tests/mdns/netmidid.sh` 13/13 (conflito,
+  peer IPv4+IPv6, goodbye, porta nova, TTL 60), fixtures do responder 44/44 por um adaptador da fixture (descoberta e
+  consulta aposentadas), `dnssd_ipc_test` 0 falhas; hosted `dnssdtest` 68/68, `dnssd_gone`, interop TWO=1; m68k
+  `dnssdtest` 68/68, `dnssd_gone`, interop. **m68k:** mdnsd texto 60.484 → 48.094 B (arquivo 87.540 → 70.980), a
+  `bonami.library` sai, `dnssd.library` 20.048 B. Achados do teste corrigidos no próprio teste: `avahi-browse -p` escapa
+  espaço/parênteses (`\032`, `\040`, `\041`) e precisa de `-k`.
+- **Antes do PR (pendente):** decisão do usuário sobre retirar a Bonami de vez ou manter uma Bonami 40.1 pura (Kal objetou
+  a estender, não a manter); rebase sobre o master (hoje `f04bb2c13e`) depois do merge do #2218 (o mdnsd depende do
+  `IP_PKTINFO` dele); limpar o histórico (o `fixup!` `c98621239f`, agrupamento); Codacy/cppcheck; tools.sh/netmidid.sh
+  no m68k (só hosted hoje); aval do usuário. `.local` no `resolver.atcp` é PR separado do AROSTCP.
 
 ### Entrega (decisão do usuário, 2026-11-12)
 

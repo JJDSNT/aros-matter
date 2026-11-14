@@ -56,18 +56,33 @@ def main():
         target.write_text('#include "mdns_exec_mock.h"\n')
     sources = ("mdns_dns.c", "mdns_host.c", "mdns_reg.c", "mdns_packet.c",
                "dnssd_link.c")
-    ipc = source("mdns_ipc.h").decode()
+    try:
+        ipc = source("mdns_ipc.h").decode()
+        no_port = False
+    except (OSError, subprocess.CalledProcessError):
+        # realignment D8: bonami.library and its port are gone; the
+        # responder's cases register through tests/mdns/review/
+        # mdns_reg_adapter.h, and bonami.library's discovery and query
+        # engines, which the other two suites tested, are no more
+        ipc = ""
+        no_port = True
+        if args.discovery or args.query:
+            print("retired: bonami.library's discovery and query engines are "
+                  "gone (D8); dnssd.library's operations are tested by "
+                  "tests/mdns/dnssd.sh, tools.sh and netmidid.sh")
+            return 0
     if "mi_TaskID" in ipc:
         sources += ("mdns_client.c",)
     if "MDNS_IPC_READ" in ipc:
         sources += ("mdns_discovery.c",)
     if "MDNS_IPC_QUERY" in ipc:
         sources += ("mdns_query.c",)
-    names = (*sources, "mdns_dns.h", "mdnsd.h", "mdns_ipc.h", "dnssd_link.h")
+    port_headers = () if no_port else ("mdns_ipc.h",)
+    names = (*sources, "mdns_dns.h", "mdnsd.h", *port_headers, "dnssd_link.h")
     try:
         source("mdns_cache.c")
         sources += ("mdns_cache.c",)
-        names = (*sources, "mdns_dns.h", "mdnsd.h", "mdns_ipc.h", "dnssd_link.h",
+        names = (*sources, "mdns_dns.h", "mdnsd.h", *port_headers, "dnssd_link.h",
                  "dnssd_ipc.h", "include/dnssd/dnssd.h")
     except (OSError, subprocess.CalledProcessError):
         pass
@@ -81,12 +96,12 @@ def main():
         source("dnssd_reg.h")
         sources += ("dnssd_reg.c",)
         names = (*names, "dnssd_reg.c", "dnssd_reg.h", "dnssd_model.h",
-                 "mdns_bonami.h")
+                 *(() if no_port else ("mdns_bonami.h",)))
         canonical = True
     except (OSError, subprocess.CalledProcessError):
         pass
-    for name in (*names,
-                 "include/bonami/mdns.h", "include/libraries/bonamibase.h"):
+    for name in (*names, *(() if no_port else
+                 ("include/bonami/mdns.h", "include/libraries/bonamibase.h"))):
         target = output / name
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(source(name))
@@ -102,14 +117,18 @@ def main():
     ipv6_core = b"MDNS_MCAST_ADDR6" in (output / "mdns_dns.h").read_bytes()
     if ipv6_core:
         flags.append("-DMDNS_IPV6_CORE")
-    subtype_core = b"MDNS_ServiceSubtype" in (output / "include/bonami/mdns.h").read_bytes()
+    subtype_core = no_port or \
+        b"MDNS_ServiceSubtype" in (output / "include/bonami/mdns.h").read_bytes()
     if subtype_core:
         flags.append("-DMDNS_SUBTYPE_CORE")
     if reap:
         flags.append("-DMDNS_DISCOVERY_REAP")
     if canonical:
         flags.append("-DMDNS_CANONICAL_REG")
-    if b"mdnsCacheLatest" in (output / "mdns_discovery.c").read_bytes():
+    if no_port:
+        flags.append("-DMDNS_NO_BONAMI_PORT")
+    if (output / "mdns_discovery.c").exists() and \
+            b"mdnsCacheLatest" in (output / "mdns_discovery.c").read_bytes():
         flags.append("-DMDNS_SINGLE_CACHE")   # one cache (step 5)
     fixture = ("mdns_query.c" if args.query else
                "mdns_discovery.c" if args.discovery else "mdns_responder_rfc.c")
@@ -123,7 +142,7 @@ def main():
              "legacy-multiple", "shared-delay", "shared-repeat",
              "shared-interface", "types-delay", "types-legacy", "types-repeat",
              "types-interface")
-    if "mi_TaskID" in ipc:
+    if "mi_TaskID" in ipc or no_port:
         cases += ("identical-txt", "goodbye-txt", "goodbye-srv", "compressed-srv",
                   "local-rename", "reject-instance", "proxy-own-name",
                   "restart-probes", "task-ids", "update-ttl")
