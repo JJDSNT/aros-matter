@@ -258,8 +258,25 @@ e do cache passam a rodar junto com `dnssdtest`/interop como critério de aceita
   `dnssdtest` 68/68, `dnssd_gone`, interop. **m68k:** mdnsd texto 60.484 → 48.094 B (arquivo 87.540 → 70.980), a
   `bonami.library` sai, `dnssd.library` 20.048 B. Achados do teste corrigidos no próprio teste: `avahi-browse -p` escapa
   espaço/parênteses (`\032`, `\040`, `\041`) e precisa de `-k`.
-- **Antes do PR (pendente):** decisão do usuário sobre retirar a Bonami de vez ou manter uma Bonami 40.1 pura (Kal objetou
-  a estender, não a manter); rebase sobre o master (hoje `f04bb2c13e`) depois do merge do #2218 (o mdnsd depende do
+- **Revisão do acompanhamento (ChatGPT + usuário, 2026-11-14):** orçamento 1+16+4 = 21 de 24 (finder) e 2+2+16 = 20
+  (netmidid), documentado no código; `ff70044aab` o resolve diz exatamente o que mudou (antes: soma de 32 bits, colisão
+  calava mudança; perda do último endereço nunca era dita; rajada de RESOLVED ao começar — achado pelo `follow.sh`) e
+  diz uma vez por volta, nunca sem TXT; netmidid reporta peer sem endereço como ido. `tests/mdns/follow.sh` (hosted e
+  m68k): 20 instâncias, 16 seguidas, vagas reaproveitadas pelas 4 restantes (UPDATE cada), conjunto de endereços
+  (AAAA entra e sai, A troca), nenhuma operação recusada. Mudança de instância não seguida é dita quando ela passa a ser
+  seguida (documentado). **Decisão do usuário: Bonami removida de vez (commit `d6a04bc658` fica), créditos preservados.**
+- **Cobertura dos testes aposentados (regra do usuário: tira o teste do mecanismo antigo, não a cobertura do
+  comportamento).** Fixtures de descoberta (45) e consulta (16) → cobertura atual: *coberto* — goodbye (tools, netmidid,
+  follow), atualização/endereços (follow), resolve e tempo esgotado (dnssdtest, Handshake), vários enlaces (interop
+  TWO=1), enumeração de tipos (tools, Nearby), registro local visível (dnssdtest), subtipo no registro (dnssdtest),
+  consulta A (tools), instância com ponto (dnssdtest). *Lacunas a cobrir* (sobre o cache + `dnssd_server.c`, numa
+  fixture de host nova no lugar das aposentadas, mais um injetor de pacotes no host para o runtime): expiração por TTL
+  de PTR/SRV/TXT/A → REMOVE; goodbye "resgatado" dentro de 1 s; cache-flush; renovação a 80–82 %; robustez de entrada
+  (nome comprimido, classe errada, ciclo de ponteiro, RDATA curto/excedido, porta ≠ 5353); orçamento do cache (o que
+  ninguém observa sai primeiro); fila cheia → `LOST`; sessão fechada não pergunta mais; recuo das perguntas e coalescência;
+  reinício de enlaces (reset); browse de subtipo e pertença; consulta AAAA/PTR/própria máquina/serviço local; virada do
+  relógio de ticks.
+- **Antes do PR (pendente):** a cobertura acima; rebase sobre o master (hoje `f04bb2c13e`) depois do merge do #2218 (o mdnsd depende do
   `IP_PKTINFO` dele); limpar o histórico (o `fixup!` `c98621239f`, agrupamento); Codacy/cppcheck; tools.sh/netmidid.sh
   no m68k (só hosted hoje); aval do usuário. `.local` no `resolver.atcp` é PR separado do AROSTCP.
 
