@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # precodacy.sh BASE TIP - before pushing an AROS PR, what Codacy would add:
 #  1. cppcheck findings TIP adds in each C file it changes (base and tip
 #     lists compared with diff, duplicates counted; each keyed by the text
@@ -14,6 +14,10 @@
 # failed on #2194; 2.22, built in ~/tools-src, finds it and the
 # knownConditionTrueFalse there too, and is used when present
 # (CPPCHECK=... picks another).
+# bash, whoever runs it: under dash (sh) the flawfinder part printed
+# nothing at all, and every check run as "sh precodacy.sh" was cppcheck's
+# alone - #2284 went to Codacy with a strncpy() this missed (2026-11-14)
+[ -n "${BASH_VERSION:-}" ] || exec bash "$0" "$@"
 cd "${AROS_SRC:-$HOME/AROS-ipv6}" || exit 1
 CC22=$HOME/tools-src/cppcheck-2.22.0/build/bin/cppcheck
 [ -z "$CPPCHECK" ] && [ -x "$CC22" ] && CPPCHECK=$CC22
@@ -48,8 +52,16 @@ if command -v flawfinder >/dev/null; then
       rev=$1; [ $v = tip ] && rev=$2
       mkdir -p "$T/$v/$(dirname "$f")"
       git show "$rev:$f" > "$T/$v/$f" 2>/dev/null || : > "$T/$v/$f"
+      # each hit keyed by its message and the text of its line, as Codacy
+      # counts them: by message alone, a call removed elsewhere in the file
+      # hid one added (#2284: three strncpy() went, one came, none shown)
       flawfinder --quiet --dataonly --singleline "$T/$v/$f" 2>/dev/null \
-        | sed -E 's/^[^:]*:[0-9]+:([0-9]+:)? *//' | sort > "$T/$v.ff"
+        | awk -v src="$T/$v/$f" 'BEGIN { while ((getline l < src) > 0) line[++n] = l }
+            match($0, /^[^:]*:[0-9]+:/) {
+              split(substr($0, 1, RLENGTH - 1), p, ":"); ln = p[length(p)] + 0
+              msg = $0; sub(/^[^:]*:[0-9]+:([0-9]+:)? */, "", msg)
+              t = line[ln]; gsub(/^[ \t]+|[ \t]+$/, "", t)
+              print msg " @ " t }' | sort > "$T/$v.ff"
     done
     n=$(diff "$T/base.ff" "$T/tip.ff" | sed -n 's/^> //p')
     # what Codacy fails on, and level-2 char/memcpy/bcopy, which it passed
