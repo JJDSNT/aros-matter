@@ -75,7 +75,7 @@ Avahi on the Linux host:
 | tools.sh (every tool mode; TTL, IPv6 proxy, binary TXT, UPDATE, own name) | pass | pass |
 | netmidid.sh (conflict, rename, IPv4+IPv6 peer, goodbye, new port, TTL) | pass | pass |
 | follow.sh (20 instances followed/resolved; address add/remove/replace) | pass | pass |
-| dnssd_gone (session ends with its task) | pass | — |
+| dnssd_gone (session ends with its task) | 8/8 | 8/8 |
 | interop with Avahi, two links | pass | pass |
 
 Host fixtures under ASan/UBSan: `dnssd_server_rfc.c` 29/29 (cache,
