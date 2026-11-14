@@ -9,7 +9,9 @@ over D-Bus, on a timeline (seconds from the start):
   25  every F.. says v=2                (followed ones: UPDATE)
   25  addrhost.local gains 2001:db8::81  (an address added)
   40  F01..F16 withdrawn                (room for the others)
-  40  addrhost.local loses 2001:db8::81  (an address removed)
+  45  addrhost.local loses 2001:db8::81  (an address removed; apart from the
+      withdrawals: Avahi says that goodbye once, and the emulated Amiga
+      may drop a packet of a burst - the AAAA would then stay its TTL)
   50  F17..F20 say v=3                  (all followed now: UPDATE each)
   55  addrhost.local's IPv4 address is 192.168.166.82 instead
   70  everything withdrawn
@@ -80,6 +82,7 @@ def main():
     at(40)
     for n in names[:16]:
         groups.pop(n).Free()
+    at(45)
     addr6.Free()
     at(50)
     for n in names[16:]:

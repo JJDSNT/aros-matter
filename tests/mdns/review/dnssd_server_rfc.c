@@ -46,6 +46,7 @@ static void init(void)
     setup(&md, 0);
     mdnsRegFree(&md);                   /* no service of the responder's */
     md.md_DaemonID = 77;
+    md.md_SendIf = -1;                  /* no packet in hand, as in mdnsd */
     CHECK(mdnsCacheInit(&md));
     CHECK(dnssdServerInit(&md, 0));
     packets = questions = 0;
@@ -801,21 +802,18 @@ static void query_timeout(void)
  * another host turns out to have it, what this host said of it goes - as a
  * record question, which tells what goes, sees (a lookup tells each address
  * once, as it comes). */
+static void announce_host(void);
+
 static void own_host(void)
 {
     ULONG l, q;
     const struct DNSSDEvent *e;
-    int step;
 
     init();
     open_session();
     md.md_HostState = MDNS_NAME_PROBING;
     mdnsHostRestart(&md);
-    for (step = 0; step < 8; step++) {  /* three probes, then announced */
-        mdnsHostTick(&md);
-        later(13);
-    }
-    CHECK(md.md_HostState == MDNS_NAME_ANNOUNCED);
+    announce_host();
     l = lookup("arosbox.local", 3);
     e = next_of(l, DNSSD_EVENT_ADDRESS);
     CHECK(e && has4(e, 192, 0, 2, 2));
@@ -833,6 +831,97 @@ static void own_host(void)
             part(e, &e->de_RData)[0] == 192 && part(e, &e->de_RData)[3] == 2)
             break;
     CHECK(e != NULL);                   /* ours, withdrawn from the cache */
+    finish();
+}
+
+/* The host's name probed and announced, as mdnsd's loop does it. */
+static void announce_host(void)
+{
+    int step;
+
+    for (step = 0; step < 8; step++) {  /* three probes, then announced */
+        mdnsHostTick(&md);
+        later(13);
+    }
+    CHECK(md.md_HostState == MDNS_NAME_ANNOUNCED);
+}
+
+/* Is e a record of the IPv4 address a.b.c.d, removed (gone) or not? */
+static int a_record(const struct DNSSDEvent *e, int gone, UBYTE a, UBYTE b,
+                    UBYTE c, UBYTE d)
+{
+    const UBYTE *x = part(e, &e->de_RData);
+
+    return e->de_Kind == DNSSD_EVENT_RECORD && e->de_RRType == DNS_TYPE_A &&
+           !(e->de_Flags & DNSSD_EVENTF_REMOVED) == !gone &&
+           e->de_RData.dr_Size == 4 && x[0] == a && x[1] == b && x[2] == c &&
+           x[3] == d;
+}
+
+/* The next event of q that is the A record a.b.c.d (gone or not). */
+static int saw_a(ULONG q, int gone, UBYTE a, UBYTE b, UBYTE c, UBYTE d)
+{
+    const struct DNSSDEvent *e;
+
+    while ((e = next_of(q, DNSSD_EVENT_RECORD)) != NULL)
+        if (a_record(e, gone, a, b, c, d))
+            return 1;
+    return 0;
+}
+
+/* Each way the host's own records stop being true takes them out of its
+ * cache (mdns_host.c: host_forget(), from mdnsHostSetName() and
+ * mdnsHostRestart(); a link that goes, in the cache's turn; the goodbye):
+ *   restart  the links or their addresses changed: out, and back with the
+ *            announcement under what there is now
+ *   link     one of two links goes: its address goes, the other's stays
+ *   rename   the system names itself otherwise: the old name's go, the new
+ *            name has them once announced
+ *   goodbye  mdnsd stops: gone a second later (RFC 6762 section 10.1) */
+static void own_host_paths(int path)
+{
+    ULONG q, q2;
+
+    init();
+    if (path == 1)
+        configure_links(&md, TRUE, TRUE, FALSE);
+    open_session();
+    md.md_HostState = MDNS_NAME_PROBING;
+    mdnsHostRestart(&md);
+    announce_host();
+    q = query("arosbox.local", DNS_TYPE_A, 0);
+    later(0);
+    CHECK(saw_a(q, 0, 192, 0, 2, 2));
+    if (path == 1)
+        CHECK(saw_a(q, 0, 198, 51, 100, 2));
+    drain();
+    if (path == 0) {
+        mdnsHostRestart(&md);
+        later(0);
+        CHECK(saw_a(q, 1, 192, 0, 2, 2));
+        announce_host();
+        CHECK(saw_a(q, 0, 192, 0, 2, 2));
+    } else if (path == 1) {
+        configure_links(&md, FALSE, TRUE, FALSE);
+        later(1);
+        CHECK(saw_a(q, 1, 198, 51, 100, 2));
+        later(100);
+        CHECK(!saw_a(q, 1, 192, 0, 2, 2));
+    } else if (path == 2) {
+        q2 = query("newname.local", DNS_TYPE_A, 0);
+        mdnsHostSetName(&md, "newname", 0);
+        later(0);
+        CHECK(saw_a(q, 1, 192, 0, 2, 2));
+        mdnsHostRestart(&md);           /* as a rescan that renamed does */
+        announce_host();
+        CHECK(saw_a(q2, 0, 192, 0, 2, 2));
+    } else {
+        mdnsHostGoodbye(&md);
+        later(49);
+        CHECK(!saw_a(q, 1, 192, 0, 2, 2));
+        later(1);
+        CHECK(saw_a(q, 1, 192, 0, 2, 2));
+    }
     finish();
 }
 
@@ -937,6 +1026,10 @@ int main(int argc, char **argv)
         if (!strcmp(argv[1], expires[i])) { expire((int)i); return 0; }
     for (i = 0; i < 5; i++)
         if (!strcmp(argv[1], robusts[i])) { robust((int)i); return 0; }
+    if (!strcmp(argv[1], "own-host-restart")) { own_host_paths(0); return 0; }
+    if (!strcmp(argv[1], "own-host-link-gone")) { own_host_paths(1); return 0; }
+    if (!strcmp(argv[1], "own-host-renamed")) { own_host_paths(2); return 0; }
+    if (!strcmp(argv[1], "own-host-goodbye")) { own_host_paths(3); return 0; }
     if (!strcmp(argv[1], "query-aaaa")) { query_records(0); return 0; }
     if (!strcmp(argv[1], "query-ptr")) { query_records(1); return 0; }
     if (!strcmp(argv[1], "goodbye")) { goodbye(0); return 0; }

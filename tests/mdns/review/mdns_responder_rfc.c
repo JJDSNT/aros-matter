@@ -473,6 +473,7 @@ static struct MDNSRegisteredService *setup(struct MDNSDaemon *md, ULONG ttl)
     md->md_SendIf = 0;
     md->md_HostState = MDNS_NAME_ANNOUNCED;
     strcpy(md->md_HostName, "arosbox");
+    strcpy(md->md_HostBase, "arosbox");     /* what the system calls itself */
     md->md_TxBuf = tx;
     md->md_RxBuf = rx;
     md->md_NextHandle = 1;

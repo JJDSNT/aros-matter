@@ -176,6 +176,8 @@ def main():
                  "name-past-rdata", "wrong-port", "budget", "lost",
                  "close-quiet", "coalesce", "links-reset", "subtype",
                  "query-aaaa", "query-ptr", "query-timeout", "own-host",
+                 "own-host-restart", "own-host-link-gone", "own-host-renamed",
+                 "own-host-goodbye",
                  "renamed", "clock-wrap")
     if args.discovery:
         cases = ("labels-order-txt", "expire-ptr", "expire-srv", "expire-txt", "expire-a",

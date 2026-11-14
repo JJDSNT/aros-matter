@@ -284,6 +284,13 @@ e do cache passam a rodar junto com `dnssdtest`/interop como critério de aceita
   `own-host` e `renamed` falham, o resto passa. Hosted e m68k íntegros. Em aberto: o usuário/ChatGPT perguntaram se o
   mecanismo (cópia local no cache) é superior ao da BonAmi; comparação respondida na conversa, recomendação de fonte
   canônica de registros locais (sem cópia) — decisão do usuário.
+- **Nome da máquina num lugar só (`028c093b67`, pedido do usuário depois da investigação pré-D8):** `mdnsHostSetName()`
+  é o único lugar onde `md_HostName` muda; o descarte da cópia local (`host_forget()`) só é chamado dele e do
+  `mdnsHostRestart()`. Casos no `dnssd_server_rfc.c` para cada caminho (conflito, restart, enlace que sai, renomear pelo
+  sistema, goodbye): 29/29. Achado lateral **B42** (renomear só o hostname numa reconfiguração não é notado), anterior
+  ao D8, fora do PR. Observação (não confirmada): no m68k um `follow.sh` perdeu o goodbye único que o Avahi manda do
+  AAAA quando ele saía junto com 16 retiradas (rajada no A2065 emulado); o registro ficou até o TTL, como o mDNS
+  prevê. A retirada do AAAA no teste foi separada da rajada (t=45); a captura de outra rodada mostrou o goodbye no fio.
 - **Antes do PR (pendente):** rebase sobre o master (hoje `f04bb2c13e`) depois do merge do #2218 (o mdnsd depende do
   `IP_PKTINFO` dele); limpar o histórico (o `fixup!` `c98621239f`, agrupamento); Codacy/cppcheck; tools.sh/netmidid.sh
   no m68k (só hosted hoje); aval do usuário. `.local` no `resolver.atcp` é PR separado do AROSTCP.
