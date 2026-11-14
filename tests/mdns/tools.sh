@@ -12,7 +12,9 @@
 # The host publishes HostTest (_hosttest._tcp) and HostWeb (_http._tcp),
 # browses what AROS registered, resolves the other host's name, and a capture
 # on aros0 gives the TTL of AROS's records. Prints PASS/FAIL per check.
-# AROS_HOSTED_IMAGE as for tools/hosted-run.sh.
+# AROS_HOSTED_IMAGE as for tools/hosted-run.sh; MODE=amiga runs AROS m68k on
+# the emulated Amiga (tools/amiga-run.sh, without timesyncd there: B35), the
+# host's side later by what the slower boot takes.
 set -u
 out=$1; mkdir -p "$out"
 root=$(cd "$(dirname "$0")/../.." && pwd)
@@ -20,7 +22,12 @@ root=$(cd "$(dirname "$0")/../.." && pwd)
 host=$(avahi-resolve -4 -a 192.168.166.1 2>/dev/null | awk '{print $2}')
 host=${host%.local}
 [ -n "$host" ] || host=$(hostname)
+mode=${MODE:-hosted}
+pre=""
+off=0
+[ "$mode" = amiga ] && { pre="Delete >NIL: SYS:System/Network/AROSTCP/db/services.d/timesync QUIET"; off=45; }
 cat > "$out/s.script" <<EOS
+$pre
 Execute SYS:System/Network/AROSTCP/S/startnet
 Wait 12
 Run >NIL: C:dnssd -R ToolReg _arostest._tcp . 8080 -t 45 path=/ >SYS:out/register.log
@@ -46,11 +53,16 @@ EOS
 avahi-publish-service HostTest _hosttest._tcp 9999 vers=1 >/dev/null 2>&1 & pub1=$!
 avahi-publish-service HostWeb _http._tcp 8000 path=/w >/dev/null 2>&1 & pub2=$!
 # ChangeTest: v=1 from 20 s after the boot, v=2 at 35 s, withdrawn at 50 s
-( sleep 20; python3 "$root/tests/mdns/avahi_update.py" ChangeTest _changetest._tcp 7001 v=1 v=2 15 15 ) & upd=$!
-sudo -n timeout 140 tcpdump -i aros0 -n -s0 -U -w "$out/aros0.pcap" udp port 5353 >/dev/null 2>&1 & cap=$!
-AROS_TAP_IP=192.168.166.2 AROS_RUN_TIMEOUT=130 \
-  "$root/tools/hosted-run.sh" "$out/aros" "$out/s.script" > "$out/run.txt" 2>&1 & run=$!
-sleep 45
+( sleep $((20 + off)); python3 "$root/tests/mdns/avahi_update.py" ChangeTest _changetest._tcp 7001 v=1 v=2 15 15 ) & upd=$!
+sudo -n timeout $((140 + 2 * off)) tcpdump -i aros0 -n -s0 -U -w "$out/aros0.pcap" udp port 5353 >/dev/null 2>&1 & cap=$!
+if [ "$mode" = amiga ]; then
+  AMIGA_TAP_IP=192.168.166.2 AMIGA_RUN_TIMEOUT=260 \
+    "$root/tools/amiga-run.sh" "$out/aros" "$out/s.script" > "$out/run.txt" 2>&1 & run=$!
+else
+  AROS_TAP_IP=192.168.166.2 AROS_RUN_TIMEOUT=130 \
+    "$root/tools/hosted-run.sh" "$out/aros" "$out/s.script" > "$out/run.txt" 2>&1 & run=$!
+fi
+sleep $((45 + off))
 timeout 10 avahi-browse -rptk _arostest._tcp > "$out/host-arostest.txt" 2>&1
 timeout 10 avahi-browse -rptk _http._tcp > "$out/host-http.txt" 2>&1
 avahi-resolve -4 -n proxyhost.local > "$out/host-proxy.txt" 2>&1

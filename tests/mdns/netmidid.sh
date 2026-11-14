@@ -12,7 +12,10 @@
 #     goodbye: "is gone") and publishes it again on 5675: found again, with
 #     the new port (the resolve follows it);
 #   - browses AROS's AppleMIDI session; a capture gives its records' TTL.
-# Prints PASS/FAIL per check. AROS_HOSTED_IMAGE as for tools/hosted-run.sh.
+# Prints PASS/FAIL per check. AROS_HOSTED_IMAGE as for tools/hosted-run.sh;
+# MODE=amiga runs AROS m68k on the emulated Amiga (tools/amiga-run.sh,
+# without timesyncd there: B35), the host's side later by what the slower
+# boot takes.
 set -u
 out=$1; mkdir -p "$out"
 root=$(cd "$(dirname "$0")/../.." && pwd)
@@ -23,7 +26,12 @@ local_port=5004
 midi2_port=5673
 midi2_peer_name=HostEP
 EOC
+mode=${MODE:-hosted}
+pre=""
+off=0
+[ "$mode" = amiga ] && { pre="Delete >NIL: SYS:System/Network/AROSTCP/db/services.d/timesync QUIET"; off=45; }
 cat > "$out/s.script" <<EOS
+$pre
 Copy SYS:C/NetMIDI ENV:NetMIDI
 Echo >ENV:netmidid.log "SYS:out/netmidid.log" NOLINE
 Execute SYS:System/Network/AROSTCP/S/startnet
@@ -34,10 +42,15 @@ EOS
 avahi-publish-service "AROS MIDI" _apple-midi._udp 5004 >/dev/null 2>&1 & twin1=$!
 avahi-publish-service "AROS MIDI" _midi2._udp 5676 UMPEndpointName=HostTwin ProductInstanceId=t1 >/dev/null 2>&1 & twin2=$!
 avahi-publish-service HostMIDI2 _midi2._udp 5674 UMPEndpointName=HostEP ProductInstanceId=h1 >/dev/null 2>&1 & peer=$!
-sudo -n timeout 130 tcpdump -i aros0 -n -s0 -U -w "$out/aros0.pcap" udp port 5353 >/dev/null 2>&1 &
-AROS_TAP_IP=192.168.166.2 AROS_RUN_TIMEOUT=120 \
-  "$root/tools/hosted-run.sh" "$out/aros" "$out/s.script" "$out/NetMIDI" > "$out/run.txt" 2>&1 & run=$!
-sleep 45
+sudo -n timeout $((130 + 2 * off)) tcpdump -i aros0 -n -s0 -U -w "$out/aros0.pcap" udp port 5353 >/dev/null 2>&1 &
+if [ "$mode" = amiga ]; then
+  AMIGA_TAP_IP=192.168.166.2 AMIGA_RUN_TIMEOUT=260 \
+    "$root/tools/amiga-run.sh" "$out/aros" "$out/s.script" "$out/NetMIDI" > "$out/run.txt" 2>&1 & run=$!
+else
+  AROS_TAP_IP=192.168.166.2 AROS_RUN_TIMEOUT=120 \
+    "$root/tools/hosted-run.sh" "$out/aros" "$out/s.script" "$out/NetMIDI" > "$out/run.txt" 2>&1 & run=$!
+fi
+sleep $((45 + off))
 kill $peer 2>/dev/null                  # its goodbye
 sleep 8
 avahi-publish-service HostMIDI2 _midi2._udp 5675 UMPEndpointName=HostEP ProductInstanceId=h1 >/dev/null 2>&1 & peer=$!
