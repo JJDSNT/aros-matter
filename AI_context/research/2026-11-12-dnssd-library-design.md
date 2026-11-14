@@ -276,7 +276,15 @@ e do cache passam a rodar junto com `dnssdtest`/interop como critério de aceita
   ninguém observa sai primeiro); fila cheia → `LOST`; sessão fechada não pergunta mais; recuo das perguntas e coalescência;
   reinício de enlaces (reset); browse de subtipo e pertença; consulta AAAA/PTR/própria máquina/serviço local; virada do
   relógio de ticks.
-- **Antes do PR (pendente):** a cobertura acima; rebase sobre o master (hoje `f04bb2c13e`) depois do merge do #2218 (o mdnsd depende do
+- **Cobertura recuperada (2026-11-14):** `tests/mdns/review/dnssd_server_rfc.c` (`--server` no
+  `tools/review-mdns-responder.py`), 25 casos sobre o cache e o `dnssd_server.c` reais, ASan/UBSan, 3× seguidas: todas as
+  lacunas acima. Achou dois defeitos, corrigidos em `d5f445ddc6`: o nome da própria máquina não era respondido aos
+  programas da própria AROS (regressão do D8: a BonAmi tinha `answer_own_host`) e registros locais de um nome perdido
+  ficavam no cache para sempre (SRV velho ao lado do do outro host depois de "Nome (2)"). Controle no commit anterior:
+  `own-host` e `renamed` falham, o resto passa. Hosted e m68k íntegros. Em aberto: o usuário/ChatGPT perguntaram se o
+  mecanismo (cópia local no cache) é superior ao da BonAmi; comparação respondida na conversa, recomendação de fonte
+  canônica de registros locais (sem cópia) — decisão do usuário.
+- **Antes do PR (pendente):** rebase sobre o master (hoje `f04bb2c13e`) depois do merge do #2218 (o mdnsd depende do
   `IP_PKTINFO` dele); limpar o histórico (o `fixup!` `c98621239f`, agrupamento); Codacy/cppcheck; tools.sh/netmidid.sh
   no m68k (só hosted hoje); aval do usuário. `.local` no `resolver.atcp` é PR separado do AROSTCP.
 
