@@ -109,6 +109,8 @@ def main():
         flags.append("-DMDNS_DISCOVERY_REAP")
     if canonical:
         flags.append("-DMDNS_CANONICAL_REG")
+    if b"mdnsCacheLatest" in (output / "mdns_discovery.c").read_bytes():
+        flags.append("-DMDNS_SINGLE_CACHE")   # one cache (step 5)
     fixture = ("mdns_query.c" if args.query else
                "mdns_discovery.c" if args.discovery else "mdns_responder_rfc.c")
     subprocess.run(flags + [str(fixtures / fixture),

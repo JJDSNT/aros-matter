@@ -225,7 +225,23 @@ e do cache passam a rodar junto com `dnssdtest`/interop como critério de aceita
   m68k; saída IPv4 route/ll/alias ok. **m68k:** mdnsd texto +156 B, bss +4.352 B (`qwire[256]` das 16 perguntas e
   `wire[256]` do registro analisado; o `qname` em texto sai quando ninguém mais o usar, passo 5), cada registro ~1,2 KB
   a mais no heap (estimativa pelo layout: nomes de fio prontos).
-- **Próximo:** passo 5 (um cache só: `mdns_cache.c`, trazendo do `mdns_discovery.c` o que ele faz melhor).
+- **Passo 5 feito (`09e99e56db`, 2026-11-13):** um cache só. O motor de descoberta da BonAmi (`mdns_discovery.c`)
+  virou visões do `mdns_cache.c`: browse observa os PTR do tipo; cada instância, o SRV/TXT no enlace e o A do host do
+  SRV; resolve, SRV/TXT/host da instância. Saíram a tabela de 128 registros, endereços pendentes, perguntas, renovação
+  e despejo próprios; ficaram visões, eventos, filas, subtipos, enumeração de tipos e pedidos emprestados. Operação que
+  termina solta suas visões e observações na hora (`settle`, senão a vez do cache ainda perguntava: pegou o
+  `release-quiet`). O cache ganhou do motor: perguntas devidas no mesmo enlace saem numa consulta só, cada uma com
+  respostas conhecidas (RFC 6762 §5.3, §7.1; no fio: 4 perguntas + 4 respostas conhecidas, recuo 1/2/4/8/16 s);
+  despejo tira primeiro o que ninguém observa; nome dentro de PTR/SRV tem de acabar onde acaba o RDATA. Mudanças de
+  contrato (fixtures sob `MDNS_SINGLE_CACHE`, motivo ao lado de cada uma): A ouvido antes do SRV vale pelo TTL inteiro
+  (era 1 s); renovação a 80–82 % com sorteio, contada em perguntas; browse não pergunta AAAA (o evento só leva IPv4).
+  Aceitação: fixtures 44/45/16 (descoberta 6× seguidas: tempos sorteados); hosted `dnssdtest` 68/68, `dnssd_gone`
+  8/8 ×2, interop TWO=1 (browse BonAmi nos dois enlaces); m68k `dnssdtest` 68/68, `dnssd_gone` 8/8 ×2, interop.
+  **m68k:** texto −3.360 B; `struct MDNSDiscovery` 223.300 → 117.990 B (−105 KB de heap, alocado no primeiro browse
+  BonAmi; o resto é a fila de eventos por sessão da API BonAmi, 16 × 8 × 626 B, que sai no D8). O `qname` em texto
+  ainda serve ao `mdns_host.c` e ao `mdns_query.c` (BonAmi): sai no D8.
+- **Próximo:** D8 (migrar a ferramenta `dnssd`, Nearby, Share, Handshake e `netmidid` para `dnssd.library`; retirar a
+  BonAmi) e o PR de corte único com o aval do usuário.
 
 ### Entrega (decisão do usuário, 2026-11-12)
 

@@ -4,6 +4,12 @@
 #include "mdns_responder_rfc.c"
 #undef main
 
+#ifdef MDNS_SINGLE_CACHE
+/* Realignment step 5: the browses are views of mdnsd's one cache, which
+ * drops what ends and asks the questions in its own turn, before
+ * discovery's (as mdnsd.c runs them). */
+#define mdnsDiscoveryTick(m) (mdnsCacheTick(m), mdnsDiscoveryTick(m))
+#endif
 #define CHECK(expr) do { if (!(expr)) { fprintf(stderr, "FAIL %s:%d: %s\n", __func__, __LINE__, #expr); exit(1); } } while (0)
 static struct MDNSDaemon md;
 static UBYTE packet[MDNS_MAX_PACKET], data[512];
@@ -124,15 +130,24 @@ static void init(void)
     ticks = 5000; live_task_id = 1; packets = 0; feed_type = "_midi2._udp.local";
     setup(&md, 0); md.md_DaemonID = 77;
     mdnsRegFree(&md);
+#ifdef MDNS_SINGLE_CACHE
+    CHECK(mdnsCacheInit(&md));
+#endif
 }
 static void init_local(void)
 {
     ticks = 5000; live_task_id = 1; packets = 0; feed_type = "_midi2._udp.local";
     setup(&md, 60); md.md_DaemonID = 77;
+#ifdef MDNS_SINGLE_CACHE
+    CHECK(mdnsCacheInit(&md));
+#endif
 }
 static void finish(void)
 {
     mdnsDiscoveryFree(&md); mdnsRegFree(&md);
+#ifdef MDNS_SINGLE_CACHE
+    mdnsCacheFree(&md);
+#endif
 }
 static void expect_add(APTR ref, const char *instance, UBYTE address)
 {
@@ -227,8 +242,16 @@ static void restart_network(void)
 static void refresh(void)
 {
     APTR ref; unsigned before;
+#ifdef MDNS_SINGLE_CACHE
+    /* RFC 6762 section 5.2: at 80 % of the life and up to 2 % more, picked
+     * at random (here 60 s: 48-49.2 s); the four records watched (PTR, SRV,
+     * TXT, A) are asked for in one query, so its questions are counted */
+    init(); ref = begin(0, NULL); feed("Session", 15, 60, 9); expect_add(ref, "Session", 9);
+    before = questions; ticks += 2462; mdnsDiscoveryTick(&md); CHECK(questions >= before + 4); finish();
+#else
     init(); ref = begin(0, NULL); feed("Session", 15, 60, 9); expect_add(ref, "Session", 9);
     before = packets; ticks += 2400; mdnsDiscoveryTick(&md); CHECK(packets >= before + 4); finish();
+#endif
 }
 
 static void compressed(void)
@@ -352,6 +375,16 @@ static void a_before_srv(void)
     init(); ref = begin(0, NULL);
     feed("Session", 8, 120, 9); ticks += 49; feed("Session", 7, 120, 9);
     expect_add(ref, "Session", 9); finish();
+#ifdef MDNS_SINGLE_CACHE
+    /* One cache keeps every record it hears for its time to live (RFC 6762
+     * section 10), not a second: an A heard well before the SRV serves it,
+     * and nothing has to be asked again. */
+    (void)before; (void)e;
+    init(); ref = begin(0, NULL);
+    feed("Session", 8, 120, 9); ticks += 51 * 50; feed("Session", 7, 120, 9);
+    expect_add(ref, "Session", 9);
+    finish();
+#else
     init(); ref = begin(0, NULL);
     feed("Session", 8, 120, 9); ticks += 51; feed("Session", 7, 120, 9);
     CHECK(read_event(ref, &e) == MDNSERR_NOTREADY);
@@ -359,6 +392,7 @@ static void a_before_srv(void)
     CHECK(packets > before);     /* the A is asked for */
     feed("Session", 8, 120, 9); expect_add(ref, "Session", 9);
     finish();
+#endif
 }
 
 #ifdef MDNS_IPV6_CORE
@@ -387,6 +421,32 @@ static void single_address_family(void)
     unsigned questions;
     APTR ref;
 
+#ifdef MDNS_SINGLE_CACHE
+    /* A browse's event carries an IPv4 address and nothing else: it
+     * watches the A of the host and never asks for its AAAA (that is
+     * QueryRecordA()'s, or dnssd.library's). A missing A is asked for as
+     * any watched record is (RFC 6762 section 5.2): first within 120 ms,
+     * then after 1, 2, 4 s... - once in the first second, not on every turn. */
+    init();
+    ref = begin(0, NULL);
+    feed("IPv4Only", 15, 120, 42);
+    expect_add(ref, "IPv4Only", 42);
+    ticks += 50;
+    mdnsDiscoveryTick(&md);
+    CHECK(aaaa_questions == 0);
+    finish();
+
+    init();
+    ref = begin(0, NULL);
+    feed("IPv6Only", 23, 120, 43);
+    CHECK(read_event(ref, &event) == MDNSERR_NOTREADY);
+    ticks += 50;
+    mdnsDiscoveryTick(&md);
+    CHECK(a_questions == 1);
+    questions = a_questions;
+    mdnsDiscoveryTick(&md);
+    CHECK(a_questions == questions);
+#else
     init();
     ref = begin(0, NULL);
     feed("IPv4Only", 15, 120, 42);
@@ -407,6 +467,7 @@ static void single_address_family(void)
     ticks += 50;
     mdnsDiscoveryTick(&md);
     CHECK(a_questions == questions);
+#endif
     /* A arriving later still completes the backward-compatible event. */
     feed("IPv6Only", 8, 120, 43);
     expect_add(ref, "IPv6Only", 43);

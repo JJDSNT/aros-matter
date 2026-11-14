@@ -25,6 +25,7 @@ static unsigned ipv4_packets, ipv6_packets, dual_packets;
 static unsigned subtype_ptr_records, subtype_goodbyes;
 #endif
 static unsigned a_questions, aaaa_questions, srv_questions, txt_questions;
+static unsigned questions;          /* of every type */
 static struct Task owner;
 static ULONG live_task_id = 1;
 
@@ -325,6 +326,7 @@ BOOL mdnsNetSendOn(struct MDNSDaemon *md, LONG index, const UBYTE *packet, LONG 
         struct MDNSQuestion question;
         if (mdnsParseQuestion(packet, length, offset, &question, &consumed))
             abort();
+        ++questions;
         if (question.qtype == DNS_TYPE_SRV)
             ++srv_questions;
         else if (question.qtype == DNS_TYPE_TXT)
@@ -471,6 +473,7 @@ static struct MDNSRegisteredService *setup(struct MDNSDaemon *md, ULONG ttl)
     subtype_ptr_records = subtype_goodbyes = 0;
 #endif
     a_questions = aaaa_questions = srv_questions = txt_questions = 0;
+    questions = 0;
     return service;
 }
 static void receive(struct MDNSDaemon *md, const UBYTE *packet, size_t length)
