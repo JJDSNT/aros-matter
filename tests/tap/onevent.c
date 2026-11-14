@@ -6,6 +6,9 @@
  * Two openers of tap.device UNIT; the host takes the tap down and up when
  * told (SYS:out/ready1, then SYS:out/ready2 appears; it answers with
  * SYS:out/go1, SYS:out/go2). Prints PASS/FAIL lines and "RESULT".
+ * ONLINE and OFFLINE are states: a request for the one the unit is in comes
+ * back at once (as atheros5000's CmdOnEvent()); CONNECT and DISCONNECT are
+ * changes, and wait for the next one.
  */
 #include <proto/exec.h>
 #include <proto/dos.h>
@@ -80,6 +83,35 @@ static void signal_host(const char *ready, const char *go)
     UnLock(l);
 }
 
+/* S2_ONEVENT for events, as opener base: done at once (1), with what? */
+static int at_once(struct IOSana2Req *base, ULONG events, ULONG *got)
+{
+    struct IOSana2Req *r = clone(base, S2_ONEVENT, events);
+    int done;
+
+    SendIO((struct IORequest *)r);
+    done = done_within(r, 1);
+    if (!done) {
+        AbortIO((struct IORequest *)r);
+        WaitIO((struct IORequest *)r);
+    }
+    *got = r->ios2_Req.io_Error == 0 ? r->ios2_WireError : 0;
+    dispose(r);
+    return done;
+}
+
+/* S2_ONLINE or S2_OFFLINE, as opener base: its io_Error */
+static int command(struct IOSana2Req *base, UWORD cmd)
+{
+    struct IOSana2Req *r = clone(base, cmd, 0);
+    int e;
+
+    DoIO((struct IORequest *)r);
+    e = r->ios2_Req.io_Error;
+    dispose(r);
+    return e;
+}
+
 static struct IOSana2Req *open_unit(LONG unit)
 {
     struct MsgPort *mp = CreateMsgPort();
@@ -95,8 +127,9 @@ static struct IOSana2Req *open_unit(LONG unit)
 
 int main(int argc, char **argv)
 {
-    struct IOSana2Req *a, *b, *a1, *a2, *a3, *a4, *a5, *b1, *b2, *x;
+    struct IOSana2Req *a, *b, *a1, *a2, *a3, *a4, *a5, *b1, *b2, *x, *w;
     LONG unit;
+    ULONG got;
 
     if (argc < 2)
         return 20;
@@ -114,6 +147,12 @@ int main(int argc, char **argv)
           (unsigned long)x->ios2_WireError);
     dispose(x);
 
+    /* the unit is offline until S2_ONLINE: OFFLINE is its state */
+    CHECK(at_once(a, S2EVENT_OFFLINE, &got) && got == S2EVENT_OFFLINE,
+          "offline: a request for OFFLINE comes back at once (%lu)", (unsigned long)got);
+    CHECK(at_once(a, S2EVENT_OFFLINE | S2EVENT_CONNECT, &got) && got == S2EVENT_OFFLINE,
+          "offline: OFFLINE with CONNECT comes back at once, with OFFLINE alone (%lu)", (unsigned long)got);
+
     /* both openers wait for the link to go; one more request waits for ONLINE */
     a1 = clone(a, S2_ONEVENT, S2EVENT_DISCONNECT | S2EVENT_CONNECT);
     b1 = clone(b, S2_ONEVENT, S2EVENT_DISCONNECT);
@@ -123,9 +162,10 @@ int main(int argc, char **argv)
     SendIO((struct IORequest *)a2);
     Delay(25);
     CHECK(!CheckIO((struct IORequest *)a1) && !CheckIO((struct IORequest *)b1),
-          "requests wait: an event is a change, not the state the link is in (%d %d, %d %d)",
+          "CONNECT/DISCONNECT wait: a link event is a change, not the state the link is in (%d %d, %d %d)",
           CheckIO((struct IORequest *)a1) != NULL, a1->ios2_Req.io_Error,
           CheckIO((struct IORequest *)b1) != NULL, b1->ios2_Req.io_Error);
+    CHECK(!CheckIO((struct IORequest *)a2), "offline: a request for ONLINE waits");
     signal_host("SYS:out/ready1", "SYS:out/go1");     /* the host: link down */
     CHECK(done_within(a1, 5) && a1->ios2_Req.io_Error == 0 && a1->ios2_WireError == S2EVENT_DISCONNECT,
           "opener 1 told of the link going (%lu)", (unsigned long)a1->ios2_WireError);
@@ -150,16 +190,39 @@ int main(int argc, char **argv)
     CHECK(done_within(a3, 5) && a3->ios2_Req.io_Error == 0 && a3->ios2_WireError == S2EVENT_CONNECT,
           "the other opener told of the link coming back (%lu)", (unsigned long)a3->ios2_WireError);
 
-    /* S2_ONLINE is S2EVENT_ONLINE */
+    /* S2_CONFIGINTERFACE puts the unit online, as the other drivers in the
+     * tree do: S2EVENT_ONLINE; the S2_ONLINE AROSTCP sends next finds it
+     * online (S2WERR_UNIT_ONLINE, which it takes as done) */
     a4 = clone(a, S2_ONEVENT, S2EVENT_ONLINE);
     SendIO((struct IORequest *)a4);
     x = clone(a, S2_CONFIGINTERFACE, 0);
     DoIO((struct IORequest *)x);
+    CHECK(done_within(a4, 2) && a4->ios2_Req.io_Error == 0 && a4->ios2_WireError == S2EVENT_ONLINE,
+          "S2_CONFIGINTERFACE puts it online: S2EVENT_ONLINE (%d, %lu)", a4->ios2_Req.io_Error,
+          (unsigned long)a4->ios2_WireError);
     x->ios2_Req.io_Command = S2_ONLINE;
     DoIO((struct IORequest *)x);
-    CHECK(done_within(a4, 2) && a4->ios2_Req.io_Error == 0 && a4->ios2_WireError == S2EVENT_ONLINE,
-          "S2_ONLINE is S2EVENT_ONLINE (%d, %lu)", a4->ios2_Req.io_Error, (unsigned long)a4->ios2_WireError);
+    CHECK(x->ios2_Req.io_Error == S2ERR_BAD_STATE && x->ios2_WireError == S2WERR_UNIT_ONLINE,
+          "then S2_ONLINE finds it online (%d, %lu)", x->ios2_Req.io_Error, (unsigned long)x->ios2_WireError);
     dispose(x);
+
+    /* online: ONLINE is its state, OFFLINE waits for S2_OFFLINE */
+    CHECK(at_once(a, S2EVENT_ONLINE, &got) && got == S2EVENT_ONLINE,
+          "online: a request for ONLINE comes back at once (%lu)", (unsigned long)got);
+    w = clone(a, S2_ONEVENT, S2EVENT_OFFLINE | S2EVENT_DISCONNECT);
+    SendIO((struct IORequest *)w);
+    Delay(25);
+    CHECK(!CheckIO((struct IORequest *)w), "online: a request for OFFLINE waits");
+    CHECK(command(a, S2_OFFLINE) == 0 && done_within(w, 2) && w->ios2_Req.io_Error == 0 &&
+          w->ios2_WireError == S2EVENT_OFFLINE,
+          "S2_OFFLINE is S2EVENT_OFFLINE (%lu)", (unsigned long)w->ios2_WireError);
+    dispose(w);
+
+    /* the stack's case (#2258 review): a write failed offline; the unit is
+     * back online before the stack asks for ONLINE - it must not wait */
+    CHECK(command(a, S2_ONLINE) == 0, "back online before the request");
+    CHECK(at_once(a, S2EVENT_ONLINE, &got) && got == S2EVENT_ONLINE,
+          "online again by then: the request for ONLINE comes back at once (%lu)", (unsigned long)got);
 
     /* the last opener closes with a request waiting */
     a5 = clone(a, S2_ONEVENT, S2EVENT_DISCONNECT);
