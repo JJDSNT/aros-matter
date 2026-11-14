@@ -22,6 +22,9 @@ def main():
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--discovery", action="store_true")
     mode.add_argument("--query", action="store_true")
+    mode.add_argument("--server", action="store_true",
+                      help="the cache and dnssd.library's operations "
+                           "(dnssd_server_rfc.c; after bonami.library went)")
     args = parser.parse_args()
     # the fixtures are Codex's (aros-midihub review/mdns-modernization-plan)
     fixtures = Path(os.environ.get("MDNS_FIXTURES",
@@ -100,13 +103,25 @@ def main():
         canonical = True
     except (OSError, subprocess.CalledProcessError):
         pass
+    if args.server:
+        if not no_port:
+            print("--server: for a tree without bonami.library (D8 and later)")
+            return 2
+        sources += ("dnssd_server.c", "dnssd_ipc.c", "dnssd_model.c")
+        names = (*names, "dnssd_server.c", "dnssd_ipc.c", "dnssd_model.c",
+                 "dnssd_model.h", "dnssd_ipc_port.h", "include/dnssd/dnssd.h")
+        for header in ("aros/asmcall.h", "resources/task.h", "proto/task.h"):
+            target = shim / header
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text('#include "dnssd_host_mock.h"\n')
     for name in (*names, *(() if no_port else
                  ("include/bonami/mdns.h", "include/libraries/bonamibase.h"))):
         target = output / name
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(source(name))
     binary = output / ("query" if args.query else
-                       "discovery" if args.discovery else "responder-rfc")
+                       "discovery" if args.discovery else
+                       "server" if args.server else "responder-rfc")
     reap = any(b"mdnsDiscoveryReap" in (output / h).read_bytes()
                for h in ("mdnsd.h", "mdns_bonami.h") if (output / h).exists())
     flags = [os.environ.get("CC", "cc"), "-std=c99", "-O1", "-g", "-Wall", "-Wextra",
@@ -131,7 +146,8 @@ def main():
             b"mdnsCacheLatest" in (output / "mdns_discovery.c").read_bytes():
         flags.append("-DMDNS_SINGLE_CACHE")   # one cache (step 5)
     fixture = ("mdns_query.c" if args.query else
-               "mdns_discovery.c" if args.discovery else "mdns_responder_rfc.c")
+               "mdns_discovery.c" if args.discovery else
+               "dnssd_server_rfc.c" if args.server else "mdns_responder_rfc.c")
     subprocess.run(flags + [str(fixtures / fixture),
                            *(str(output / source) for source in sources),
                            "-o", str(binary)], check=True)
@@ -153,6 +169,14 @@ def main():
     if subtype_core:
         cases += ("subtype-announce", "subtype-query", "subtype-goodbye",
                   "subtype-validation")
+    if args.server:
+        cases = ("expire-ptr", "expire-srv", "expire-a", "expire-txt",
+                 "goodbye", "goodbye-rescued", "cache-flush", "refresh",
+                 "compressed", "wrong-class", "pointer-cycle",
+                 "name-past-rdata", "wrong-port", "budget", "lost",
+                 "close-quiet", "coalesce", "links-reset", "subtype",
+                 "query-aaaa", "query-ptr", "query-timeout", "own-host",
+                 "renamed", "clock-wrap")
     if args.discovery:
         cases = ("labels-order-txt", "expire-ptr", "expire-srv", "expire-txt", "expire-a",
                  "goodbye", "rescue", "update", "lifecycle", "overflow", "resolve",

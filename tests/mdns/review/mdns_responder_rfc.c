@@ -325,6 +325,8 @@ BOOL mdnsNetIsOwn6(struct MDNSDaemon *md, const struct in6_addr *address)
 #endif
 void mdnsNetNameHost(struct MDNSDaemon *md)
 { snprintf(md->md_HostName, sizeof(md->md_HostName), "arosbox-%u", md->md_HostSuffix); }
+/* told of every packet sent, for fixtures that look into them */
+static void (*sent_hook)(LONG index, const UBYTE *packet, LONG length);
 BOOL mdnsNetSendOn(struct MDNSDaemon *md, LONG index, const UBYTE *packet, LONG length)
 {
     const struct MDNSHeader *header = (const struct MDNSHeader *)packet;
@@ -333,6 +335,8 @@ BOOL mdnsNetSendOn(struct MDNSDaemon *md, LONG index, const UBYTE *packet, LONG 
     (void)md;
     (void)index;
     ++packets;
+    if (sent_hook)
+        sent_hook(index, packet, length);
 #ifdef MDNS_IPV6_CORE
     if (md->md_SendFamily == AF_INET)
         ++ipv4_packets;

@@ -36,6 +36,7 @@ Wait 6
 C:dnssd -L HostTest _hosttest._tcp >SYS:out/resolve.log
 C:dnssd -L BinReg _arostest._tcp >SYS:out/resolve-binary.log
 C:dnssd -G v4v6 $host.local >SYS:out/lookup.log
+C:dnssd -G v4 arosbox.local >SYS:out/lookup-self.log
 C:Nearby TIME 6 >SYS:out/nearby-kinds.log
 C:Nearby web PORTS RAW TIME 6 >SYS:out/nearby-web.log
 C:Handshake HostTest _hosttest._tcp TIME 8 >SYS:out/handshake.log
@@ -85,6 +86,7 @@ check "dnssd -L address" "$a/resolve.log" 'address 192.168.166.1'
 check "dnssd -L TXT" "$a/resolve.log" 'TXT     vers=1'
 check "dnssd -G v4" "$a/lookup.log" "$host.local  192.168.166.1"
 check "dnssd -G v6" "$a/lookup.log" "$host.local  fe80:"
+check "dnssd -G of this host's own name" "$a/lookup-self.log" "arosbox.local  192.168.166.2"
 check "dnssd -q A" "$a/query.log" "$host.local.  type 1 .* 192.168.166.1"
 check "dnssd -Z PTR" "$a/zone.log" '_hosttest._tcp.local.	PTR	HostTest._hosttest._tcp.local.'
 check "dnssd -Z SRV" "$a/zone.log" "HostTest._hosttest._tcp.local.	SRV	0 0 9999 $host.local."
