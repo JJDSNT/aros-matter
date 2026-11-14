@@ -25,7 +25,11 @@ host=${host%.local}
 mode=${MODE:-hosted}
 pre=""
 off=0
-[ "$mode" = amiga ] && { pre="Delete >NIL: SYS:System/Network/AROSTCP/db/services.d/timesync QUIET"; off=45; }
+tail=15
+# on the Amiga the boot takes 30-45 s and the host's side starts 45 s late:
+# the script waits longer, so that the browse is still there for the
+# withdrawal whatever the boot took (a faster boot once ended it first)
+[ "$mode" = amiga ] && { pre="Delete >NIL: SYS:System/Network/AROSTCP/db/services.d/timesync QUIET"; off=45; tail=45; }
 cat > "$out/s.script" <<EOS
 $pre
 Execute SYS:System/Network/AROSTCP/S/startnet
@@ -48,7 +52,7 @@ C:Nearby TIME 6 >SYS:out/nearby-kinds.log
 C:Nearby web PORTS RAW TIME 6 >SYS:out/nearby-web.log
 C:Handshake HostTest _hosttest._tcp TIME 8 >SYS:out/handshake.log
 C:Handshake Nobody web TIME 3 >SYS:out/handshake-none.log
-Wait 15
+Wait $tail
 EOS
 avahi-publish-service HostTest _hosttest._tcp 9999 vers=1 >/dev/null 2>&1 & pub1=$!
 avahi-publish-service HostWeb _http._tcp 8000 path=/w >/dev/null 2>&1 & pub2=$!
