@@ -173,6 +173,19 @@ Estados: **aberto** · **em correção** (alguém trabalhando) · **corrigido (l
   - **Próximo:** teste da enumeração de tipos; reescrever as ferramentas (`ba_common` sobre sessões `dnssd.library`; `dnssd` com -B resolvendo cada instância para manter a saída que `interop.sh` confere, -L, -R, -P, -q, -G; `Nearby`, `Share`, `Handshake`), depois `netmidid` (`workbench/network/netmidid/discovery.c`), e o R7 (retirar `bonami.library`, porta `BonAmi`, `mdns_client.c`, `mdns_discovery.c`, `mdns_query.c`). IPP não migra.
   - #2123 (eventos V2 na `bonami.library`): **fechado (2026-11-12)** com nota apontando para a `dnssd.library`. Branches `review/mdns-tools-v2` e `review/mdns-receive-hoplimit` (#2119 recusado) abandonadas.
 
+## Itens a não perder (pedido do usuário, 2026-11-14)
+
+- **B42** (troca de hostname sem reconfiguração não chega ao mdnsd; desde `db1826863d`): resolver **junto da integração
+  do `.local` no `resolver.atcp`** (passo 5 do desenho, PR do AROSTCP depois do #2218), que depende do nome atual do
+  mdnsd. Duas partes: o AROSTCP acorda os assinantes de `SBTC_SIG_ADDRESS_CHANGE_MASK` também em
+  `Miami_sethostname()`/ARexx; o mdnsd relê o nome a cada despertar/olhada, não só quando o inventário muda. Teste:
+  trocar o hostname por `Miami_sethostname()` sem reconfiguração e ver o mdnsd anunciar o novo.
+- **Provedor canônico de registros locais** (investigação futura, fora do PR do mDNS por decisão do usuário): medir
+  três benefícios possíveis antes de decidir — (1) memória residente (os registros locais copiados no cache: host e
+  serviços), (2) caminhos duplicados de atualização e invalidação (reflexo no envio + `mdnsCacheDropLocal` nos pontos de
+  troca), (3) código total, incluindo a notificação. Desenho a avaliar: as observações do cache consultam o estado
+  autoritativo (`mdnsNetAddressAt()`, registros de `mdns_reg.c`) e são avisadas das mudanças, sem cópia.
+
 ## Último commit do upstream visto
 
 `64d00bf2da` (2026-11-12, Kal: núcleo + módulos `inet.prot`/`inet6.prot`/`transport.prot`, `resolver.atcp`/`admin.atcp`/`packet.atcp`/`netconfig.atcp`; serviços do núcleo em `net/netcore.def`). Trouxe B27, B31–B34. **As medições de tamanho/memória (`research/2026-11-11-stack-cost-m68k.md`) são da estrutura anterior: refazer a linha de base sobre ela** (núcleo + módulos carregados).
