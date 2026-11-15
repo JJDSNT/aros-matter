@@ -1,0 +1,31 @@
+diff --git a/arch/m68k-amiga/boot/mmakefile.src b/arch/m68k-amiga/boot/mmakefile.src
+index ccf31ada20..ad3d7e95b9 100644
+--- a/arch/m68k-amiga/boot/mmakefile.src
++++ b/arch/m68k-amiga/boot/mmakefile.src
+@@ -119,7 +119,7 @@ rom_entry.o: FORCE
+ ext_entry.o: FORCE
+ 
+ USER_CPPFLAGS := -DADATE="\"$(shell date "+%d.%m.%Y")\""
+-#USER_CPPFLAGS += -DDEFKRN_CMDLINE="\"sysdebug=InitCode,debugmmu,mungwall\""
++USER_CPPFLAGS += -DDEFKRN_CMDLINE="\"mungwall\""   # B35 DEBUG (local)
+ 
+ # Use -m68060 when compiling .S files, as we will need the
+ # expanded instruction set to detect alternate CPUs
+diff --git a/workbench/network/stacks/AROSTCP/bsdsocket/kern/net_modload.c b/workbench/network/stacks/AROSTCP/bsdsocket/kern/net_modload.c
+index 985291cc1e..958d913638 100644
+--- a/workbench/network/stacks/AROSTCP/bsdsocket/kern/net_modload.c
++++ b/workbench/network/stacks/AROSTCP/bsdsocket/kern/net_modload.c
+@@ -340,6 +340,13 @@ netmodule_load1(const char *libname, struct netmodule **nmp, int optional, int n
+     ReleaseSemaphore(&syscall_semaphore);
+ 
+     __log(LOG_NOTICE, "module %s loaded from %s.", nm->nm_name, file);
++    /* B35 DEBUG (local, not upstream): where it is, to map addresses */
++    {
++        const UWORD *jt = (const UWORD *)((const UBYTE *)base - 6);
++        __log(LOG_NOTICE, "B35DBG module %s: base %08lx desc %08lx lvo1 %04x %08lx",
++              nm->nm_name, (unsigned long)base, (unsigned long)nm,
++              (unsigned)jt[0], (unsigned long)*(const ULONG *)(jt + 1));
++    }
+     if(nmp != NULL)
+         *nmp = nm;
+     return (0);
