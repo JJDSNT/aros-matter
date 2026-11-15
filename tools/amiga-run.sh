@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # amiga-run.sh WORKDIR SCRIPT [FILE...]
 #
 # Boots AROS m68k once on an emulated Amiga (Amiberry), runs the AmigaDOS
@@ -57,6 +57,16 @@ set -- --log -G -r "$rom" ${ext:+-K "$ext"} --model A3000 \
     -s chipmem_size=4 $mem \
     -s a2065=aros0 -s sound_output=none \
     -s filesystem2="rw,DH0:System:$sys,10"
+# AMIGA_SERIAL=FILE: the Amiga's serial port (AROS's debug output: alerts,
+# kprintf) into FILE - Amiberry serves it on TCP, tools/ptylog.py records it
+serpid=""
+if [ -n "${AMIGA_SERIAL:-}" ]; then
+    : > "$AMIGA_SERIAL"
+    serport=${AMIGA_SERIAL_PORT:-17311}
+    set -- "$@" -s serial_port="TCP://127.0.0.1:$serport"
+    python3 "$(dirname "$0")/ptylog.py" "$AMIGA_SERIAL" "$serport" &
+    serpid=$!
+fi
 setsid timeout "$((tmo + 30))" xvfb-run -a "$amiberry" "$@" > "$work/amiberry.log" 2>&1 &
 pid=$!
 t=0
@@ -77,6 +87,7 @@ if [ -n "$sid" ]; then
     pkill -KILL -s "$sid" 2>/dev/null || true
 fi
 wait $pid 2>/dev/null || true
+[ -n "$serpid" ] && kill "$serpid" 2>/dev/null
 cp -r "$sys/out" "$work/out"
 rm -rf "$sys"
 if [ -f "$work/out/done.log" ]; then echo "finished: $work/out"; else echo "did not finish (timeout or crash): see $work/amiberry.log" >&2; exit 1; fi
