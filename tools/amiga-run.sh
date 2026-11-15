@@ -87,7 +87,7 @@ if [ -n "$sid" ]; then
     pkill -KILL -s "$sid" 2>/dev/null || true
 fi
 wait $pid 2>/dev/null || true
-[ -n "$serpid" ] && kill "$serpid" 2>/dev/null
+[ -n "$serpid" ] && { kill "$serpid" 2>/dev/null || true; }   # it may have ended with the emulator
 cp -r "$sys/out" "$work/out"
 rm -rf "$sys"
 if [ -f "$work/out/done.log" ]; then echo "finished: $work/out"; else echo "did not finish (timeout or crash): see $work/amiberry.log" >&2; exit 1; fi
