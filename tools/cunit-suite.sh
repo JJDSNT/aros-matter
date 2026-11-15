@@ -19,6 +19,10 @@ if [ -n "$built" ] && [ "$(cd "$src" && pwd)" != "$(cd "$built" && pwd)" ]; then
   echo "AROS_SRC $src is not the tree $build was built from ($built)" >&2; exit 1
 fi
 echo "suites of $src ($(git -C "$src" rev-parse --short HEAD)), build $build" >&2
+# the test programs as this tree has them: a build reused across branches
+# keeps the last branch's binaries (2026-11-15: #2282's run had B49's
+# cunit-net-ifalias, with a test of a fix not in that tree)
+make -C "$build" test-socket-yes-cunit-quick >/dev/null 2>&1 || { echo "building the tests failed" >&2; exit 1; }
 mkdir -p "$out"
 # the taps go away when WSL restarts: without them tap.device does not open,
 # the stack does not start and every suite skips itself
