@@ -104,3 +104,57 @@ da `dnssd.library` depois do #2264; o resolver ganha o reverso em seguida. A fas
 - O B42 (troca de hostname em execução não chega ao mdnsd) mexe no `resolver.atcp`/núcleo, mas é outro
   tópico: PR separado.
 - Fase 2 (reverso): PR da `dnssd.library` (`DNSSD_QueryRecordSyncA`) e depois o do resolver.
+
+## Implementação (2026-11-15) — o que mudou em relação ao desenho
+
+Ramo `review/resolver-mdns-local` em `~/AROS-ipv6`, sobre o #2264: `0a8a7a681d` (cabeçalho público da dnssd nos
+includes comuns de rede) e `3aa89ea6f2` (resolver). Local, sem push.
+
+- **Sem dependência do mDNS (usuário):** o AROSTCP não depende do mDNS nem para compilar nem para rodar. O
+  `<dnssd/dnssd.h>` foi para `workbench/network/common/include` (instalado por `network-includes-copy`, como os de
+  netservice/miamipanel); o caminho continua o mesmo para o mdns, netmidid e ferramentas
+  (`workbench-network-mdns-includes` passa a significar `network-includes-copy`). No AROSTCP só fica o stub da chamada
+  ao vetor 10 (`AROS_LC4`), porque o `proto/dnssd.h` é gerado pelo build da biblioteca. Nada no mmakefile do resolver.
+  Uma primeira versão copiava a ABI no `res_mdns.c`; trocada pelo cabeçalho comum (sugestão do ChatGPT, aceita).
+- **Erros, conferidos com o caminho DNS (`res_query.c`):** nome ausente `HOST_NOT_FOUND`/`EAI_NONAME`; mdnsd parado
+  `TRY_AGAIN`/`EAI_AGAIN` na hora (como servidor que recusa); Ctrl-C `TRY_AGAIN` + `EINTR`/`EAI_AGAIN`; sem
+  `dnssd.library` `HOST_NOT_FOUND`; respondeu mas sem endereço da família `NO_DATA`. O `getaddrinfo()` DNS continua
+  como era (só `EAI_NONAME`); o `EAI_AGAIN` vale para `.local`.
+- **`gethostbyname2(AF_INET6)`:** os link-local ficam fora (sem zona no `hostent`); `NO_DATA` quando só há eles.
+- **`usens` (`USENAMESERVER`):** 0 = só o arquivo de hosts (o mDNS não é consultado), 1 = servidor de nomes primeiro,
+  2 = segundo; o mDNS segue a mesma ordem que o DNS.
+- **Lista de busca:** sem mudança no `res_search()` (fase 1 mínima): só o nome dado com `.local` vai ao mDNS.
+- **Pilha no m68k:** os resultados ficam na `struct DNSSDAddress` do cabeçalho, no buffer de quem chama: o `querybuf`
+  ocioso depois da `hoststruct` (com checagem de tamanho em compilação) no `hostent`, e memória do heap alocada só
+  para `.local` no `getaddrinfo()`. Frames no m68k: `res_mdns_lookup` 8 B, `mdns_answer` 4 B, `res_getaddrinfo`
+  2168 B (os 2 KB de `sockaddr_storage` já eram dele). Texto do `resolver.atcp` m68k: 15453 → 18615 (+3162 B).
+- **B59** (nosso, nunca publicado): contadores do `hostent` sem o NULL final → 16 bytes além do buffer, corrupção TLSF;
+  corrigido antes do primeiro commit (ver bugs.md).
+
+Validação (final: hosted 25/25, cunit 69/69; m68k 24/24): `tests/mdns/resolver.sh` (`resolvtest`) — hosted com duas interfaces, 25 checks; m68k (A3000 68030, um
+enlace) 24 checks aplicáveis, todos ok: endereços do host nos dois enlaces, nome do próprio AROS, zona de cada
+link-local igual ao índice da interface do seu enlace (`if_nametoindex()`), `connect()` a cada endereço e a
+`fe80::1` (os dois enlaces o têm) chegando ao host pelo enlace da zona (registro do servidor no host), nome
+ausente em ~3,0 s (uma espera para as três APIs), hosts antes do mDNS, nenhum `.local` na porta 53 (com e sem
+mdnsd) enquanto um nome de controle vai, Ctrl-C, 50 consultas sem perda de memória, mdnsd parado (Ctrl-C na tarefa)
+e iniciado de novo, 20 consultas depois. Suíte cunit 69/69. precodacy limpo.
+
+Observação: a primeira consulta de um nome com o cache do mdnsd frio leva ~1,25 s (as seguintes ~250 ms); não
+investigado (Avahi/consulta inicial do mdnsd).
+
+### Pilha no m68k, cadeia inteira (2026-11-15)
+
+`tests/mdns/resolver-stack.sh` (`resolvtest -S`): cada nome num processo próprio, que abre a sua
+`bsdsocket.library`, pinta a pilha na entrada e mede o pico de `gethostbyname()` + `gethostbyname2()` +
+`getaddrinfo()` (bsdsocket, módulo resolver, `dnssd.library`, trocas de tarefa). A3000 68030 emulado:
+
+| caminho | pico | na entrada | das consultas |
+|---|---|---|---|
+| `.local` encontrado / inexistente / no hosts (o IPv6 vai ao mDNS) | 3824 | 169 | 3655 |
+| só no arquivo de hosts; DNS unicast | 4196 | 169 | 4027 |
+
+O caminho `.local` usa 372 bytes a menos que o DNS que já existia (o `gethostbyname2()` desses cai no DNS:
+`res_send`, cache). O AROS m68k não cria processo com menos de 8192 bytes de pilha (`NP_StackSize` 4096 e o
+`Stack 4096` do Shell dão 8192): sobram 4368 bytes para a aplicação no `.local`, 3996 no DNS. Frame do
+`res_getaddrinfo` 2156 → 2168 B. Os testes compilam com `tests/mdns/build-tests.sh` (mesmas flags nos dois alvos,
+`-fno-common`: o GCC 6.5 do m68k faz COMMON de globais não inicializados e o AROS m68k não carrega o programa).
