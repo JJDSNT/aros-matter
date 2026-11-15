@@ -3,6 +3,7 @@
  * (on an AF_INET6 socket with "inet6"). For B48: ip addr showed each IPv6
  * link-local address twice.
  */
+#define __CONFIG_ROADSHOW__     /* inet_ntop() */
 #include <proto/exec.h>
 #include <proto/socket.h>
 #include <sys/socket.h>
