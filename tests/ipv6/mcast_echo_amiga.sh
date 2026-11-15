@@ -1,7 +1,7 @@
 #!/bin/sh
 # mcast_echo_amiga.sh OUT - B40: boot AROS, ping ff02::1 and AROS's link-local
 # address from the host while capturing on aros0; prints how many replies came
-# from AROS and the echo lines. MODE=amiga (default: the m68k build,
+# from AROS and the echo lines; the same for IPv4 (224.0.0.1). MODE=amiga (default: the m68k build,
 # tools/amiga-run.sh) or MODE=hosted (AROS_HOSTED_IMAGE, tools/hosted-run.sh).
 set -u
 o=$1; rm -rf "$o"; mkdir -p "$o"
@@ -22,11 +22,14 @@ ping -c2 -w4 192.168.166.2 >/dev/null
 mac=$(ip neigh show 192.168.166.2 dev aros0 | grep -o "lladdr [0-9a-f:]*" | cut -d' ' -f2)
 ll=$(python3 -c "
 import socket;b=bytes.fromhex('$mac'.replace(':',''));e=bytes([b[0]^2])+b[1:3]+b'\xff\xfe'+b[3:];print(socket.inet_ntop(socket.AF_INET6,bytes.fromhex('fe80000000000000')+e))")
-sudo -n tcpdump -ni aros0 -U -w "$o/c.pcap" icmp6 >/dev/null 2>&1 &
+sudo -n tcpdump -ni aros0 -U -w "$o/c.pcap" "icmp6 or icmp" >/dev/null 2>&1 &
 sleep 1
 echo "AROS $ll ($mode)"
 echo "multicast replies from AROS: $(ping -6 -w 4 "ff02::1%aros0" | grep -c "from $ll")"
 echo "unicast replies: $(ping -6 -c 2 -w 4 "$ll%aros0" | grep -c "from $ll")"
+# IPv4 has the same path (icmp_reflect() keeps the request's M_MCAST: #2282 review)
+echo "IPv4 multicast replies from AROS (224.0.0.1): $(ping -I aros0 -w 4 224.0.0.1 2>/dev/null | grep -c "from 192.168.166.2")"
+echo "IPv4 unicast replies: $(ping -c 2 -w 4 192.168.166.2 | grep -c "from 192.168.166.2")"
 sleep 1; sudo -n pkill -INT -f "tcpdump -ni aros0 -U -w $o/c.pcap"; sleep 1
 sudo -n tcpdump -nn -r "$o/c.pcap" 2>/dev/null | awk '/echo/' | head -10
 wait
