@@ -20,6 +20,8 @@
 #   AMIBERRY          the amiberry binary (default ~/emu/amiberry-dl/squashfs-root/AppRun)
 #   AMIGA_A2065_DEV   the SANA-II driver (default ~/emu/drivers/SANA/SANA/dev/devs/networks/a2065.device)
 #   AMIGA_FAST_MB     Fast RAM in MB (default 8; Zorro III above 8)
+#   AMIGA_MB_RAM_MB   the A3000's motherboard (RAMSEY) Fast RAM in MB, 0 to 16
+#                     (default: Amiberry's, 8 - on top of AMIGA_FAST_MB)
 #   AMIGA_CPU         68000/68020/68030/68040 (default 68030)
 #   AMIGA_TAP_IP      if set, eth0 on the A2065 with this IPv4
 #   AMIGA_AROSTCP     if set, this AROSTCP binary replaces the system's
@@ -52,6 +54,7 @@ printf 'Run >NIL: Execute S:matter-run\n' > "$sys/S/User-Startup"
 
 # Zorro II Fast RAM up to 8 MB; more as Zorro III
 if [ "$fast" -le 8 ]; then mem="-s fastmem_size=$fast"; else mem="-s z3mem_size=$fast"; fi
+[ -n "${AMIGA_MB_RAM_MB:-}" ] && mem="$mem -s a3000mem_size=$AMIGA_MB_RAM_MB"
 set -- --log -G -r "$rom" ${ext:+-K "$ext"} --model A3000 \
     -s cpu_type="$cpu" -s cpu_model="$cpu" -s cpu_speed=max -s cpu_compatible=false \
     -s chipmem_size=4 $mem \

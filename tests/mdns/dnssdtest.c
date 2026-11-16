@@ -11,6 +11,7 @@
  * Prints "PASS ..."/"FAIL ..." lines and a summary.
  */
 #include <exec/types.h>
+#include <exec/memory.h>
 #include <dos/dos.h>
 #include <proto/exec.h>
 #include <proto/dos.h>
@@ -18,6 +19,10 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
+
+#ifndef DNSSD_SESSION_OPERATIONS
+#define DNSSD_SESSION_OPERATIONS 24     /* headers from before dnssd.h said it */
+#endif
 
 struct Library *DNSSDBase;
 static int fails, passes;
@@ -640,6 +645,36 @@ main(int argc, char **argv)
     CHECK(DNSSD_Cancel(op) == DNSSD_OK, "cancel at once");
     n = drain(s, port, 3, &end, &events, 0);
     CHECK(events == 0, "nothing after the cancel (%lu events)", (unsigned long)events);
+
+    {
+        /* the operations a session can always have at once, whatever the
+         * memory mdnsd started with */
+        DNSSDOperationRef many[DNSSD_SESSION_OPERATIONS];
+        int k, ok = 0;
+        ULONG rest = AvailMem(MEMF_ANY), largest = AvailMem(MEMF_ANY | MEMF_LARGEST);
+
+        for (k = 0; k < DNSSD_SESSION_OPERATIONS; k++) {
+            many[k] = NULL;
+            rc = DNSSD_LookupAddress(s, missing, &many[k], DNSSD_Timeout, 30, TAG_DONE);
+            if (rc == DNSSD_OK) {
+                ok++;
+            } else {
+                printf("  operation %d: %ld\n", k + 1, (long)rc);
+            }
+        }
+        printf("  free memory: %lu at rest (largest block %lu), %lu with %d operations\n",
+            (unsigned long)rest, (unsigned long)largest,
+            (unsigned long)AvailMem(MEMF_ANY), ok);
+        CHECK(ok == DNSSD_SESSION_OPERATIONS, "%d operations at once in a session (%d)",
+            DNSSD_SESSION_OPERATIONS, ok);
+        for (k = 0; k < DNSSD_SESSION_OPERATIONS; k++) {
+            if (many[k] != NULL) {
+                DNSSD_Cancel(many[k]);
+            }
+        }
+        drain(s, port, 1, &end, &events, 0);
+        printf("  free memory: %lu after the cancels\n", (unsigned long)AvailMem(MEMF_ANY));
+    }
 
     status(&inc2, &sessions, &ops);
     CHECK(inc2 == inc && sessions >= 1 && ops == 0, "status open: sessions %lu operations %lu",
