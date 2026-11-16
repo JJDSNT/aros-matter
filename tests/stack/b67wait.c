@@ -12,13 +12,13 @@
  *                          SBTC_SIG_HOSTNAME_CHANGE_MASK signal came, whether
  *                          another came in the 1.5 s after it, and
  *                          gethostname()
- *   b67wait addr IF ADDR   adds ADDR/32 to IF (SIOCAIFADDR); the signal of
+ *   b67wait addr IF ADDR [HOLD]  adds ADDR/32 to IF (SIOCAIFADDR); the signal of
  *                          the add comes from this task and is taken; then:
  *                          when the SBTC_SIG_ADDRESS_CHANGE_MASK signal of
  *                          its conflict detection ending came (the stack
  *                          task's, from its ARP timer), within 8 s, and the
  *                          address's IN_IFF_* flags then; the address is
- *                          deleted after
+ *                          deleted after, or HOLD seconds later
  *
  * Prints "first <ms>|none", "again yes|no", and the name or the flags.
  */
@@ -40,6 +40,7 @@
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 struct Library *SocketBase;
 struct RxsLib *RexxSysBase;
@@ -174,6 +175,8 @@ int main(int argc, char **argv)
         first = wait_ms(mask, 8000);
         printf("addr first %s%d flags then %d\n", first < 0 ? "none " : "", first,
             aflags(argv[2], argv[3]));
+        if (argc > 4)
+            Delay(atol(argv[4]) * 50);
         alias(0, argv[2], argv[3]);
         SocketBaseTags(SBTM_SETVAL(SBTC_SIG_ADDRESS_CHANGE_MASK), 0, TAG_END);
     }

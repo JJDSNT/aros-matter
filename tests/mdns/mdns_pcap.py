@@ -2,14 +2,15 @@
 """
 mdns_pcap.py - the mDNS records in a capture, as they were sent.
 
-    mdns_pcap.py PCAP [--from ADDR] [--name SUFFIX] [--type TYPE]
+    mdns_pcap.py PCAP [--from ADDR] [--name SUFFIX] [--type TYPE] [--rdata] [--time]
 
 Reads a pcap (Ethernet, IPv4 or IPv6, UDP 5353) and prints one line per
 resource record of each response: source address, owner name, type, class
 (with the cache-flush bit) and TTL. --from keeps the packets of one source,
 --name the records whose owner ends with SUFFIX (case ignored), --type the
-records of one type (A, AAAA, PTR, SRV, TXT or a number). Plain Python, no
-packages.
+records of one type (A, AAAA, PTR, SRV, TXT or a number); --rdata adds
+an A or AAAA record's address after the TTL, --time the packet's capture
+time (seconds since the epoch) first. Plain Python, no packages.
 """
 import argparse
 import ipaddress
@@ -28,8 +29,8 @@ def packets(path):
             rec = f.read(16)
             if len(rec) < 16:
                 return
-            _, _, incl, _ = struct.unpack(endian + "IIII", rec)
-            yield f.read(incl)
+            secs, usecs, incl, _ = struct.unpack(endian + "IIII", rec)
+            yield secs + usecs / 1e6, f.read(incl)
 
 
 def udp_5353(frame):
@@ -87,8 +88,9 @@ def records(msg):
     for _ in range(an + ns + ar):
         owner, at = name_at(msg, at)
         rtype, rclass, ttl, length = struct.unpack(">HHIH", msg[at:at + 10])
+        data = msg[at + 10:at + 10 + length]
         at += 10 + length
-        yield owner, rtype, rclass, ttl
+        yield owner, rtype, rclass, ttl, data
 
 
 def main():
@@ -97,12 +99,14 @@ def main():
     ap.add_argument("--from", dest="source")
     ap.add_argument("--name")
     ap.add_argument("--type")
+    ap.add_argument("--rdata", action="store_true")
+    ap.add_argument("--time", action="store_true")
     args = ap.parse_args()
     want = None
     if args.type:
         want = int(args.type) if args.type.isdigit() else \
             {v: k for k, v in TYPES.items()}[args.type.upper()]
-    for frame in packets(args.pcap):
+    for when, frame in packets(args.pcap):
         got = udp_5353(frame)
         if got is None:
             continue
@@ -110,13 +114,19 @@ def main():
         if args.source and src != args.source:
             continue
         try:
-            for owner, rtype, rclass, ttl in records(msg):
+            for owner, rtype, rclass, ttl, data in records(msg):
                 if args.name and not owner.lower().endswith(args.name.lower()):
                     continue
                 if want is not None and rtype != want:
                     continue
-                print(src, owner, TYPES.get(rtype, rtype),
-                      ("IN-flush" if rclass & 0x8000 else "IN"), ttl)
+                extra = []
+                if args.rdata and rtype == 1 and len(data) == 4:
+                    extra = [str(ipaddress.IPv4Address(data))]
+                elif args.rdata and rtype == 28 and len(data) == 16:
+                    extra = [str(ipaddress.IPv6Address(data))]
+                head = ["%.6f" % when] if args.time else []
+                print(*head, src, owner, TYPES.get(rtype, rtype),
+                      ("IN-flush" if rclass & 0x8000 else "IN"), ttl, *extra)
         except (ValueError, struct.error, IndexError):
             continue
 
