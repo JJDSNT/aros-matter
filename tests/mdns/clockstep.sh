@@ -10,13 +10,18 @@
 #   3. a rename (C:rexxhost) and the clock set back an hour at once: when
 #      the new name's probes and announcement go out (the capture).
 # RESOLVTEST, REXXHOST, CLOCKSTEP: the test binaries (built for the target).
+# MODE=amiga runs AROS m68k on the emulated Amiga (tools/amiga-run.sh).
 # Prints what happened; with mdnsd on the monotonic clock: 1. 3 s, 2. no
-# REMOVE, 3. probes 250 ms apart right after the rename.
+# REMOVE, 3. probes 280 ms apart (MDNS_PROBE_TICKS) right after the rename.
 set -u
 out=$1; mkdir -p "$out"
 root=$(cd "$(dirname "$0")/../.." && pwd)
 "$root/tools/tap-up.sh" >/dev/null
+mode=${MODE:-hosted}
+pre=""
+[ "$mode" = amiga ] && pre="Delete >NIL: SYS:System/Network/AROSTCP/db/services.d/timesync QUIET"
 cat > "$out/s.script" <<EOS
+$pre
 Execute SYS:System/Network/AROSTCP/S/startnet
 Wait 15
 Run >NIL: C:resolvtest -T 192.168.166.1 nobody-clock.local >SYS:out/c1.txt
@@ -42,11 +47,17 @@ EOS
 avahi-publish-service ClockSvc _clocktest._tcp 7799 >/dev/null 2>&1 & pub=$!
 sudo -n tcpdump -i aros0 -n -w "$out/aros0.pcap" 'udp port 5353 or udp port 9' >/dev/null 2>&1 & cap=$!
 sleep 1
-AROS_TAP_IP=192.168.166.2 AROS_RUN_TIMEOUT=200 \
-  "$root/tools/hosted-run.sh" "$out/aros" "$out/s.script" "$RESOLVTEST" "$REXXHOST" "$CLOCKSTEP" > "$out/run.txt" 2>&1
+if [ "$mode" = amiga ]; then
+  AMIGA_TAP_IP=192.168.166.2 AMIGA_RUN_TIMEOUT=300 \
+    "$root/tools/amiga-run.sh" "$out/aros" "$out/s.script" "$RESOLVTEST" "$REXXHOST" "$CLOCKSTEP" > "$out/run.txt" 2>&1
+else
+  AROS_TAP_IP=192.168.166.2 AROS_RUN_TIMEOUT=200 \
+    "$root/tools/hosted-run.sh" "$out/aros" "$out/s.script" "$RESOLVTEST" "$REXXHOST" "$CLOCKSTEP" > "$out/run.txt" 2>&1
+fi
 sleep 1
 sudo -n kill $cap 2>/dev/null
 kill $pub 2>/dev/null
+sleep 1                 # tcpdump writes out what it still holds
 o=$out/aros/out
 echo "1. look-up of a missing name, clock back 1 h after 1 s, forward again 10 s later:"
 grep "^T " "$o/c1.txt" | awk '{print "   took " $4 " ms (" $5 ")"}'

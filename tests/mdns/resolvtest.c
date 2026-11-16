@@ -348,13 +348,19 @@ main(int argc, char **argv)
             struct timeval a, b;
             struct hostent *h;
 
+            struct timeval u0, u1;
+
+            /* the start on the time of day (for the capture), the length
+             * on the monotonic clock (the time of day may be set meanwhile) */
             GetSysTime(&a);
+            GetUpTime(&u0);
             h = gethostbyname((STRPTR)argv[i]);
-            GetSysTime(&b);
+            GetUpTime(&u1);
+            b = u1;
             printf("T %s %lu.%06lu %lu %s\n", argv[i], (unsigned long)a.tv_secs,
                    (unsigned long)a.tv_micro,
-                   (unsigned long)((b.tv_secs - a.tv_secs) * 1000 +
-                                   ((LONG)b.tv_micro - (LONG)a.tv_micro) / 1000),
+                   (unsigned long)((b.tv_secs - u0.tv_secs) * 1000 +
+                                   ((LONG)b.tv_micro - (LONG)u0.tv_micro) / 1000),
                    h ? "found" : "none");
         }
     } else if (argc == 3 && strcmp(argv[1], "-b") == 0) {
