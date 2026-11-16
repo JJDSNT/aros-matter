@@ -106,7 +106,7 @@ família nova) e aos próprios eventos. Um serviço não anuncia em L antes de `
   compara com a `Pub(dono, B)` (mesmo nome) - sem o diário seria empate consigo mesmo; com ele, ignorada.
   Fica como etapa própria, com o teste de conflito verdadeiro (`foreignaddr.sh`).
 
-## 5. Custo estimado (m68k) - a medir
+## 5. Custo estimado (m68k) - estimativa inicial; os números medidos estão em §9.4
 
 | Item | Hoje | B |
 |---|---|---|
@@ -144,3 +144,70 @@ o número exato sai das medições de cada etapa.
   conflito verdadeiro com o Avahi (rename global, §14), empate de sonda (§8.2, só o enlace), família que some
   (goodbye pela outra), testes unitários do coordenador (lógica pura de transições, sem rede).
 - Medidas: texto/dados/bss do mdnsd por etapa; pico de pilha; memória com 50 serviços em 2 enlaces.
+
+## 9. Etapa 1 implementada (2026-11-16, local, sem push)
+
+Ramo `review/mdnsd-record-lifecycle` em `~/AROS-ipv6`:
+- `5f58ff74f0` dnssd_link: FAMILY_DOWN vem seguido de um ADDRESS_REMOVED por endereço que a família tinha (para
+  poder retirar os registros); `dnssd_link_aros_reconcile()` recebe a lista (NULL = nenhuma). Compila sozinho.
+- `1ff96c058e` mdnsd: publicações do host por enlace e família + coordenador.
+
+### 9.1 O modelo como ficou
+- `struct MDNSPub { p_Link; p_Family[2] }`, `struct MDNSFamilyPub { state, step, updates, next, multicast }` (12 B):
+  **dois sub-estados por família** em cada enlace (OFF, PROBING, ANNOUNCING, ANNOUNCED). Identidade do enlace =
+  índice da interface (não o slot). `mdns_pub.c`: só a mecânica (achar/criar/remover Pub, iniciar rodada, "responde?").
+- O host: `md_HostPubs[32]` substitui `md_HostState/Step/NextTick/Announced/Multicast`.
+- Coordenador: `mdnsHostLinksChanged()` consome a lista do inventário:
+  FAMILY_UP → só (L, f) sonda e anuncia; ADDRESS_ADDED/REMOVED com a família presente → `fp_Updates = 2`
+  (dois anúncios cache-flush, §8.4, sem sonda) nas famílias que respondem em L; FAMILY_DOWN → (L, f) OFF e goodbye
+  dos endereços perdidos **pela outra família** se ela responde em L; enlace sumido → Pub removida;
+  overflow → todo enlace volta a sondar (rede de segurança).
+- Nome (rename B42, conflito §9): todas as Pubs recomeçam (posse global, §14); goodbye do nome velho só no rename
+  voluntário (B68). Os serviços são reanunciados com o nome novo quando o host está pronto em toda Pub.
+- Respostas: o host responde em (L, f) só se (L, f) responde; a resposta multicast sai **pela família da pergunta**;
+  o "unicast direto" (§5.4) usa o último multicast de (L, f). Serviços do host só respondem onde o host responde.
+- Serviços continuam globais (etapa 2), mas: endereço do host mudou → **nada** para eles (o SRV aponta o nome; os
+  A/AAAA adicionais vêm do host); só FAMILY_UP/overflow ainda reinicia os serviços (globalmente, até a etapa 2).
+- **Proxy:** a etapa 1 não toca o ciclo do proxy (os registros dele são do serviço); mudanças do host local não o
+  afetam - a invariante vale por construção e será explícita nas Pubs de serviço (etapa 2).
+
+### 9.2 Limites do B75 (documentados, não "resolvidos pelo cache-flush")
+- Endereço removido com a família ainda presente: o reanúncio cache-flush do conjunto restante retira o velho em
+  ~1 s (§10.2) para quem ouve aquela família - correto pelo §8.4.
+- **Última família removida** no enlace: nada mais sai por ela. O goodbye vai pela família que resta
+  (`addrreplace`: TTL 0 de 192.168.166.2 com origem fe80::…); um cliente **só IPv4** não o recebe e guarda o
+  registro até expirar (TTL do host, 120 s). Sem transporte nenhum (enlace caiu), nenhum goodbye é possível.
+- "Retirar antes de perder o transporte": não há aviso prévio da pilha (o endereço já some/fica tentativo quando
+  o sinal chega); ficaria para um sinal "vai remover" da pilha - fora do escopo.
+
+### 9.3 Resultados (hosted, imagem `aros-build-ipv6-hosted-claude`)
+- `availability.sh` (B76): eth1 **sem nenhuma lacuna** de resposta e 0 sondas em ambos os enlaces enquanto o alias
+  vem e vai no eth0 (antes: 4 lacunas de 0,8-0,9 s e 18 sondas no eth1); eth0: 2 anúncios por família com o alias e 2
+  sem ele, sem sonda.
+- `ipv4only`: IPv6 anunciado a 1,1 s durante a ACD; IPv4 sonda só quando pronto (5,4 s) e o ouvinte só-IPv4 ouve.
+- `addrchange`: mesmo IPv4 reaplicado → 3 sondas (só IPv4; antes 6); IPv4 que chega no eth1 → só eth1/IPv4 sonda.
+- `addrreplace`: alias = 0 sondas; troca .2→.3 (passa pela ACD) → goodbye de .2 via IPv6, 3 sondas IPv4, anúncio .3.
+- Regressão: hostname, dnssd (69/0), dnssd_gone, resolver, follow, timing, tools, interop, clockstep,
+  foreignaddr - sem falha; dnssdlinktest e dnssdlinkarostest 0 falhas.
+- m68k (A3000/68030, 1 placa, ROM com B73): ipv4only, dnssd (69/0), tools, hostname, resolver, follow,
+  dnssd_gone, clockstep sem falha; resolver-stack ≤ 4196 B de pilha. `timing` falha também na base (anúncios
+  965-987 ms, reenvios 937-994 ms no fio): **B77**, anterior, do relógio do m68k emulado, não da etapa 1.
+- Atenção de bancada: `resolver`, `resolver-stack`, `foreignaddr` e `samesegment` são bash (`$'\n'`); sob `sh`
+  o `resolver` em m68k não apagava `services.d/mdns` e falhava "no mdnsd" (falso).
+- **`samesegment` (B60) continua falhando, com outro sintoma:** antes ficava preso sondando (~230 sondas, nunca
+  anunciava); agora um enlace vence, anuncia, e o outro enlace ouve o anúncio como conflito → 50 renomeações
+  (arosbox-2 … -51). Mesma causa (sem classificação de pacotes próprios no transporte); decisão pendente: B60
+  antes de publicar a série.
+
+### 9.4 Custos medidos
+- m68k (`m68k-aros-size`): texto 50 650 → 53 490 (+2 840), bss 62 348 → 63 696 (+1 348: `md_HostPubs` 896 B,
+  `md_LinkChange` 448 B). `MDNSPub` 28 B; `MDNSRegisteredService` 2 444 B (dos quais 256 B de arrays por slot).
+- Memória real (`tests/mdns/memory.sh` + `memsvc`, AvailMem, cliente + mdnsd):
+  - m68k A3000/68030, 1 enlace: 1 / 10 / 50 serviços = 16 432 / 50 128 / 200 432 B (base: 16 432 / 66 560 / 192 216);
+    ~3,6-3,8 KB por serviço; degraus de 4 KB (puddles do alocador) - diferenças ±16 KB são granularidade.
+    mdnsd ocioso: 4 784 B a mais livres na base (≈ estático + alinhamento de hunk).
+  - hosted x86-64: 1 enlace 76 336 / 44 224 / 202 720 (base) vs 76 336 / 44 192 / 202 704; 2 enlaces 221 312 vs
+    221 264 com 50 serviços. O 2º enlace custa ~370 B por serviço - o **cache** do mdnsd (cópia dos próprios
+    registros por enlace), não o estado de publicação: ponto para a etapa 2.
+  - A etapa 1 não muda o custo por serviço (não toca serviços); 2 enlaces no m68k não foram montados (só A2065):
+    o comportamento multi-enlace é provado no hosted e confirmado no m68k com 1 placa (decisão do usuário).

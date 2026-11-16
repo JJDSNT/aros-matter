@@ -1,6 +1,6 @@
 #!/bin/sh
 # build-tests.sh OUTDIR [hosted|m68k]... - the mDNS test programs
-# (dnssdtest, dnssd_gone, resolvtest) for each target, all with the same
+# (dnssdtest, dnssd_gone, resolvtest, memsvc) for each target, all with the same
 # flags: OUTDIR/<target>/<program>, and OUTDIR/<target>/<program>.log with
 # the compiler's output (no warning expected; m68k's inline library calls
 # give -Wvolatile-register-var, which is left out of the log check).
@@ -29,7 +29,7 @@ for t in $targets; do
     *) echo "unknown target $t" >&2; exit 2 ;;
   esac
   mkdir -p "$out/$t"
-  for p in dnssdtest dnssd_gone resolvtest; do
+  for p in dnssdtest dnssd_gone resolvtest memsvc; do
     if "$cc" --sysroot="$sys" -I"$sys/include" -L"$sys/lib" $flags \
          -o "$out/$t/$p" "$here/$p.c" > "$out/$t/$p.log" 2>&1 &&
        ! grep -v "Wvolatile-register-var\|^In file included\|^ *from \|note:\|^ *|\|^ *[0-9]* |" \
