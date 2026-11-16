@@ -21,6 +21,13 @@
  *                                  own bsdsocket.library: "stack4 NAME
  *                                  <size> <at entry> <most used> <left>" -
  *                                  what the look-ups took is most - entry
+ *        resolvtest -T ADDR NAME...  a UDP datagram "mark" to ADDR port 9,
+ *                                  then gethostbyname() of each NAME, with
+ *                                  the system time each started at: "M
+ *                                  <secs>.<micros>", "T NAME <secs>.<micros>
+ *                                  <ms> found|none" - in a capture taken
+ *                                  meanwhile the datagram gives the offset
+ *                                  between the two clocks
  *        resolvtest -b NAME        gethostbyname() and getaddrinfo() with
  *                                  Ctrl-C already pending: "brk NAME <ms>
  *                                  h_errno=N errno=E gai=G"
@@ -323,6 +330,33 @@ main(int argc, char **argv)
             gethostbyname((STRPTR)argv[2]);
         }
         printf("rep %s %d %ld\n", argv[2], n, (long)(before - AvailMem(MEMF_ANY)));
+    } else if (argc >= 4 && strcmp(argv[1], "-T") == 0) {
+        struct sockaddr_in to;
+        struct timeval m;
+        int s = socket(AF_INET, SOCK_DGRAM, 0);
+
+        memset(&to, 0, sizeof(to));
+        to.sin_len = sizeof(to);
+        to.sin_family = AF_INET;
+        to.sin_port = htons(9);
+        to.sin_addr.s_addr = inet_addr((STRPTR)argv[2]);
+        GetSysTime(&m);
+        sendto(s, (APTR)"mark", 4, 0, (struct sockaddr *)&to, sizeof(to));
+        CloseSocket(s);
+        printf("M %lu.%06lu\n", (unsigned long)m.tv_secs, (unsigned long)m.tv_micro);
+        for (i = 3; i < argc; i++) {
+            struct timeval a, b;
+            struct hostent *h;
+
+            GetSysTime(&a);
+            h = gethostbyname((STRPTR)argv[i]);
+            GetSysTime(&b);
+            printf("T %s %lu.%06lu %lu %s\n", argv[i], (unsigned long)a.tv_secs,
+                   (unsigned long)a.tv_micro,
+                   (unsigned long)((b.tv_secs - a.tv_secs) * 1000 +
+                                   ((LONG)b.tv_micro - (LONG)a.tv_micro) / 1000),
+                   h ? "found" : "none");
+        }
     } else if (argc == 3 && strcmp(argv[1], "-b") == 0) {
         struct addrinfo hints, *res = NULL;
         struct hostent *h;
