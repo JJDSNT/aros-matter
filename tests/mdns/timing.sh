@@ -13,6 +13,9 @@
 #   - a missing name: the look-up's time (the resolver's 3 s);
 #   - probes of the host's name at start 250 ms apart, its announcements
 #     at least 1 s apart (sections 8.1, 8.3).
+# WARM=1 looks a name up first, unmeasured: the first look-up after boot
+# also loads dnssd.library from disk (the resolver opens it per look-up),
+# which on a 68030 takes a few hundred ms before mdnsd sees the request.
 # RESOLVTEST: the test binary (built for the target). MODE=amiga runs AROS
 # m68k (tools/amiga-run.sh); FIRST_MAX: the most the first query may take,
 # ms (default 120 + 30 for the wait's overshoot and a turn of mdnsd).
@@ -21,12 +24,15 @@ out=$1; mkdir -p "$out"
 root=$(cd "$(dirname "$0")/../.." && pwd)
 "$root/tools/tap-up.sh" >/dev/null
 mode=${MODE:-hosted}
+warm=";"
+[ "${WARM:-0}" = 1 ] && warm="C:resolvtest warmup.local >NIL:"
 pre=""
 [ "$mode" = amiga ] && pre="Delete >NIL: SYS:System/Network/AROSTCP/db/services.d/timesync QUIET"
 cat > "$out/s.script" <<EOS
 $pre
 Execute SYS:System/Network/AROSTCP/S/startnet
 Wait 15
+$warm
 C:resolvtest -T 192.168.166.1 t1.local nobody1.local >SYS:out/t1.txt
 Wait 4
 C:resolvtest -T 192.168.166.1 t2.local nobody2.local >SYS:out/t2.txt
