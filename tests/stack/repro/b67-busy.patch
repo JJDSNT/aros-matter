@@ -1,0 +1,16 @@
+diff --git a/workbench/network/stacks/AROSTCP/bsdsocket/api/amiga_api.c b/workbench/network/stacks/AROSTCP/bsdsocket/api/amiga_api.c
+index faa6ddee78..f1d7a210a4 100644
+--- a/workbench/network/stacks/AROSTCP/bsdsocket/api/amiga_api.c
++++ b/workbench/network/stacks/AROSTCP/bsdsocket/api/amiga_api.c
+@@ -1220,7 +1220,10 @@ static VOID api_sendchange(ULONG which)
+      * the stack's next timer tick.
+      */
+     if(FindTask(NULL) == AROSTCP_Task) {
+-        if(!AttemptSemaphoreShared(&baselist_semaphore)) {
++        /* B67 fault injection (tests/stack/repro/b67-busy.patch, never
++         * upstream): every new change from the stack task finds the list
++         * busy; only the retry (which == 0) may take it */
++        if(which != 0 || !AttemptSemaphoreShared(&baselist_semaphore)) {
+             api_change_pending |= which;
+             return;
+         }
