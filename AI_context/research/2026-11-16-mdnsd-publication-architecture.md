@@ -264,3 +264,27 @@ sondagem (`rs_State`), conferido.
 - Memória real m68k (68030, 1 enlace, AvailMem): 1 / 10 / 50 serviços = 16 216 / 56 184 / 181 416 B (B60: 16 432 /
   58 344 / 192 216): **−216 B por serviço**; mdnsd ocioso −1 976 B livres (código e tabelas). Regressão m68k limpa
   (ipv4only, dnssd 69/0, tools, hostname, follow, dnssd_gone, clockstep, resolver); `timing` = B77.
+
+## 11. Etapa 3: limpeza (2026-11-17, local, sem push)
+
+Medido no m68k (`m68k-aros-size`) a cada commit, sobre `e1cf7a20ed` (texto 56 674, bss 63 848):
+
+| Commit | O quê | Texto | bss | Dinâmica |
+|---|---|---|---|---|
+| `bbae723111` | `mdnsRegRestartAll` → `services_restart` interno (só recuperação) | −32 | 0 | - |
+| `b5992e560d` | `p_TypeTick` sai de `MDNSPub` → `MDNSServicePub`; arrays por tamanho em `mdns_pub.c` | +296 | −128 | igual (32 B/enlace/serviço) |
+| `95a366e468` | publicações do host dimensionadas aos enlaces (AllocVec) | −116 | −892 | +28 B por enlace |
+| `3e5ccc1704` | lista de mudanças: 1 por (enlace, família) + ADDRESS_LOST; entrada 24 B; alocada por rescan no limite (`dnssd_link_changes_bound()`) | +100 | −464 | transitória: 24 B × limite (~1,8 KB com 2 enlaces) |
+| `9aaea4a3ff` | diário B60: eco lido avança a marca da família; cresce ×1,5, encolhe a ¼; entrada 18 B; sem refresh | +4 | 0 | pico 1 024 × 20 B → 819 × 18 B (14,7 KB), só com 2+ enlaces |
+
+Total da etapa 3: texto +252, bss −1 484 (−1 232 B estáticos); mdnsd ocioso no m68k com 1 040 B a mais livres
+(AvailMem). Custo por serviço inalterado (m68k 1/10/50: 16 216 / 56 184 / 181 416 B; hosted 50 em 2 enlaces
+212 528 B). Overflow da lista (único caminho do reinício global) só sem memória.
+Pico do diário: o piso é "pacotes enviados num segundo" (rajada de ~1 000 pacotes em ~2 s com 50 serviços × 2
+enlaces × 2 famílias); baixar mais exigiria encurtar a folga de 1 s - fora do escopo.
+Regressão final hosted (availability alias e família, ipv4only, addrchange, addrreplace, hostname, dnssd 69/0,
+dnssd_gone, tools, follow, timing, clockstep, interop, resolver) e m68k (ipv4only, dnssd, tools, hostname, follow,
+dnssd_gone, clockstep, resolver) limpas; B60 (samesegment, netem, foreignaddr, teto 8, probetie) como antes.
+
+Série inteira sobre `c58cce7bf5` (base do inventário): texto 50 650 → 56 926 (+6 276), bss 62 348 → 62 364 (+16);
+por serviço −216 B no m68k.
