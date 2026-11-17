@@ -22,9 +22,15 @@ Wait 35
 C:dnssd -G v4 foreign.local >SYS:out/foreign.log
 Wait 35
 EOS
+# MDNSD: another mdnsd binary in place of the system's, for this run
+if [ -n "${MDNSD:-}" ]; then
+  cp "$MDNSD" "$out/mdnsd.new"
+  { echo "Copy C:mdnsd.new SYS:System/Network/Services/mdnsd QUIET"; cat "$out/s.script"; } > "$out/s2.script"
+  mv "$out/s2.script" "$out/s.script"
+fi
 sudo -n timeout 150 tcpdump -i aros0 -n -s0 -U -w "$out/aros0.pcap" udp port 5353 >/dev/null 2>&1 &
 AROS_TAP_IP=192.168.166.2 AROS_TAP2_IP=192.168.167.2 AROS_RUN_TIMEOUT=120 \
-  "$root/tools/hosted-run.sh" "$out/aros" "$out/s.script" > "$out/run.txt" 2>&1 & run=$!
+  "$root/tools/hosted-run.sh" "$out/aros" "$out/s.script" ${MDNSD:+"$out/mdnsd.new"} > "$out/run.txt" 2>&1 & run=$!
 # the other host: from 20 s after the boot, foreign.local for 25 s; from 50 s,
 # arosbox.local for 15 s - each a second, cache-flush, TTL 120
 sleep 20

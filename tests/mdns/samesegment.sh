@@ -5,6 +5,13 @@
 # other interface, as its own: the host keeps its name (no "arosbox-2"), and
 # its own name resolves on AROS. mDNS on the bridge is captured; the names AROS
 # announces are listed. The bridge is taken down at the end. Prints PASS/FAIL.
+# SERVICES=N (with MEMSVC, tests/mdns/memsvc built for hosted): N services
+# more, "Mem 1".."Mem N", registered at once and held 30 s - a burst of
+# probes on both links and families, each heard by the other link: none may
+# take another name.
+# DELAY=<tc time> (e.g. 300ms): what the segment delivers to AROS's eth1 is
+# held that long (netem on aros1), eth0's not - the echoes of eth0's packets
+# come late, and the two interfaces' traffic out of step.
 set -u
 out=$1; mkdir -p "$out"
 root=$(cd "$(dirname "$0")/../.." && pwd)
@@ -14,23 +21,33 @@ undo() {
   sudo -n ip link set aros0 nomaster 2>/dev/null
   sudo -n ip link set aros1 nomaster 2>/dev/null
   sudo -n ip link del arosbr 2>/dev/null
+  sudo -n tc qdisc del dev aros1 root 2>/dev/null
 }
 trap undo EXIT
 undo
 sudo -n ip link add arosbr type bridge && sudo -n ip link set arosbr up &&
   sudo -n ip link set aros0 master arosbr && sudo -n ip link set aros1 master arosbr ||
   { echo "FAIL bridge"; exit 1; }
-cat > "$out/s.script" <<'EOS'
+[ -n "${DELAY:-}" ] && { sudo -n tc qdisc add dev aros1 root netem delay "$DELAY" || { echo "FAIL netem"; exit 1; }; }
+services=${SERVICES:-0}
+cat > "$out/s.script" <<EOS
 Execute SYS:System/Network/AROSTCP/S/startnet
 Wait 20
 Run >NIL: C:dnssd -R SegTest _segtest._tcp . 8080 -t 40 >SYS:out/register.log
+$([ "$services" -gt 0 ] && echo "Run >NIL: C:memsvc $services 30 >SYS:out/memsvc.log")
 Wait 20
 C:dnssd -G v4 arosbox.local >SYS:out/self.log
-Wait 15
+Wait $([ "$services" -gt 0 ] && echo 30 || echo 15)
 EOS
-sudo -n timeout 150 tcpdump -i arosbr -n -s0 -U -w "$out/br.pcap" udp port 5353 >/dev/null 2>&1 &
-AROS_TAP_IP=192.168.166.2 AROS_TAP2_IP=192.168.167.2 AROS_RUN_TIMEOUT=120 \
-  "$root/tools/hosted-run.sh" "$out/aros" "$out/s.script" > "$out/run.txt" 2>&1
+# MDNSD: another mdnsd binary in place of the system's, for this run
+if [ -n "${MDNSD:-}" ]; then
+  cp "$MDNSD" "$out/mdnsd.new"
+  { echo "Copy C:mdnsd.new SYS:System/Network/Services/mdnsd QUIET"; cat "$out/s.script"; } > "$out/s2.script"
+  mv "$out/s2.script" "$out/s.script"
+fi
+sudo -n timeout 180 tcpdump -i arosbr -n -s0 -U -w "$out/br.pcap" udp port 5353 >/dev/null 2>&1 &
+AROS_TAP_IP=192.168.166.2 AROS_TAP2_IP=192.168.167.2 AROS_RUN_TIMEOUT=150 \
+  "$root/tools/hosted-run.sh" "$out/aros" "$out/s.script" ${MDNSD:+"$out/mdnsd.new"} ${MEMSVC:+"$MEMSVC"} > "$out/run.txt" 2>&1
 sudo -n pkill -INT -f "tcpdump -i arosbr -n -s0 -U -w $out/br.pcap" 2>/dev/null
 sleep 1
 tcpdump -r "$out/br.pcap" -n -vv 2>/dev/null > "$out/br.txt"
@@ -60,6 +77,13 @@ svc=$(grep "\*- \[0q\]" "$out/payloads.txt" | grep -c "SegTest._segtest._tcp.loc
 svcren=$(grep -o "SegTest ([0-9]*)" "$out/payloads.txt" | sort -u | tr '\n' ' ')
 [ "$svc" -gt 0 ] && [ -z "$svcren" ] && echo "PASS the service SegTest announced ($svc) under its name" ||
   { echo "FAIL the service: $svc announcements, renamed: ${svcren:-no}; register: $(cat "$out/aros/out/register.log" 2>/dev/null | head -2 | tr '\n' ' ')"; fails=$((fails + 1)); }
+if [ "$services" -gt 0 ]; then
+  memann=$(grep "\*- \[0q\]" "$out/payloads.txt" | grep -o "Mem [0-9]*\._memsvc" | sort -u | wc -l)
+  memren=$(grep -o "Mem [0-9]* ([0-9]*)" "$out/payloads.txt" | sort -u | wc -l)
+  [ "$memann" -eq "$services" ] && [ "$memren" -eq 0 ] &&
+    echo "PASS $services services at once: all announced under their names" ||
+    { echo "FAIL $services services: $memann announced, $memren renamed; $(grep registered "$out/aros/out/memsvc.log" 2>/dev/null)"; fails=$((fails + 1)); }
+fi
 grep -q "^arosbox.local *192.168.16[67].2" "$out/aros/out/self.log" 2>/dev/null &&
   echo "PASS arosbox.local resolves on AROS" ||
   { echo "FAIL arosbox.local on AROS: $(cat "$out/aros/out/self.log" 2>/dev/null)"; fails=$((fails + 1)); }

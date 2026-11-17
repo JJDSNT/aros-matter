@@ -211,3 +211,56 @@ Ramo `review/mdnsd-record-lifecycle` em `~/AROS-ipv6`:
     registros por enlace), não o estado de publicação: ponto para a etapa 2.
   - A etapa 1 não muda o custo por serviço (não toca serviços); 2 enlaces no m68k não foram montados (só A2065):
     o comportamento multi-enlace é provado no hosted e confirmado no m68k com 1 placa (decisão do usuário).
+
+## 10. Desempate por enlace, B60 e etapa 2 (2026-11-16/17, local, sem push)
+
+Ordem dos commits em `review/mdnsd-record-lifecycle` (`~/AROS-ipv6`), cada um compilável:
+`c58cce7bf5` diferença de inventário → `5f58ff74f0` FAMILY_DOWN nomeia endereços → `1ff96c058e` etapa 1 (host) →
+`e9f94e5d91` reivindicação por enlace (desempate) → `7808574ff7` B60 → `e1cf7a20ed` etapa 2 (serviços).
+
+### 10.1 Reivindicação por enlace (`e9f94e5d91`)
+`probetie.sh` mostrou: com sub-estados por família, perder o desempate atrasava só a família da sonda; a outra
+anunciava no mesmo segmento. Regra: a reivindicação é do **enlace**. Se o nome já responde no enlace por qualquer
+família → não há desempate; a sonda do outro é pergunta, respondida em defesa pela família dela (§8.1, §9). Senão,
+perda → todas as famílias ainda sondando no enlace recomeçam em 1 s (§8.2). Outros enlaces seguem.
+`probetie` LOSE/WIN/WIN4 passam (WIN: 0 anúncios em qualquer família enquanto o outro sonda; WIN4: IPv6 já tinha o
+nome, IPv4 defende; um só renome quando o outro anuncia mesmo assim). Serviço só responde depois da própria
+sondagem (`rs_State`), conferido.
+
+### 10.2 B60: diário de pacotes enviados no transporte (`7808574ff7`)
+- `mdnsNetIsOwnPacket()` antes de qualquer lógica: próprio = origem nossa no enlace de recepção (loopback), ou
+  **eco**: chega por outro enlace, com origem = endereço nosso **no enlace por onde saiu**, e é o mesmo pacote byte a
+  byte (FNV-1a + soma tipo Fletcher + tamanho, por família). Sem identificador no pacote (EDNS0 Owner tem semântica
+  própria; decisão do usuário: não estender o protocolo).
+- Expiração pelo progresso da recepção: a assinatura sai quando o socket da família foi visto vazio ≥ 1 s depois do
+  envio (`mdnsNetIdle()`, só quando o `WaitSelect()` olhou os sockets - não quando um sinal o encerrou); teto de 30 s.
+  Anel cresce enquanto cheio de assinaturas pendentes; volta a zero quando esvazia; com 1 enlace nada é guardado.
+- **Conservador:** na dúvida (assinatura sumida, eco > 1 s atrasado, sem memória) o pacote é de outro host → no
+  máximo falso conflito; nunca esconde conflito de outro host (cópia idêntica = mesmos registros).
+- Resultados: samesegment 0/20/50 serviços passam (412 anúncios simultâneos); netem 300/900 ms passam; **2 s falha**
+  (falso conflito, renomes) - limite conhecido; foreignaddr detecta o conflito real; saturação forçada (teto 8,
+  build de teste): 2896 despejos → falsos conflitos, conflito real ainda detectado; pico 1024 assinaturas (20 KB) com
+  50 serviços em 2 enlaces, liberadas depois. m68k +1560 texto, +24 bss, 0 em tempo de execução com 1 enlace.
+
+### 10.3 Etapa 2: serviços por enlace e família
+- `mdns_pub.c` ganhou a mecânica comum: `mdnsFamilyStep()` (sondas, anúncios, atualizações §8.4), `mdnsPubAnswers/
+  Asked/Defer/Update` (reivindicação por enlace); host refatorado para usá-la.
+- Cada serviço: `rs_Pubs` (AllocVec, dobra), só nos enlaces do seu escopo (`interface_index` da registração, antes
+  ignorado); somem `rs_Step/NextTick/Multicast` e os arrays `rs_MulticastTick[32]`/`rs_TypeTick[32]`; limite de 1 s
+  por (enlace, família) em `fp_Multicast`, PTR de tipo por enlace em `p_TypeTick`.
+- Posse global: conflito em qualquer enlace → novo nome, todas as Pubs recomeçam; o cliente é avisado uma vez por
+  nome (`rs_Told`).
+- Coordenador `mdnsRegLinksChanged()`: FAMILY_UP → só (L, f) sonda (proxies também: conectividade nova);
+  FAMILY_DOWN → (L, f) desliga; mudança só de endereço → nada; overflow → recomeça tudo.
+- Serviço do host anda em L só onde o nome do host está estabelecido em L; proxy não depende do host; rename do host →
+  2 anúncios de atualização só dos serviços não-proxy.
+- Seleção de registros nas respostas, known-answer e respostas atrasadas: inalteradas (o serviço já respondia
+  pergunta específica com o conjunto inteiro - decisão anterior, mantida).
+- Hosted: `availability.sh CHANGE=family` (IPv4 chega ao eth1, perguntas no eth0): etapa 1+B60 → serviço 1,7 s sem
+  resposta no eth0 e 6 sondas em cada enlace (IPv4+IPv6); etapa 2 → sem lacuna, 0 sondas no eth0, 3 sondas só IPv4 no
+  eth1. Anúncios do serviço: exatamente 2 por (enlace, família) (antes 4 por IPv6). Regressão hosted toda limpa.
+- Memória hosted, 50 serviços: 1 enlace 202 672 → 192 368 B; 2 enlaces 221 264 → 212 496 B.
+  m68k: `MDNSRegisteredService` 2 444 → 2 188 B, + 32 B por enlace (AllocVec); texto +1516, bss +128 (`p_TypeTick`).
+- Memória real m68k (68030, 1 enlace, AvailMem): 1 / 10 / 50 serviços = 16 216 / 56 184 / 181 416 B (B60: 16 432 /
+  58 344 / 192 216): **−216 B por serviço**; mdnsd ocioso −1 976 B livres (código e tabelas). Regressão m68k limpa
+  (ipv4only, dnssd 69/0, tools, hostname, follow, dnssd_gone, clockstep, resolver); `timing` = B77.
