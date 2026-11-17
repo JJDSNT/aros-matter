@@ -127,6 +127,10 @@ O #2304 depende do #2299 (versão 5.52 depois da 5.51).
 
 ## Bugs do bench (aros-matter) já corrigidos
 
+- `hostname.sh` lia, no fim, uma resposta do Avahi deixada por um teste anterior (`arosbox` → 192.168.167.2 do
+  eth1 do `addrchange`, sem goodbye porque o emulador é parado): falso "after: arosbox.local resolves" quando rodava
+  logo depois. Agora espera o Avahi não ter mais `arosbox.local` antes de iniciar (até o TTL do host). (2026-11-17)
+
 - netem com limite padrão de 1000 pacotes descartava janelas grandes a 100 ms (`run_tcp.tc_delay`, `limit 10000`).
 - `tail_probe`: PSH não marca fim de rajada (filtro por número de sequência); Nagle segurava a cauda (TCP_NODELAY).
 - Relógio de parede do WSL2 dá saltos (+1,2 s/32 s): capturas convertidas para monotônico (`ClockMap`).

@@ -53,6 +53,15 @@ C:rexxhost arosbox >SYS:out/step4.txt
 Wait 8
 $res C:resolvtest arosbox.local b42four.local >SYS:out/res4.txt
 EOS
+# what the host's Avahi still has of an earlier run (a name AROS had on a
+# link this one leaves out, whose goodbye never went: the emulator is
+# stopped) would be read as this run's answer: wait until it has none of
+# arosbox.local, the host's time to live at most (the other names end with
+# their goodbyes in the run itself)
+i=0
+while [ $i -lt 65 ] && timeout 2 avahi-resolve-host-name -4 arosbox.local >/dev/null 2>&1; do
+  sleep 2; i=$((i + 1))
+done
 sudo -n tcpdump -i aros0 -n -w "$out/aros0.pcap" udp port 5353 >/dev/null 2>&1 & cap=$!
 sleep 1
 if [ "$mode" = amiga ]; then
