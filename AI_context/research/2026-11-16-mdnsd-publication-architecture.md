@@ -288,3 +288,22 @@ dnssd_gone, clockstep, resolver) limpas; B60 (samesegment, netem, foreignaddr, t
 
 Série inteira sobre `c58cce7bf5` (base do inventário): texto 50 650 → 56 926 (+6 276), bss 62 348 → 62 364 (+16);
 por serviço −216 B no m68k.
+
+## 12. Publicação (2026-11-17): PR #2307, Draft
+
+Série reorganizada em `review/mdnsd-publication` (sobre o #2304, `aee82e6af8`), cinco commits, cada um compilável
+(hosted e m68k sem avisos) e testado:
+
+| Commit | O quê | m68k texto / bss |
+|---|---|---|
+| `73e27ca942` | dnssd_link: o que um reconcile mudou, por enlace e família (forma final: 1 mudança por (enlace, família), ADDRESS_LOST, limite) | 50 718 / 62 348 |
+| `0ad5a4fecd` | host por enlace e família (+ mecânica comum, arrays dimensionados, lista por rescan, recuperação de falta de memória 1×/s) | 54 014 / 62 348 |
+| `3aca3ede76` | reivindicação do nome por enlace (desempate/defesa) | 54 170 / 62 348 |
+| `f286d5f447` | serviços por enlace e família (+ `MDNSServicePub`, reinício só como recuperação, recuperação 1×/s) | 55 778 / 62 356 |
+| `7b9fc0d541` | B60 (diário na forma final) | 57 342 / 62 376 |
+
+Base `aee82e6af8`: 49 650 / 62 348. Auditoria antes da publicação: falha de alocação das publicações deixava o dono
+sem publicação no enlace, sem aviso → completar o que falta, 1×/s, sem reprobar o que existe (teste com as três
+primeiras alocações falhando: host e serviço publicados nos dois enlaces); reinício global só no overflow (sem
+memória); classificação do B60 sem defeito. precodacy limpo (variableScope/const corrigidos nos commits de origem).
+Binários do HEAD idênticos byte a byte aos validados. Pendências: #2299 → #2304 → rebase deste; B77 separado.
