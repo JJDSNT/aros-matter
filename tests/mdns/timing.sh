@@ -57,6 +57,7 @@ sudo -n kill $cap 2>/dev/null
 kill $pids 2>/dev/null
 sleep 1
 tcpdump -tt -n -r "$out/aros0.pcap" 2>/dev/null > "$out/pcap.txt"
+"$(dirname "$0")/pcap-clock.sh" "$out"/aros*.pcap || { echo "timing: INVALID (the host's clock went back)"; exit 2; }
 cat "$out"/aros/out/t?.txt > "$out/t.txt" 2>/dev/null
 python3 -I - "$out" "${FIRST_MAX:-150}" <<'EOF'
 import re, sys

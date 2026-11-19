@@ -41,6 +41,7 @@ for i in 0 1; do
   tcpdump -tt -n -r "$out/aros$i.pcap" 2>/dev/null > "$out/pcap$i.txt"
   python3 -I "$root/tests/mdns/mdns_pcap.py" "$out/aros$i.pcap" --name arosbox.local --rdata --time > "$out/rec$i.txt"
 done
+"$root/tests/mdns/pcap-clock.sh" "$out"/aros*.pcap || { echo "addrreplace: INVALID (the host's clock went back)"; exit 2; }
 python3 -I "$root/tests/mdns/addrchange_report.py" "$out" | grep -v aros1 | \
   sed -e 's/^1 alias add\/delete  /1 alias 12 s, deleted/' -e 's/^2 same IPv4 again   /2 .2 replaced by .3/' \
       -e 's/^3 IPv4 on eth1      /3 .3 back to .2   /' -e '/^4 /d'

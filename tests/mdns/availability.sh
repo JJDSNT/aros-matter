@@ -58,6 +58,7 @@ sleep 1
 sudo -n kill $cap0 $cap1 2>/dev/null
 sleep 1
 for i in 0 1; do tcpdump -tt -n -r "$out/aros$i.pcap" 2>/dev/null > "$out/pcap$i.txt"; done
+"$(dirname "$0")/pcap-clock.sh" "$out"/aros*.pcap || { echo "availability: INVALID (the host's clock went back)"; exit 2; }
 python3 -I - "$out" "$asked" <<'PYEOF'
 import sys
 out, asked = sys.argv[1], sys.argv[2]

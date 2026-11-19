@@ -42,6 +42,7 @@ sleep 1
 sudo -n kill $cap 2>/dev/null
 sleep 1
 tcpdump -tt -n -r "$out/aros0.pcap" 2>/dev/null > "$out/pcap.txt"
+"$(dirname "$0")/pcap-clock.sh" "$out"/aros*.pcap || { echo "ipv4only: INVALID (the host's clock went back)"; exit 2; }
 python3 -I - "$out" <<'EOF'
 import sys
 out = sys.argv[1]

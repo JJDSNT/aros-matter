@@ -64,6 +64,7 @@ grep "^T " "$o/c1.txt" | awk '{print "   took " $4 " ms (" $5 ")"}'
 echo "2. browse, clock forward 1 h:"
 echo "   $(grep -c "^ADD" "$o/browse.log") ADD, $(grep -c "^REMOVE" "$o/browse.log") REMOVE"
 echo "3. rename to clockname, clock back 1 h at once (forward again 10 s later):"
+"$(dirname "$0")/pcap-clock.sh" "$out"/aros*.pcap || { echo "clockstep: INVALID (the host's clock went back)"; exit 2; }
 tcpdump -tt -n -r "$out/aros0.pcap" 2>/dev/null | grep "? clockname.local." | awk '{print $1}' > "$out/c3probes.txt"
 t0=$(tcpdump -tt -n -r "$out/aros0.pcap" 2>/dev/null | grep "? clockname.local." | head -1 | awk '{print $1}')
 echo "   probes for clockname.local: $(wc -l < "$out/c3probes.txt"), at (s after the first):" \
