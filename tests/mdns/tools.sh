@@ -14,7 +14,9 @@
 # on aros0 gives the TTL of AROS's records. Prints PASS/FAIL per check.
 # AROS_HOSTED_IMAGE as for tools/hosted-run.sh; MODE=amiga runs AROS m68k on
 # the emulated Amiga (tools/amiga-run.sh, without timesyncd there: B35), the
-# host's side later by what the slower boot takes.
+# host's side later by what the slower boot takes. AROS_EXTRA_C: files copied
+# into the image's C: (e.g. tools built from another tree, over an image whose
+# dnssd.library is the same).
 set -u
 out=$1; mkdir -p "$out"
 root=$(cd "$(dirname "$0")/../.." && pwd)
@@ -54,17 +56,19 @@ C:Handshake HostTest _hosttest._tcp TIME 8 >SYS:out/handshake.log
 C:Handshake Nobody web TIME 3 >SYS:out/handshake-none.log
 Wait $tail
 EOS
-avahi-publish-service HostTest _hosttest._tcp 9999 vers=1 >/dev/null 2>&1 & pub1=$!
+# three strings, one with a space and one with a backslash: how dnssd -L and
+# Handshake print a TXT (escaped, one space between strings)
+avahi-publish-service HostTest _hosttest._tcp 9999 vers=1 'a b' 'c\d' >/dev/null 2>&1 & pub1=$!
 avahi-publish-service HostWeb _http._tcp 8000 path=/w >/dev/null 2>&1 & pub2=$!
 # ChangeTest: v=1 from 20 s after the boot, v=2 at 35 s, withdrawn at 50 s
 ( sleep $((20 + off)); python3 "$root/tests/mdns/avahi_update.py" ChangeTest _changetest._tcp 7001 v=1 v=2 15 15 ) & upd=$!
 sudo -n timeout $((140 + 2 * off)) tcpdump -i aros0 -n -s0 -U -w "$out/aros0.pcap" udp port 5353 >/dev/null 2>&1 & cap=$!
 if [ "$mode" = amiga ]; then
   AMIGA_TAP_IP=192.168.166.2 AMIGA_RUN_TIMEOUT=260 \
-    "$root/tools/amiga-run.sh" "$out/aros" "$out/s.script" > "$out/run.txt" 2>&1 & run=$!
+    "$root/tools/amiga-run.sh" "$out/aros" "$out/s.script" ${AROS_EXTRA_C:-} > "$out/run.txt" 2>&1 & run=$!
 else
   AROS_TAP_IP=192.168.166.2 AROS_RUN_TIMEOUT=130 \
-    "$root/tools/hosted-run.sh" "$out/aros" "$out/s.script" > "$out/run.txt" 2>&1 & run=$!
+    "$root/tools/hosted-run.sh" "$out/aros" "$out/s.script" ${AROS_EXTRA_C:-} > "$out/run.txt" 2>&1 & run=$!
 fi
 sleep $((45 + off))
 timeout 10 avahi-browse -rptk _arostest._tcp > "$out/host-arostest.txt" 2>&1
@@ -100,6 +104,7 @@ check "host sees AROS Share" "$out/host-http.txt" ';AROS\\032Share;_http._tcp;lo
 check "dnssd -L resolved" "$a/resolve.log" 'RESOLVED'
 check "dnssd -L address" "$a/resolve.log" 'address 192.168.166.1'
 check "dnssd -L TXT" "$a/resolve.log" 'TXT     vers=1'
+check "dnssd -L TXT escaped" "$a/resolve.log" 'TXT     vers=1 a\\ b c\\\\d$'
 check "dnssd -G v4" "$a/lookup.log" "$host.local  192.168.166.1"
 check "dnssd -G v6" "$a/lookup.log" "$host.local  fe80:"
 check "dnssd -G of this host's own name" "$a/lookup-self.log" "arosbox.local  192.168.166.2"
@@ -116,6 +121,7 @@ check "Handshake reached" "$a/handshake.log" 'Reached "HostTest"'
 check "Handshake port" "$a/handshake.log" 'Port:  9999'
 check "Handshake IPv4" "$a/handshake.log" 'IP:    192.168.166.1'
 check "Handshake IPv6" "$a/handshake.log" 'IP:    fe80:'
+check "Handshake info" "$a/handshake.log" 'Info:  vers=1 a\\ b c\\\\d$'
 check "Handshake nobody" "$a/handshake-none.log" 'Could not reach "Nobody"'
 check "browse: ADD v=1" "$a/change.log" '^ADD      ChangeTest .* 7001  v=1$'
 check "browse: UPDATE v=2 (followed)" "$a/change.log" '^UPDATE   ChangeTest .* 7001  v=2$'

@@ -13,7 +13,8 @@ teste que falharia se o defeito voltasse (anotado na coluna "Teste de regressão
 Branch `review/arostcp-pending` (worktree `~/AROS-pr2218`, sobre `review/arostcp-ipv4-acd`): os 3 commits do #2218 +
 `IP_RECVIF`, B36, B37 (cherry-pick sem conflito). Falta: **portar o B5** (`11df4517ea`, cache de vizinhos IPv6 por
 interface) para a pilha modular — o `rtsock.c` está no `admin.atcp`, o `amiga_roadshow.c` foi repartido, a queda de
-enlace é `NFE_LINKDOWN`: o ND6 é alcançado pelos ganchos da família IPv6, não por chamada do núcleo; e o B30. Depois:
+enlace é `NFE_LINKDOWN`: o ND6 é alcançado pelos ganchos da família IPv6, não por chamada do núcleo. (O B30 saiu
+deste PR em 2026-11-20, decisão do usuário: vai para o "PR de build" abaixo, junto da build sem Mesa.) Depois:
 se o #2218 ainda estiver aberto, tudo entra nele (um comentário explicando o escopo: o `IP_RECVIF` é o que foi prometido
 "quando o mDNS de socket único precisar"); se já tiver sido mesclado, um PR só com o resto. Bump uma vez, no último commit.
 
@@ -112,6 +113,20 @@ rotas de PMTU IPv6) e custo medido.
 **Escopo congelado (2026-11-13):** nada além destes itens; só correções de defeitos demonstrados; resultados
 consolidados para o Kal.
 
+## PR de build: partes do sistema sem a build completa (decisão do usuário, 2026-11-20)
+
+Pendência, depois da pilha (não é prioridade). Um PR de build, sem bump do AROSTCP (nenhum dos dois muda
+comportamento), dois commits independentes:
+
+1. **B30**: build limpa só do alvo do AROSTCP falha porque os módulos (`%build_module` sem `uselibs`) ligam contra a
+   lista padrão de stubs de todas as bibliotecas ("cannot find -lcodesets"); `uselibs` mínimo em cada módulo.
+2. **M1 (build sem Mesa)**: `--with-mesagl=no` (ou `--disable-mesagl`) no `configure` → `OPT_MESAGL` vazio; Mesa, `glu`
+   e drivers gallium fora dos alvos completos (`workbench/libs/mesa/mmakefile.src:27` hoje sempre o puxa com o
+   toolchain do AROS).
+
+Caso que expõe os dois: montar uma build só para testar a rede (`~/aros-build-b61-hosted`). Cuidado: mexe em
+`mmakefile` do AROSTCP - não abrir junto com um PR do AROSTCP que toque os mesmos arquivos.
+
 ## Worktrees e builds (desde 2026-11-12)
 
 Uma worktree e um build por linha de PR; a validação final de um PR roda numa imagem feita só da branch dele.
@@ -120,6 +135,7 @@ Uma worktree e um build por linha de PR; a validação final de um PR roda numa 
 |---|---|---|---|
 | #2218 (ACD/IPv4LL/decline/NUD) | `~/AROS-pr2218` | `~/aros-build-pr2218-hosted` | `review/arostcp-ipv4-acd` |
 | mDNS/`dnssd.library` (+ pilha `review/arostcp-ip-recvif` na base) | `~/AROS-ipv6` | `~/aros-build-ipv6-hosted-claude` | `review/mdnsd-canonical-links` |
+| B61 (frames das ferramentas mDNS) | `~/AROS-b61` | `~/aros-build-b61-hosted` (sem Mesa: alvos avulsos) | `review/mdns-tools-frames` |
 | m68k (Amiga emulado) | `~/AROS-hist` (destacada) | `~/aros-build-hist-m68k` | conforme o teste |
 
 `tools/cunit-suite.sh` e os benches tomam `AROS_SRC`/`AROS_BUILD`/`AROS_HOSTED_IMAGE`; apontar para o par certo.
@@ -150,7 +166,9 @@ Estados: **aberto** · **em correção** (alguém trabalhando) · **corrigido (l
 | B34 | Tráfego IPv6 nunca filtrado (`pfil` só no IPv4) | anterior ao nosso trabalho | Kal | upstream `64d00bf2da` | regra do firewall bloqueando ICMPv6/UDP6; o tráfego some; IPv4 igual | `cunit-net-filter6` (do Kal) | no upstream — falta nossa verificação; **B5 conflita** (4 arquivos) |
 | B27 | `tcp_debug[100]` é memória morta (72 KB no m68k) | anterior; dobrou com o `tcpcb` maior | nós | upstream `64d00bf2da` ("72 KB TCP trace buffer and SYN cache allocated only when used") | `m68k-aros-nm` sem `tcp_debug`; m68k `.bss` ~17 KB | `cunit-net-synalloc` (SYN cache); para o `tcp_debug`: medir no m68k (sem o símbolo no `.bss`) | **fechado** — medido no m68k: `.bss` do núcleo 6.140 B, sem `tcp_debug` |
 | B28 | Perfil `INET6=0` não compila | anterior | nós | — | build m68k com `INET6=0` | build `INET6=0` (m68k) junto com o delta de tamanho de cada PR | **perde a razão** — o IPv6 é o módulo `inet6.prot`, escolhido em tempo de execução (`PROTOCOLS=INET`: −97 KB em repouso no m68k); o `#define INET6 0` de compilação não é mais o perfil |
-| B30 | Alvo do AROSTCP não depende da `fd.library` (`proto/fd.h`) | anterior | nós | — | build limpo só do alvo `workbench-network-stacks-arostcp` | o mesmo, ao montar build novo | **não se reproduz na pilha modular** (2026-11-13: `proto/fd.h` e o diretório da `fd` apagados, o alvo do AROSTCP os regenera pela cadeia de `includes`); fora do PR |
+| B30 | Build limpa só do alvo do AROSTCP falha (módulos sem `uselibs`; antes `proto/fd.h`) | anterior | nós | — | build limpo só do alvo `workbench-network-stacks-arostcp` | o mesmo, ao montar build novo | **aberto — PR de build** (com M1; decisão do usuário 2026-11-20). `proto/fd.h` não se reproduz na pilha modular (2026-11-13); falha atual: "cannot find -lcodesets" (2026-11-14) |
+| M1 | Build sem Mesa: `configure` não tem como desligá-lo; `workbench-libs-complete` sempre o puxa | AROS (build) | nós | — | `configure --with-mesagl=no` + `make` completo sem compilar o Mesa | build reduzida da rede | **aberto — PR de build** (com B30; pedido do usuário 2026-11-20) |
+| CX1 | Commodity/GUI do mDNS: refazer a do midihub (sobre a `bonami.library`, aposentada) na `dnssd.library`, com locale/catálogo cobrindo commodity e ferramentas (dnssd, Nearby, Share, Handshake) | midihub (nosso) | nós | `~/aros-midihub/network/mdns/aros/commodity/` (origem) | Nearby/Handshake/Share pela janela; tecla de atalho; Exchange; catálogo de outra língua carregado; layout com fonte maior (MD17) | a escrever (a commodity não tem teste automático) | **aberto** (pedido do usuário 2026-11-20; depois da pilha) |
 | B29 | Hosted x86_64 trava com o perfil de mbuf do m68k | não investigado | nós | — | `tests/stack/memcost.py --profile m68k` (hosted) | o mesmo | aberto (investigar) |
 | B5 | Cache de vizinhos IPv6 por (interface, endereço) | anterior | nós | branch `review/arostcp-nd6-ifcache`, `11df4517ea` (local) | `zone_probe.py` 2 NS; `cunit-net-nd6cache`, `pmtu6`; 52 suítes; `defrouter.py`, `remloop.py`; delta m68k +1.420 | `cunit-net-nd6cache`, `pmtu6` (ON_LINK, LINK_LOCAL), `ndqueue6` | corrigido (local) — **PR aguarda autorização do usuário** e o #2218; rebase sobre B32–B34 |
 | G11 | IPv4: ACD + IPv4LL pela ACD, DHCPDECLINE, NUD do ARP (**escopo reduzido 2026-11-12**: `IP_RECVIF`/`IP_SENDSRCADDR`, `ip_mreqn` e dicas do TCP saíram — sob demanda, como ganchos da família IPv4, quando o mdnsd/`dnssd.library` precisar de um socket IPv4 único) | — | nós | PR #2218; branch local `review/arostcp-ipv4-acd` (`fe5910c842`, `ba00219d06`, `a505f7a00e`) reimplementada sobre `64d00bf2da` (módulo `inet.prot`; reload/enlace pelos eventos de família; `dad_count` como `netvar`; bind duplicado em `inf_pcbbindaddr`) | 64 suítes ok (2 execuções); `acd_probe`, `dhcp_decline_probe` (+`--claim`), `acd_reprobe_probe` (pronto aos 66,8 s), `arp_stale_probe` (20,9 s); m68k: núcleo igual, `inet.prot` +2.468 B | `cunit-net-acd`, benches `tests/ipv4` | **2ª revisão do Kal respondida (2026-11-12):** força-push `3e633650bc`; origem por endereço (`SIOCAIFADDR_ORIGIN`), origem pronta/broadcast /32, dhclient por sinal; validado em build só da branch (64 suítes; benches); m68k `inet.prot` +3.708 B, `dhclient` +2.208 B; memória no Amiga emulado: repouso +2,9 KB (638,2→641,1), pós-carga +3,0 KB, pico sob carga +7 a +24 KB (variável). Aguarda o Kal |
@@ -187,6 +205,22 @@ Estados: **aberto** · **em correção** (alguém trabalhando) · **corrigido (l
   serviços), (2) caminhos duplicados de atualização e invalidação (reflexo no envio + `mdnsCacheDropLocal` nos pontos de
   troca), (3) código total, incluindo a notificação. Desenho a avaliar: as observações do cache consultam o estado
   autoritativo (`mdnsNetAddressAt()`, registros de `mdns_reg.c`) e são avisadas das mudanças, sem cópia.
+
+- **Build sem Mesa** (pedido do usuário, 2026-11-20; melhoria de build, não da pilha): o `workbench-libs-complete`
+  puxa o Mesa sempre que o toolchain é o do AROS (`workbench/libs/mesa/mmakefile.src:27`,
+  `mesa3dgl-library-$(AROS_TARGET_TOOLCHAIN)`), e o `configure` não tem como desligar: `--with-mesagl=family` só
+  escolhe a versão. Uma build nova paga o Mesa inteiro mesmo para testar só a rede. Proposta para o upstream: opção
+  `--with-mesagl=no` (ou `--disable-mesagl`) que leve o `OPT_MESAGL` vazio e tire o Mesa, a `glu` e os drivers
+  gallium dos alvos completos. Visto ao montar `~/aros-build-b61-hosted`. Não é prioridade (pilha antes). Vai no "PR de build" com o B30 (M1).
+
+- **CX1 - commodity/GUI do mDNS** (pedido do usuário, 2026-11-20): a commodity GadTools do midihub
+  (`~/aros-midihub/network/mdns/aros/commodity/`, ~2.400 linhas: Nearby, Handshake e Share numa janela, tecla de
+  atalho, Exchange) está sobre a `bonami.library`, aposentada no #2264. **Refazer sobre a `dnssd.library`** (o mesmo
+  caminho das ferramentas em `workbench/network/mdns/tools`, `sd_common`) e **implementar locale/catálogo**
+  (`locale.library`, `.cd` + `%build_catalogs`, strings por `GetCatalogStr()`), que nem a commodity nem as
+  ferramentas têm hoje. **O catálogo cobre tudo** (decisão do usuário, 2026-11-20): a commodity e as ferramentas
+  dnssd, Nearby, Share e Handshake. Pendências herdadas do midihub (MD17): Share, tecla de atalho e Exchange nunca testados; um
+  rótulo sobrepõe um gadget com a fonte padrão (layout pela fonte). Não é prioridade (pilha antes).
 
 ## Último commit do upstream visto
 
