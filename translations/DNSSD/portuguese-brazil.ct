@@ -1,0 +1,590 @@
+## version $VER: DNSSD.catalog 1.0 (21.11.2026)
+## language português-brasil
+## codeset 0
+;
+MSG_ERR_NOENGINE
+o mdnsd não está em execução
+; mdnsd is not running
+;
+MSG_ERR_BADPARAM
+argumento inválido
+; bad argument
+;
+MSG_ERR_NOMEM
+memória insuficiente
+; out of memory
+;
+MSG_ERR_BUSY
+muita coisa ao mesmo tempo; tente de novo
+; too much at once; run it again
+;
+MSG_ERR_STALE
+o mdnsd foi reiniciado
+; mdnsd restarted
+;
+MSG_ERR_TIMEOUT
+tempo esgotado
+; timed out
+;
+MSG_ERR_NOTFOUND
+não encontrado
+; not found
+;
+MSG_ERR_CANCELLED
+interrompido
+; stopped
+;
+MSG_ERR_BADNAME
+não é um nome que o DNS aceite
+; not a name DNS can carry
+;
+MSG_ERR_EXISTS
+nome já em uso neste computador
+; name already in use here
+;
+MSG_ERR_CONFLICT
+outro computador tem este nome
+; another host has the name
+;
+MSG_ERR_OTHER
+erro
+; error
+;
+MSG_CANT_OPEN_LIBRARY
+Não foi possível abrir %s versão %ld.\n
+; Cannot open %s version %ld.\n
+;
+MSG_OP_BROWSE
+procurar
+; browse
+;
+MSG_OP_RESOLVE
+resolver
+; resolve
+;
+MSG_OP_LOOKUP
+procurar endereço
+; lookup
+;
+MSG_OP_QUERY
+pedir
+; query
+;
+MSG_OP_REGISTER
+registrar
+; register
+;
+MSG_OP_CONTACT
+contatar
+; contact
+;
+MSG_OP_ADVERTISE
+anunciar
+; advertise
+;
+MSG_DNSSD_DOMAIN_NOTE
+(nota: o domínio "%s" não é atendido; usando local)\n
+; (note: domain "%s" is not served; using local)\n
+;
+MSG_DNSSD_DOMAIN_NOTE_REGISTER
+(nota: o domínio "%s" não é atendido; registrando em local)\n
+; (note: domain "%s" is not served; registering in local)\n
+;
+MSG_DNSSD_TOO_MANY
+\n%s: chegaram mais respostas do que era possível guardar; tente de novo.\n
+; \n%s: more answers came than could be kept; run it again.\n
+;
+MSG_DNSSD_ENGINE_ENDED
+\n%s: o mdnsd terminou.\n
+; \n%s: mdnsd ended.\n
+;
+MSG_DNSSD_DOMAINS
+Domínios de %s:\n
+; Domains for %s:\n
+;
+MSG_DNSSD_FOR_REGISTRATION
+registro
+; registration
+;
+MSG_DNSSD_FOR_BROWSING
+busca
+; browsing
+;
+MSG_DNSSD_ONLY_LOCAL
+\n(o DNS multicast só atende o domínio local)\n
+; \n(multicast DNS serves only the local domain)\n
+;
+MSG_DNSSD_BROWSING
+Procurando %s (Ctrl-C para parar)...\n\n
+; Browsing %s (Ctrl-C to stop)...\n\n
+;
+MSG_DNSSD_RESOLVING
+Resolvendo "%s" %s (Ctrl-C para parar)...\n
+; Resolving "%s" %s (Ctrl-C to stop)...\n
+;
+MSG_DNSSD_NOT_RESOLVED
+Não resolvido.\n
+; Not resolved.\n
+;
+MSG_DNSSD_FAMILY
+dnssd -G: v4, v6 ou v4v6\n
+; dnssd -G: v4, v6 or v4v6\n
+;
+MSG_DNSSD_RRTYPE
+dnssd -q: tipo de registro desconhecido "%s"\n
+; dnssd -q: unknown record type "%s"\n
+;
+MSG_DNSSD_ASKING
+Pedindo %s %s (Ctrl-C para parar)...\n\n
+; Asking for %s %s (Ctrl-C to stop)...\n\n
+;
+MSG_DNSSD_TTL
+dnssd: o TTL deve estar entre 1 e 4500 segundos.\n
+; dnssd: TTL must be 1-4500 seconds.\n
+;
+MSG_DNSSD_TXT
+dnssd: o registro TXT é longo demais, ou um escape nele não tem dois dígitos hexadecimais.\n
+; dnssd: TXT record is too long, or an escape in it is not two hex digits.\n
+;
+MSG_DNSSD_DEREGISTER_HINT
+Pressione Ctrl-C para cancelar o registro...\n
+; Press Ctrl-C to deregister...\n
+;
+MSG_DNSSD_DEREGISTERED
+Registro cancelado.\n
+; Deregistered.\n
+;
+MSG_DNSSD_NEEDS_TYPE
+dnssd %s precisa de um <tipo>\n
+; dnssd %s needs a <type>\n
+;
+MSG_DNSSD_NEEDS_L
+dnssd -L precisa de <nome> <tipo> [domínio]\n
+; dnssd -L needs <name> <type> [domain]\n
+;
+MSG_DNSSD_NEEDS_Q
+dnssd -q precisa de <nome> <tiporr>\n
+; dnssd -q needs <name> <rrtype>\n
+;
+MSG_DNSSD_NEEDS_G
+dnssd -G precisa de v4|v6|v4v6 <host>\n
+; dnssd -G needs v4|v6|v4v6 <hostname>\n
+;
+MSG_DNSSD_NEEDS_R
+dnssd -R precisa de <nome> <tipo> <domínio> <porta>\n
+; dnssd -R needs <name> <type> <domain> <port>\n
+;
+MSG_DNSSD_NEEDS_P
+dnssd -P precisa de <nome> <tipo> <domínio> <porta> <host> <ip>\n
+; dnssd -P needs <name> <type> <domain> <port> <host> <ip>\n
+;
+MSG_DNSSD_PORT
+dnssd: a porta deve estar entre 1 e 65535.\n
+; dnssd: port must be 1-65535.\n
+;
+MSG_DNSSD_UNKNOWN_MODE
+Modo desconhecido: %s\n
+; Unknown mode: %s\n
+;
+MSG_DNSSD_USAGE
+dnssd - ferramenta DNS-SD (dnssd.library)\n\n\
+  dnssd -E                      lista os domínios de registro\n\
+  dnssd -F                      lista os domínios de busca\n\
+  dnssd -R nome tipo dom porta [-t segundos] [k=v ...]  registra um serviço\n\
+  dnssd -P nome tipo dom porta host ip [k=v ...]  registra para outro computador\n\
+                                (ip: IPv4, ou IPv6 - fe80::1%%2 com a interface)\n\
+  dnssd -B tipo [domínio]       procura um tipo de serviço\n\
+  dnssd -L nome tipo [domínio]  resolve uma instância\n\
+  dnssd -Z tipo [domínio]       procura, em registros de zona completos\n\
+  dnssd -q nome tiporr          pede qualquer registro DNS\n\
+  dnssd -G v4|v6|v4v6 host      busca os endereços de um computador\n\
+  dnssd -V                      mostra a versão da biblioteca\n\
+  dnssd -h                      esta ajuda\n\n\
+Exemplos:\n\
+  dnssd -B _http._tcp\n\
+  dnssd -B _services._dns-sd._udp     (lista os tipos de serviço)\n\
+  dnssd -L "My Mac" _companion-link._tcp\n\
+  dnssd -q _http._tcp.local PTR\n\
+  dnssd -G v4 printer.local\n\
+  dnssd -R AmigaShare _http._tcp . 80 path=/ vers=1\n
+; dnssd - DNS-SD tool (dnssd.library)\n\n\
+;   dnssd -E                      list registration domains\n\
+;   dnssd -F                      list browsing domains\n\
+;   dnssd -R name type dom port [-t seconds] [k=v ...]  register a service\n\
+;   dnssd -P name type dom port host ip [k=v ...]  register for another host\n\
+;                                 (ip: IPv4, or IPv6 - fe80::1%%2 with its interface)\n\
+;   dnssd -B type [domain]        browse a service type\n\
+;   dnssd -L name type [domain]   look up (resolve) an instance\n\
+;   dnssd -Z type [domain]        browse, complete zone records\n\
+;   dnssd -q name rrtype          ask for any DNS record\n\
+;   dnssd -G v4|v6|v4v6 hostname  look up a host's addresses\n\
+;   dnssd -V                      show library version\n\
+;   dnssd -h                      this help\n\n\
+; Examples:\n\
+;   dnssd -B _http._tcp\n\
+;   dnssd -B _services._dns-sd._udp     (list service types)\n\
+;   dnssd -L "My Mac" _companion-link._tcp\n\
+;   dnssd -q _http._tcp.local PTR\n\
+;   dnssd -G v4 printer.local\n\
+;   dnssd -R AmigaShare _http._tcp . 80 path=/ vers=1\n
+;
+MSG_NEARBY_GONE
+  saiu: %s\n
+;   gone: %s\n
+;
+MSG_NEARBY_PORT
+  %-26s porta %ld
+;   %-26s port %ld
+;
+MSG_NEARBY_INFO
+      info: 
+;       info: 
+;
+MSG_NEARBY_KINDS
+Tipos de serviço na sua rede local
+; Kinds of service on your local network
+;
+MSG_NEARBY_LOOKING
+Procurando %s
+; Looking for %s
+;
+MSG_NEARBY_SECONDS
+ (%ld segundos)...\n\n
+;  (%ld seconds)...\n\n
+;
+MSG_NEARBY_CTRL_C
+ (Ctrl-C para parar)...\n\n
+;  (Ctrl-C to stop)...\n\n
+;
+MSG_NEARBY_DONE
+\nConcluído.\n
+; \nDone.\n
+;
+MSG_HANDSHAKE_CONTACTING
+Contatando "%s" (%s)...\n
+; Contacting "%s" (%s)...\n
+;
+MSG_HANDSHAKE_REACHED
+\n"%s" contatado:\n
+; \nReached "%s":\n
+;
+MSG_HANDSHAKE_HOST
+  Computador: %s\n
+;   Host:  %s\n
+;
+MSG_HANDSHAKE_IP
+  IP:         %s\n
+;   IP:    %s\n
+;
+MSG_HANDSHAKE_PORT
+  Porta:      %ld\n
+;   Port:  %ld\n
+;
+MSG_HANDSHAKE_INFO
+  Info:       
+;   Info:  
+;
+MSG_HANDSHAKE_NOT_REACHED
+\nNão foi possível contatar "%s".  Está ligado e se anunciando?\n
+; \nCould not reach "%s".  Is it switched on and advertising?\n
+;
+MSG_SHARE_TXT
+Share: TEXT é longo demais, ou um escape nele não tem dois dígitos hexadecimais.\n
+; Share: TEXT is too long, or an escape in it is not two hex digits.\n
+;
+MSG_SHARE_PORT
+Share: PORT deve estar entre 1 e 65535.\n
+; Share: PORT must be 1-65535.\n
+;
+MSG_SHARE_SHARING
+Compartilhando "%s" (%s) na porta %ld.\n
+; Now sharing "%s" (%s) on port %ld.\n
+;
+MSG_SHARE_SEEN_AS
+Os outros o veem como: %s.%s.local\n
+; Others see it as: %s.%s.local\n
+;
+MSG_SHARE_INFO
+Info anunciada:  %s\n
+; Info advertised:  %s\n
+;
+MSG_SHARE_CTRL_C
+\nCompartilhando... pressione Ctrl-C para parar.\n
+; \nSharing... press Ctrl-C to stop.\n
+;
+MSG_SHARE_STOPPED
+Compartilhamento de "%s" encerrado.\n
+; Stopped sharing "%s".\n
+;
+MSG_TYPE_HTTP
+Servidor web (HTTP)
+; Web server (HTTP)
+;
+MSG_TYPE_HTTPS
+Web segura (HTTPS)
+; Secure web (HTTPS)
+;
+MSG_TYPE_AFP
+Compartilhamento Apple (AFP)
+; Apple file share
+;
+MSG_TYPE_SMB
+Compartilhamento Windows (SMB)
+; Windows file share (SMB)
+;
+MSG_TYPE_NFS
+Compartilhamento NFS
+; NFS share
+;
+MSG_TYPE_WEBDAV
+Compartilhamento WebDAV
+; WebDAV share
+;
+MSG_TYPE_FTP
+Servidor FTP
+; FTP server
+;
+MSG_TYPE_SSH
+Acesso SSH
+; SSH login
+;
+MSG_TYPE_SFTP
+SFTP (arquivos por SSH)
+; SFTP (SSH file transfer)
+;
+MSG_TYPE_TELNET
+Acesso Telnet
+; Telnet login
+;
+MSG_TYPE_RFB
+Compartilhamento de tela (VNC)
+; Screen sharing (VNC)
+;
+MSG_TYPE_IPP
+Impressora (IPP)
+; Printer (IPP)
+;
+MSG_TYPE_IPPS
+Impressora segura (IPPS)
+; Secure printer (IPPS)
+;
+MSG_TYPE_LPR
+Impressora (LPR)
+; Printer (LPR)
+;
+MSG_TYPE_SCANNER
+Scanner
+; Scanner
+;
+MSG_TYPE_AIRPLAY
+AirPlay
+; AirPlay
+;
+MSG_TYPE_RAOP
+Áudio AirPlay (RAOP)
+; AirPlay audio (RAOP)
+;
+MSG_TYPE_CAST
+Chromecast
+; Chromecast
+;
+MSG_TYPE_SPOTIFY
+Spotify Connect
+; Spotify Connect
+;
+MSG_TYPE_COMPANION
+Dispositivo Apple associado
+; Apple companion device
+;
+MSG_TYPE_HAP
+Acessório HomeKit
+; HomeKit accessory
+;
+MSG_TYPE_WORKSTATION
+Estação de trabalho
+; Workstation
+;
+MSG_TYPE_DEVICE
+Informações do dispositivo
+; Device info
+;
+MSG_TYPE_TIME
+Serviço de data/hora
+; Time/date service
+;
+MSG_TYPE_ENVOY
+Computador Envoy
+; Envoy host
+;
+MSG_NS_CX_TITLE
+Serviços de rede
+; Network services
+;
+MSG_NS_CX_DESCRIPTION
+Encontrar, contatar e compartilhar serviços na rede
+; Find, reach and share services on the network
+;
+MSG_NS_WINDOW_TITLE
+NetServices: Atalho = <%s>
+; NetServices: Hot Key = <%s>
+;
+MSG_NS_MENU_PROJECT
+Projeto
+; Project
+;
+MSG_NS_MENU_HIDE
+O\0Ocultar
+; H\0Hide
+;
+MSG_NS_MENU_QUIT
+S\0Sair
+; Q\0Quit
+;
+MSG_NS_NEARBY_TITLE
+Por perto: serviços na rede
+; Nearby: services on the network
+;
+MSG_NS_HANDSHAKE_TITLE
+Contato: como chegar a um serviço
+; Handshake: how to reach a service
+;
+MSG_NS_SHARE_TITLE
+Compartilhar: um serviço deste computador
+; Share: a service of this computer
+;
+MSG_NS_ALL_KINDS
+Todos os tipos
+; All kinds
+;
+MSG_NS_BROWSE
+Procurar
+; Browse
+;
+MSG_NS_STOP
+Parar
+; Stop
+;
+MSG_NS_REACH
+Contatar
+; Handshake
+;
+MSG_NS_SHARE
+Compartilhar
+; Share
+;
+MSG_NS_NAME
+Nome
+; Name
+;
+MSG_NS_KIND
+Tipo
+; Kind
+;
+MSG_NS_PORT_LABEL
+Porta
+; Port
+;
+MSG_NS_INFO_LABEL
+Info
+; Info
+;
+MSG_NS_SHARE_DEFAULT
+Amiga
+; Amiga
+;
+MSG_NS_ROW
+%s  (%s)
+; %s  (%s)
+;
+MSG_NS_ROW_PORT
+%s  (porta %ld)
+; %s  (port %ld)
+;
+MSG_NS_HOST
+Computador: %s
+; Host: %s
+;
+MSG_NS_ADDRESS
+Endereço: %s
+; Address: %s
+;
+MSG_NS_PORT
+Porta: %ld
+; Port: %ld
+;
+MSG_NS_INFO
+Info: %s
+; Info: %s
+;
+MSG_NS_INFO_MORE
+      %s
+;       %s
+;
+MSG_NS_READY
+Pronto.
+; Ready.
+;
+MSG_NS_NO_LIBRARY
+Não foi possível abrir %s.
+; Cannot open %s.
+;
+MSG_NS_BROWSING_KINDS
+Procurando os tipos de serviço na rede...
+; Looking for the kinds of service on the network...
+;
+MSG_NS_BROWSING
+Procurando %s...
+; Looking for %s...
+;
+MSG_NS_STOPPED
+Busca interrompida.
+; Stopped looking.
+;
+MSG_NS_BROWSE_FAILED
+Não foi possível procurar: %s.
+; Cannot look: %s.
+;
+MSG_NS_REACHING
+Contatando "%s"...
+; Contacting "%s"...
+;
+MSG_NS_REACHED
+"%s" contatado.
+; Reached "%s".
+;
+MSG_NS_NOT_REACHED
+Não foi possível contatar "%s". Está ligado e se anunciando?
+; Could not reach "%s". Is it switched on and advertising?
+;
+MSG_NS_REACH_FAILED
+Não foi possível contatar: %s.
+; Cannot contact: %s.
+;
+MSG_NS_SHARING
+Anunciando "%s"...
+; Announcing "%s"...
+;
+MSG_NS_SHARED
+Compartilhando "%s" (%s) na porta %ld.
+; Sharing "%s" (%s) on port %ld.
+;
+MSG_NS_UNSHARED
+Compartilhamento encerrado.
+; Stopped sharing.
+;
+MSG_NS_SHARE_FAILED
+Não foi possível compartilhar: %s.
+; Cannot share: %s.
+;
+MSG_NS_BAD_PORT
+A porta deve estar entre 1 e 65535.
+; The port must be 1-65535.
+;
+MSG_NS_BAD_INFO
+A info é longa demais, ou tem um escape errado.
+; Info is too long, or one of its escapes is wrong.
+;
+MSG_NS_SESSION_FAILED
+Contato com o mdnsd perdido: %s.
+; Lost contact with mdnsd: %s.
+;
